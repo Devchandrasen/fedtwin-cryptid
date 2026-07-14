@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fedtwin-cryptid"
+version = "0.1.0"
+description = "Raw-media non-export fixed-evidence calibration and signed audit logging for multimedia copy review"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Chandrasen Pandey" }
+]
+dependencies = [
+  "cryptography>=42",
+  "matplotlib>=3.8",
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "scikit-learn>=1.4",
+  "seaborn>=0.13",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+audio = ["miniaudio>=1.61"]
+test = ["pytest>=8"]
+all = ["miniaudio>=1.61", "pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["fedtwin*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

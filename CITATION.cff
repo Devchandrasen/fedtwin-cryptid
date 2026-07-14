@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this implementation, please cite the software repository."
+title: "FedTwin-CryptID: Fixed-Evidence Calibration and Audit Implementation"
+type: software
+authors:
+  - family-names: Pandey
+    given-names: Chandrasen
+version: 0.1.0
+date-released: 2026-07-14
+license: MIT
+repository-code: "https://github.com/Devchandrasen/fedtwin-cryptid"

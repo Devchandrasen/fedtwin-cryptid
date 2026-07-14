@@ -1,0 +1,13 @@
+cryptography>=42
+matplotlib>=3.8
+numpy>=1.26
+pandas>=2.1
+scikit-learn>=1.4
+seaborn>=0.13
+tqdm>=4.66
+
+# Optional for the FMA audio tier:
+miniaudio>=1.61
+
+# Development/test dependency:
+pytest>=8
