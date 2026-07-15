@@ -38,7 +38,7 @@
   "output_tag": "vcsl_isc_paper",
   "queries": 1000,
   "rounds": 40,
-  "run_dir": "${REPOSITORY_ROOT}/outputs/confirmatory_vcsl_isc_b37644b",
+  "run_dir": "${REPOSITORY_ROOT}/outputs/confirmatory_vcsl_isc_210d82b",
   "seeds": [
     31,
     37,

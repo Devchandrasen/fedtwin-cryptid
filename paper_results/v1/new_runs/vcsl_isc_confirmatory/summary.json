@@ -22,21 +22,21 @@
   "seed_summaries": [
     {
       "best_pr_auc": 0.9884606818128848,
-      "runtime_sec": 9.52028170000267,
+      "runtime_sec": 6.742517799997586,
       "seed": 31,
       "test_rows": 3000,
       "train_rows": 6000
     },
     {
       "best_pr_auc": 0.8801258752420449,
-      "runtime_sec": 8.835991700005252,
+      "runtime_sec": 7.085592099996575,
       "seed": 37,
       "test_rows": 3000,
       "train_rows": 6000
     },
     {
       "best_pr_auc": 0.8888261839777664,
-      "runtime_sec": 8.369103800003359,
+      "runtime_sec": 6.810068099999626,
       "seed": 41,
       "test_rows": 3000,
       "train_rows": 6000
@@ -48,5 +48,5 @@
     41
   ],
   "tier": "vcsl_isc",
-  "total_runtime_sec": 26.756238699999813
+  "total_runtime_sec": 20.661409899999853
 }

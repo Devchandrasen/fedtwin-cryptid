@@ -106,7 +106,7 @@
       }
     ],
     "license_note": "Metadata is not redistributed. Users must obtain VCSL resources from the upstream project and comply with its dataset and source-video terms.",
-    "root": "${DATA_ROOT}",
+    "root": "${DATA_ROOT}/public_data/vcsl_metadata",
     "tier": "vcsl_public",
     "warnings": []
   },
@@ -265,7 +265,7 @@
   ],
   "git": {
     "branch": "agent/tmm-ready-revision",
-    "commit": "b37644b4dd6d8cf7671410109e12bf6d1c159fa5",
+    "commit": "210d82b73e2e53d98d95c138be75f3529b3e28a9",
     "dirty": false
   },
   "hardware": {
@@ -307,14 +307,14 @@
   ],
   "outputs": [
     {
-      "bytes": 91,
+      "bytes": 84,
       "path": "client_split_manifest.json",
-      "sha256": "51f53ff80b097e001ac7f9cb370bacea7c01a74e6e4e0c9b1e8a4be10fc0c66d"
+      "sha256": "d94fd46d35ca0a21535541a143f0e28395e57320a1bfb195c592779d13914945"
     },
     {
-      "bytes": 795,
+      "bytes": 773,
       "path": "dataset_manifest.json",
-      "sha256": "f632f511f9d69af37946de7be204743630241f851d7c6ace04a415261723528e"
+      "sha256": "d3ba013d0eb43f1a7d931aab0c316613f2db2bc64716fc34b680a196eaa76db2"
     },
     {
       "bytes": 20760,
@@ -324,97 +324,97 @@
     {
       "bytes": 7221,
       "path": "metrics_detection.csv",
-      "sha256": "6786f4fd8dcd0d3117f44bcafb14fb727154eb351140e9efbfc5285dddfdac2a"
+      "sha256": "d237741276bf7aeeca5d3876d734573c0be83fc9cb03705472e87d33c77af7f3"
     },
     {
-      "bytes": 45220,
+      "bytes": 45199,
       "path": "metrics_federated.csv",
-      "sha256": "93bc6780bd028157d313e482ee796aa09b0e7ec15868c456704325d7ee3f77bb"
+      "sha256": "2b0bb81af4fa608cc6b128b6d2d8b07fda22448ef6c90dfb41cab27006cdfaf8"
     },
     {
-      "bytes": 492,
+      "bytes": 491,
       "path": "metrics_ledger.csv",
-      "sha256": "0d646485d21835e35322c0e3220baab0b12c9d5170fe0462fd2edb7c3a56ed7a"
+      "sha256": "12345fda5845c702a82bd722435a0fd348dfac762316661060b6617106c9cce3"
     },
     {
-      "bytes": 1,
+      "bytes": 71,
       "path": "metrics_localization.csv",
-      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      "sha256": "f34b1edf1962f678823535dd1222f132f4c4241dbf38cda7098066e050919ae5"
     },
     {
-      "bytes": 1215,
+      "bytes": 1211,
       "path": "metrics_privacy.csv",
-      "sha256": "bf5444599200ec4bad893e1474d43bf16483d48941edca338f617fb61b97d6b7"
+      "sha256": "a0c1223d87d7c7188f6ee07e9c6fd273429878ce5724fe0f54ba49d3c8759ef6"
     },
     {
       "bytes": 13958,
       "path": "metrics_scenario.csv",
-      "sha256": "fd7b8be30481daf7d6610196536f5e26efa4a1ddbd81c891fcb6a6b4bc69bed7"
+      "sha256": "4695d0300d86b28edb121a818810d01805763854b56e035695af073262237d28"
     },
     {
-      "bytes": 1276,
+      "bytes": 1227,
       "path": "run_config.json",
-      "sha256": "1993cc4df675d988b5ac7201e8eb9b4f3e9a6db7890b34513fd8c3758b2a069e"
+      "sha256": "cd1085aac9f6b04a7c38877b2626fbf873401f0767a663adfdf9632f4c5f5e46"
     },
     {
-      "bytes": 2139,
+      "bytes": 2136,
       "path": "runtime_profile.csv",
-      "sha256": "604a8ffc0f77a2d108fea79ba8febd59c09c0bad600ae7be2c50b578a6a78b02"
+      "sha256": "602b85ef5bccf931e5524defeed68778cb4cdbee425f716f03a769eacef71c6a"
     },
     {
-      "bytes": 60,
+      "bytes": 57,
       "path": "seed_31/client_split_manifest.json",
-      "sha256": "656bda2b0b4a3ebfa0e4c7a268e74e9dddf343935235e522a5c6fca9792d4831"
+      "sha256": "38afc9a06aab575068c3bde8cf037a5a753326e99b521aedcf9f4156e41649ff"
     },
     {
-      "bytes": 794,
+      "bytes": 772,
       "path": "seed_31/dataset_manifest.json",
-      "sha256": "beb7ceb7332a52bcdf6ed565d8ca1a68453845e6b3e361de041fcbda647ca1d0"
+      "sha256": "cfeadc452b02e35966e7426670d29c38e44d840d069daa62492fc285f3d2865b"
     },
     {
-      "bytes": 6196,
+      "bytes": 6033,
       "path": "seed_31/transformation_manifest.json",
-      "sha256": "8a0951c296df8909b582866b1a870a3bc21dbed04bdaeb385dd87fe865100e78"
+      "sha256": "b5b86c874d8752b12bbe3e72e59e6104f4a2d07d765a35ae48a7cc9639faf5b4"
     },
     {
-      "bytes": 60,
+      "bytes": 57,
       "path": "seed_37/client_split_manifest.json",
-      "sha256": "7979bb7d97fcb61d2576434ac971ccdfe5573c17de2f7ab2a8a6780b3d4e4abd"
+      "sha256": "0c0c67512c38d094ec810a92398dbcbd66bd9a7f6fbf286f9bc5625cde427b5a"
     },
     {
-      "bytes": 795,
+      "bytes": 773,
       "path": "seed_37/dataset_manifest.json",
-      "sha256": "da21ee18b06f8b30ae995bebc4a82d4898d4a655f4de0a72c1d08d30cc615d3f"
+      "sha256": "38af0448ffff8a253667da01461e17dded6a440d63ace78253d4cada9dd5204c"
     },
     {
-      "bytes": 6196,
+      "bytes": 6033,
       "path": "seed_37/transformation_manifest.json",
-      "sha256": "8a0951c296df8909b582866b1a870a3bc21dbed04bdaeb385dd87fe865100e78"
+      "sha256": "b5b86c874d8752b12bbe3e72e59e6104f4a2d07d765a35ae48a7cc9639faf5b4"
     },
     {
-      "bytes": 60,
+      "bytes": 57,
       "path": "seed_41/client_split_manifest.json",
-      "sha256": "c895536702854d7fd765f31e5995753451cc1eef8cef0e088f6b4fe0db53f932"
+      "sha256": "5fc8e39f1b308a2845f0e07c8611c9da9c9bce45aabce6896b1077862daf5aae"
     },
     {
-      "bytes": 795,
+      "bytes": 773,
       "path": "seed_41/dataset_manifest.json",
-      "sha256": "f632f511f9d69af37946de7be204743630241f851d7c6ace04a415261723528e"
+      "sha256": "d3ba013d0eb43f1a7d931aab0c316613f2db2bc64716fc34b680a196eaa76db2"
     },
     {
-      "bytes": 6196,
+      "bytes": 6033,
       "path": "seed_41/transformation_manifest.json",
-      "sha256": "8a0951c296df8909b582866b1a870a3bc21dbed04bdaeb385dd87fe865100e78"
+      "sha256": "b5b86c874d8752b12bbe3e72e59e6104f4a2d07d765a35ae48a7cc9639faf5b4"
     },
     {
-      "bytes": 1210,
+      "bytes": 1160,
       "path": "summary.json",
-      "sha256": "bc0d2df2f8cafc8f96b31036b9d08fbf2e6fee40d7741aabef79cc4d8317d91c"
+      "sha256": "a79508e4e29ea0c981ef7f99e0dbadac93f86d7439b0a63bd683fbe6e2a4566d"
     },
     {
-      "bytes": 6068,
+      "bytes": 5910,
       "path": "transformation_manifest.json",
-      "sha256": "0e692d683c53ad4ca2cb2d901b8f1a4a8247ef53f9e1b4255b1e59de82084788"
+      "sha256": "d4fea0d7c4b3bd2bf66cbe96a310ae9b8f04018919585ccd92e6a896b9056076"
     }
   ],
   "runtime": {
@@ -436,6 +436,6 @@
   },
   "schema_version": "1.0",
   "timing_sec": {
-    "total_runtime": 7.830838499998208
+    "total_runtime": 6.329188399999111
   }
 }

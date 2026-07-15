@@ -38,7 +38,7 @@
   "output_tag": "vcsl_public_paper",
   "queries": 1000,
   "rounds": 20,
-  "run_dir": "${REPOSITORY_ROOT}/outputs/confirmatory_vcsl_public_b37644b",
+  "run_dir": "${REPOSITORY_ROOT}/outputs/confirmatory_vcsl_public_210d82b",
   "seeds": [
     31,
     37,
