@@ -3,7 +3,7 @@
 ## Automated gates
 
 - [x] Clean-clone validation of code/evidence commit `7a12415` passes on Python 3.10 and 3.12: lint, tests, coverage, smoke reproduction, artifact verification, and paper regeneration.
-- [ ] The same matrix passes on public GitHub Actions after the branch is pushed.
+- [x] The same matrix passes on public GitHub Actions for pull request 1, including Linux PDF compilation.
 - [x] Package coverage is at least 85% (85.80% in the current Python 3.12 run).
 - [x] `paper_results/v1/manifest.json` verifies and all active claims resolve.
 - [x] Main paper compiles to at most 10 pages; supplement compiles to at most four pages before final metadata/DOI insertion.

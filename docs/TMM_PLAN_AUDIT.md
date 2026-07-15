@@ -53,7 +53,7 @@ code or public inference and blocks ScholarOne submission.
 
 | Requirement | Status | Required action |
 |---|---|---|
-| Public branch and GitHub Actions matrix | External gate | Push the reviewed branch and require all checks to pass |
+| Public branch and GitHub Actions matrix | Pass | Draft pull request 1 is public; Python 3.10/3.12 and Linux PDF checks pass |
 | GitHub release `v1.0.0` | External gate | Merge only after human metadata is final, then tag the verified commit |
 | Zenodo archive and real DOI in all materials | External gate | Archive the exact release, insert the DOI, and rebuild once |
 | Final source ZIP, PDFs, reviewer ZIP, checksums, cover letter, and disclosures | Pass locally, final rebuild pending DOI | Rebuild from the DOI-bearing commit and re-run all gates |
@@ -64,5 +64,5 @@ The research code, evidence, and manuscript are a technically reproducible TMM
 submission candidate within the stated limitations. They are **not yet ready
 for ScholarOne submission**. Submission remains blocked by final author
 metadata and ORCIDs, human review of AI-assisted material, all-author approval,
-prior-publication and charge decisions, public CI, and the final GitHub/Zenodo
-release DOI. No technical claim should be broadened while closing those gates.
+prior-publication and charge decisions, and the final GitHub/Zenodo release
+DOI. No technical claim should be broadened while closing those gates.

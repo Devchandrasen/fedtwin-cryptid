@@ -14,7 +14,7 @@ Date: 2026-07-15
 - Versioned `paper_results/v1` artifact with configurations, permitted results, source provenance, claims mapping, figures, and a complete hash manifest.
 - Main manuscript and supplement revised around fixed-evidence calibration, protected compact-update accounting, and signed media-free audit receipts.
 - IEEE/SPS AI-use disclosure added; author attestation remains mandatory because the policy requires thorough human verification of AI-assisted material.
-- Clean clones of code/evidence commit `7a12415` pass on Python 3.10.20 and 3.12.10: Ruff, 40 tests, 85.80% branch-aware package coverage, installed CLI execution, smoke reproduction, 362-file artifact verification, 34-table/six-figure-pair paper regeneration, and clean PDF compilation. Remote GitHub Actions remains a release gate until the branch is pushed.
+- Clean clones of code/evidence commit `7a12415` pass on Python 3.10.20 and 3.12.10: Ruff, 40 tests, 85.80% branch-aware package coverage, installed CLI execution, smoke reproduction, 362-file artifact verification, 34-table/six-figure-pair paper regeneration, and clean PDF compilation. Public GitHub Actions also passes the Python 3.10/3.12 matrix and Linux PDF compilation on pull request 1.
 
 ## Deliberate interpretation limits
 
@@ -28,4 +28,4 @@ Date: 2026-07-15
 - Confirm preprint/prior-publication disclosure and acceptance of possible mandatory TMM overlength charges.
 - Merge the reviewed branch, publish GitHub release `v1.0.0`, archive that exact release with Zenodo, and insert the real DOI. No placeholder DOI is used.
 
-The implementation package is a technically reproducible submission candidate within these stated evidence boundaries, but actual submission remains blocked until clean-clone/public-CI checks, final release archiving, and the human metadata/approval gates are complete.
+The implementation package is a technically reproducible submission candidate within these stated evidence boundaries, but actual submission remains blocked until final release archiving and the human metadata/approval gates are complete.
