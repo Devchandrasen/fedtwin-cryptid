@@ -22,21 +22,21 @@
   "seed_summaries": [
     {
       "best_pr_auc": 0.9948051652707393,
-      "runtime_sec": 3.1501274999973248,
+      "runtime_sec": 4.520200899998599,
       "seed": 31,
       "test_rows": 6000,
       "train_rows": 12000
     },
     {
       "best_pr_auc": 0.9959983083732578,
-      "runtime_sec": 2.964070599999104,
+      "runtime_sec": 4.337613499999861,
       "seed": 37,
       "test_rows": 6000,
       "train_rows": 12000
     },
     {
       "best_pr_auc": 0.9960782145639594,
-      "runtime_sec": 3.1489249000005657,
+      "runtime_sec": 4.587110699998448,
       "seed": 41,
       "test_rows": 6000,
       "train_rows": 12000
@@ -48,5 +48,5 @@
     41
   ],
   "tier": "fma_audio",
-  "total_runtime_sec": 9.295020300000033
+  "total_runtime_sec": 13.486947399993369
 }

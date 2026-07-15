@@ -258,7 +258,15 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             }
         )
     for method, score in simple_scores.items():
-        modality = "video" if "video" in method else "audio" if "audio" in method else "multimodal"
+        modality = (
+            "audio"
+            if args.tier == "fma_audio"
+            else "video"
+            if "video" in method
+            else "audio"
+            if "audio" in method
+            else "multimodal"
+        )
         row = detection_metrics(y_test, score, method=method, modality=modality)
         row["seed"] = seed
         detection_rows.append(row)
