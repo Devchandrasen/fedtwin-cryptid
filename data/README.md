@@ -17,7 +17,7 @@ public_data/
   vcsl_metadata/         # VCSL pair files, category map, frame metadata
 ```
 
-Acquire VCSL metadata/descriptors and FMA from their official project distributions, review their licenses, and stage only the paths required by the selected tier. The repository deliberately does not automate acceptance of third-party terms or redistribute the resulting files.
+Acquire VCSL metadata/descriptors and FMA from their official project distributions, review their licenses, and stage only the paths required by the selected tier. Exact pinned sources, hashes, and PowerShell acquisition commands are documented in [`docs/DATA_ACQUISITION.md`](../docs/DATA_ACQUISITION.md). The repository deliberately does not automate acceptance of third-party terms or redistribute the resulting files.
 
 All paths are explicit and can be overridden:
 

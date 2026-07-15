@@ -57,6 +57,9 @@ def test_vcsl_descriptor_adapter_and_generator(vcsl_metadata_dir: Path, tmp_path
     adapter = VCSLDescriptorAdapter(vcsl_metadata_dir, feature_dir.parent)
     report = adapter.validate()
     assert report.tier == "vcsl_isc"
+    assert all((Path(report.root) / str(record["path"])).is_file() for record in report.files)
+    assert any(str(record["path"]).endswith("frames_all.csv") for record in report.files)
+    assert any(str(record["path"]).endswith(".npy") for record in report.files)
     data = generate_vcsl_isc_benchmark(
         metadata_dir=vcsl_metadata_dir,
         feature_dir=feature_dir.parent,

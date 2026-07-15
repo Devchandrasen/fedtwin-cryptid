@@ -12,6 +12,7 @@ from fedtwin.metrics import (
     review_workload_at_budget,
 )
 from fedtwin.statistics import holm_adjust, paired_bootstrap_delta, paired_permutation_delta
+from strengthen_for_tmm import paired_bootstrap_table
 
 
 def test_detection_calibration_and_workload_metrics() -> None:
@@ -75,3 +76,25 @@ def test_clustered_paired_statistics_and_holm_correction() -> None:
         holm_adjust([])
     with pytest.raises(ValueError, match="confidence"):
         paired_bootstrap_delta(y, left, right, metric=lambda labels, values: 0.0, confidence=1.0)
+
+
+def test_legacy_strengthening_bootstrap_uses_finite_p_values_and_holm() -> None:
+    y = np.array([0, 1] * 20)
+    strong = np.tile([0.05, 0.95], 20)
+    weak = np.tile([0.45, 0.55], 20)
+    cases = [
+        {
+            "y": y,
+            "scores": {
+                "score_only": strong,
+                "default_invariant": weak,
+                "mean_score_fusion": weak,
+                "platt_calibrated_score": weak,
+                "fedyogi": weak,
+                "all_fields": weak,
+            },
+        }
+    ]
+    result = paired_bootstrap_table(cases, n_boot=100)
+    assert (result["delta_pr_auc_boot_p_two_sided"] > 0).all()
+    assert (result["holm_adjusted_p_value"] >= result["delta_pr_auc_boot_p_two_sided"]).all()

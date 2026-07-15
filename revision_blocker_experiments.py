@@ -596,7 +596,7 @@ def run_calibration_and_stat_tests(args: argparse.Namespace) -> tuple[pd.DataFra
                         metric_name=metric,
                         seed=seed,
                         groups=query_groups,
-                        n_iter=200 if args.mode == "smoke" else 1000,
+                        n_iter=200 if args.mode == "smoke" else 5000,
                         comparison=f"score_only_logistic_minus_{alternative}",
                     )
                 )

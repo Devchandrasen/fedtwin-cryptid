@@ -52,6 +52,8 @@ python -m fedtwin.cli reproduce --config configs\paper.yaml --data-root D:\datas
 
 The synthetic configuration is a no-data portability check. The paper configuration is the frozen public-data protocol and fails with an explicit missing-file message until the VCSL metadata is staged under the supplied data root.
 
+Pinned upstream commits, archive links, license boundaries, and expected hashes are listed in [`docs/DATA_ACQUISITION.md`](docs/DATA_ACQUISITION.md).
+
 Regenerate released tables and figures, then verify every released hash and claim mapping:
 
 ```powershell

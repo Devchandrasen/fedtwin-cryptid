@@ -30,6 +30,7 @@ from fedtwin.features import standardize_train_test  # noqa: E402
 from fedtwin.ledger import make_receipts  # noqa: E402
 from fedtwin.metrics import detection_metrics  # noqa: E402
 from fedtwin.models import LogisticHead, train_logistic  # noqa: E402
+from fedtwin.statistics import holm_adjust  # noqa: E402
 from run_benchmark import expand_feature_map, minmax_score, modality_indices  # noqa: E402
 
 SEEDS = [31, 37, 41]
@@ -216,7 +217,7 @@ def fpr_at_recall(y_true: np.ndarray, score: np.ndarray, target_recall: float = 
     return float(feasible.min()) if feasible.size else 1.0
 
 
-def paired_bootstrap_table(paired_cases: list[dict], n_boot: int = 600) -> pd.DataFrame:
+def paired_bootstrap_table(paired_cases: list[dict], n_boot: int = 5000) -> pd.DataFrame:
     comparisons = [
         ("score_only", "default_invariant"),
         ("default_invariant", "mean_score_fusion"),
@@ -247,6 +248,9 @@ def paired_bootstrap_table(paired_cases: list[dict], n_boot: int = 600) -> pd.Da
             fpr_deltas.append(fpr_at_recall(y[idx], left_score[idx]) - fpr_at_recall(y[idx], right_score[idx]))
         ap_arr = np.asarray(ap_deltas, dtype=float)
         fpr_arr = np.asarray(fpr_deltas, dtype=float)
+        lower_tail = int(np.count_nonzero(ap_arr <= 0.0))
+        upper_tail = int(np.count_nonzero(ap_arr >= 0.0))
+        p_two_sided = min(1.0, 2.0 * (min(lower_tail, upper_tail) + 1) / (len(ap_arr) + 1))
         rows.append(
             {
                 "left_method": left,
@@ -254,7 +258,7 @@ def paired_bootstrap_table(paired_cases: list[dict], n_boot: int = 600) -> pd.Da
                 "delta_pr_auc": base_left_ap - base_right_ap,
                 "delta_pr_auc_ci_low": float(np.quantile(ap_arr, 0.025)),
                 "delta_pr_auc_ci_high": float(np.quantile(ap_arr, 0.975)),
-                "delta_pr_auc_boot_p_two_sided": float(2 * min(np.mean(ap_arr <= 0.0), np.mean(ap_arr >= 0.0))),
+                "delta_pr_auc_boot_p_two_sided": float(p_two_sided),
                 "delta_fpr_at_95_recall": base_left_fpr - base_right_fpr,
                 "delta_fpr95_ci_low": float(np.quantile(fpr_arr, 0.025)),
                 "delta_fpr95_ci_high": float(np.quantile(fpr_arr, 0.975)),
@@ -262,7 +266,9 @@ def paired_bootstrap_table(paired_cases: list[dict], n_boot: int = 600) -> pd.Da
                 "bootstrap_resamples": len(ap_arr),
             }
         )
-    return pd.DataFrame(rows)
+    frame = pd.DataFrame(rows)
+    frame["holm_adjusted_p_value"] = holm_adjust(frame["delta_pr_auc_boot_p_two_sided"].to_numpy())
+    return frame
 
 
 def load_detection_summary(run: str) -> pd.DataFrame:
