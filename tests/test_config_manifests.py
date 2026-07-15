@@ -45,6 +45,23 @@ def test_manifest_hashing_records_and_detects_tampering(tmp_path: Path) -> None:
     assert canonical_json_hash({"b": 2, "a": 1}) == canonical_json_hash({"a": 1, "b": 2})
 
 
+def test_manifest_verifier_rejects_paths_outside_artifact_root_and_duplicates(tmp_path: Path) -> None:
+    artifact = tmp_path / "artifact"
+    artifact.mkdir()
+    inside = artifact / "inside.txt"
+    inside.write_text("inside", encoding="utf-8")
+    outside = tmp_path / "outside.txt"
+    outside.write_text("outside", encoding="utf-8")
+    valid = file_records([inside], relative_to=artifact)[0]
+
+    traversal = {"path": "../outside.txt", "bytes": outside.stat().st_size, "sha256": sha256_file(outside)}
+    absolute = {"path": str(outside.resolve()), "bytes": outside.stat().st_size, "sha256": sha256_file(outside)}
+    errors = verify_file_records(artifact, [traversal, absolute, valid, dict(valid)])
+
+    assert sum("escapes artifact root" in error or "must be relative" in error for error in errors) == 2
+    assert any("duplicate file record" in error for error in errors)
+
+
 def test_run_manifest_and_strict_json_writer(tmp_path: Path) -> None:
     input_path = tmp_path / "input.csv"
     output_path = tmp_path / "output.csv"

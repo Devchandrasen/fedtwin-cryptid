@@ -25,5 +25,6 @@ ledger_modes: [hashchain]
 attacker_fractions: [0.0, 0.1, 0.2]
 attacks: [label_flip, sign_flip]
 dropout_rates: [0.0, 0.1, 0.2]
+fma_max_decode_failure_fraction: 0.05
 paillier_key_bits: 2048
 output_tag: vcsl_public_paper

@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 
 from .features import cosine, l2_normalize
+from .manifests import sha256_file, write_json
 from .pairs import construct_asset_disjoint_pairs
 from .transformations import TRANSFORMATIONS, Transformation
 
@@ -892,12 +893,17 @@ def generate_vcsl_isc_benchmark(
 
 
 FMA_AUDIO_TRANSFORMS = ["crop", "noise", "lowpass", "dropout", "speed"]
+FMA_CACHE_SCHEMA_VERSION = "2.0"
+
+
+def _resolve_fma_tracks_path(metadata_dir: str | Path) -> Path | None:
+    base = Path(metadata_dir)
+    candidates = [base / "tracks.csv", base / "fma_metadata" / "tracks.csv"]
+    return next((path for path in candidates if path.exists()), None)
 
 
 def _load_fma_tracks(metadata_dir: str | Path) -> dict[int, str]:
-    base = Path(metadata_dir)
-    candidates = [base / "tracks.csv", base / "fma_metadata" / "tracks.csv"]
-    tracks_path = next((p for p in candidates if p.exists()), None)
+    tracks_path = _resolve_fma_tracks_path(metadata_dir)
     if tracks_path is None:
         return {}
     tracks = pd.read_csv(tracks_path, header=[0, 1], index_col=0)
@@ -909,14 +915,21 @@ def _load_fma_tracks(metadata_dir: str | Path) -> dict[int, str]:
 
 
 def _discover_fma_audio_files(audio_dir: str | Path) -> dict[int, Path]:
-    base = Path(audio_dir)
-    files = {}
+    base = Path(audio_dir).resolve()
+    files: dict[int, Path] = {}
     for path in base.rglob("*.mp3"):
+        resolved = path.resolve()
         try:
-            track_id = int(path.stem)
+            resolved.relative_to(base)
+        except ValueError as exc:
+            raise ValueError(f"FMA audio path escapes configured root: {path}") from exc
+        try:
+            track_id = int(resolved.stem)
         except ValueError:
             continue
-        files[track_id] = path
+        if track_id in files:
+            raise ValueError(f"duplicate FMA track identifier {track_id}: {files[track_id]} and {resolved}")
+        files[track_id] = resolved
     return files
 
 
@@ -1044,6 +1057,75 @@ def _audio_descriptor(y: np.ndarray, sample_rate: int) -> np.ndarray:
     return l2_normalize(desc[None, :])[0].astype(np.float32)
 
 
+def _load_validated_fma_cache(cache_path: Path) -> dict:
+    manifest_path = cache_path.with_suffix(".manifest.json")
+    if not manifest_path.is_file():
+        raise ValueError(
+            f"FMA cache provenance manifest is missing: {manifest_path}; "
+            "delete the cache and regenerate it from licensed source audio"
+        )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("schema_version") != FMA_CACHE_SCHEMA_VERSION:
+        raise ValueError(
+            f"unsupported FMA cache schema {manifest.get('schema_version')!r}; "
+            "delete the cache and regenerate it"
+        )
+    cache_record = manifest.get("cache", {})
+    if int(cache_record.get("bytes", -1)) != cache_path.stat().st_size:
+        raise ValueError("FMA cache size does not match its provenance manifest")
+    if str(cache_record.get("sha256", "")) != sha256_file(cache_path):
+        raise ValueError("FMA cache hash does not match its provenance manifest")
+
+    required = {"track_ids", "genres", "clients", "descriptors", "transforms"}
+    try:
+        with np.load(cache_path, allow_pickle=False) as loaded:
+            missing = sorted(required - set(loaded.files))
+            if missing:
+                raise ValueError(f"FMA cache is missing arrays: {missing}")
+            arrays = {name: np.asarray(loaded[name]).copy() for name in required}
+    except ValueError as exc:
+        if "Object arrays cannot be loaded" in str(exc):
+            raise ValueError(
+                "legacy FMA cache contains executable object arrays; delete it and regenerate a safe cache"
+            ) from exc
+        raise
+
+    track_ids = arrays["track_ids"]
+    genres = arrays["genres"]
+    clients = arrays["clients"]
+    descriptors = arrays["descriptors"]
+    transforms = arrays["transforms"]
+    if track_ids.ndim != 1 or track_ids.dtype.kind not in "iu":
+        raise ValueError("FMA cache track_ids must be a one-dimensional integer array")
+    if clients.ndim != 1 or clients.dtype.kind not in "iu":
+        raise ValueError("FMA cache clients must be a one-dimensional integer array")
+    if genres.ndim != 1 or genres.dtype.kind not in "US":
+        raise ValueError("FMA cache genres must be a one-dimensional string array")
+    if transforms.ndim != 1 or transforms.dtype.kind not in "US":
+        raise ValueError("FMA cache transforms must be a one-dimensional string array")
+    if descriptors.ndim != 3 or descriptors.dtype.kind not in "fc" or not np.isfinite(descriptors).all():
+        raise ValueError("FMA cache descriptors must be a finite three-dimensional numeric array")
+    if not (len(track_ids) == len(genres) == len(clients) == len(descriptors)):
+        raise ValueError("FMA cache track, genre, client, and descriptor counts do not match")
+    if descriptors.shape[1] != len(transforms):
+        raise ValueError("FMA cache transform count does not match descriptor shape")
+    if len(track_ids) < 2:
+        raise ValueError("FMA cache must contain at least two successfully decoded tracks")
+
+    return {
+        "track_ids": track_ids,
+        "genres": genres,
+        "clients": clients,
+        "descriptors": descriptors,
+        "transforms": list(map(str, transforms)),
+        "cache_path": str(cache_path),
+        "cache_manifest_path": str(manifest_path),
+        "decode_failure_report": str(cache_path.with_suffix(".decode_failures.json")),
+        "decode_failures": int(manifest.get("decode_failures", 0)),
+        "input_records": list(manifest.get("inputs", [])),
+    }
+
+
 def _prepare_fma_audio_cache(
     *,
     audio_dir: str | Path,
@@ -1053,20 +1135,15 @@ def _prepare_fma_audio_cache(
     sample_rate: int,
     max_seconds: float,
     seed: int,
+    max_decode_failure_fraction: float = 0.05,
 ) -> dict:
+    if not 0.0 <= max_decode_failure_fraction < 1.0:
+        raise ValueError("max_decode_failure_fraction must lie in [0, 1)")
     cache_base = Path(cache_dir)
     cache_base.mkdir(parents=True, exist_ok=True)
     cache_path = cache_base / f"fma_audio_sr{sample_rate}_sec{int(max_seconds)}_tracks{max_tracks}.npz"
     if cache_path.exists():
-        loaded = np.load(cache_path, allow_pickle=True)
-        return {
-            "track_ids": loaded["track_ids"],
-            "genres": loaded["genres"],
-            "clients": loaded["clients"],
-            "descriptors": loaded["descriptors"],
-            "transforms": list(loaded["transforms"]),
-            "cache_path": str(cache_path),
-        }
+        return _load_validated_fma_cache(cache_path)
 
     genres_by_id = _load_fma_tracks(metadata_dir)
     audio_files = _discover_fma_audio_files(audio_dir)
@@ -1097,6 +1174,8 @@ def _prepare_fma_audio_cache(
     kept_ids = []
     kept_genres = []
     kept_clients = []
+    failures: list[dict[str, object]] = []
+    audio_root = Path(audio_dir).resolve()
     for track_id in selected:
         try:
             y = _decode_mp3(audio_files[track_id], sample_rate=sample_rate, max_seconds=max_seconds)
@@ -1109,21 +1188,95 @@ def _prepare_fma_audio_cache(
             kept_ids.append(track_id)
             kept_genres.append(genre)
             kept_clients.append(int(genre_index.get(genre, 0) % 32))
-        except Exception:
-            continue
+        except Exception as exc:
+            failures.append(
+                {
+                    "track_id": int(track_id),
+                    "path": audio_files[track_id].resolve().relative_to(audio_root).as_posix(),
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                }
+            )
+    failure_fraction = len(failures) / max(len(selected), 1)
+    failure_report_path = cache_path.with_suffix(".decode_failures.json")
+    write_json(
+        failure_report_path,
+        {
+            "schema_version": "1.0",
+            "selected_tracks": len(selected),
+            "decoded_tracks": len(kept_ids),
+            "decode_failures": len(failures),
+            "decode_failure_fraction": failure_fraction,
+            "maximum_allowed_fraction": max_decode_failure_fraction,
+            "failures": failures,
+        },
+    )
+    if failure_fraction > max_decode_failure_fraction:
+        raise RuntimeError(
+            f"FMA decode failure fraction {failure_fraction:.3f} exceeds configured maximum "
+            f"{max_decode_failure_fraction:.3f}; see {failure_report_path}"
+        )
     if not descriptors:
         raise RuntimeError("FMA descriptor cache could not decode any tracks")
 
     out = {
         "track_ids": np.asarray(kept_ids, dtype=int),
-        "genres": np.asarray(kept_genres, dtype=object),
+        "genres": np.asarray(kept_genres, dtype=str),
         "clients": np.asarray(kept_clients, dtype=int),
         "descriptors": np.asarray(descriptors, dtype=np.float32),
-        "transforms": np.asarray(transform_names, dtype=object),
-        "cache_path": str(cache_path),
+        "transforms": np.asarray(transform_names, dtype=str),
     }
     np.savez_compressed(cache_path, **out)
-    return {**out, "transforms": list(transform_names)}
+    tracks_path = _resolve_fma_tracks_path(metadata_dir)
+    if tracks_path is None:
+        raise FileNotFoundError(f"missing FMA tracks.csv under {metadata_dir}")
+    input_records = [
+        {
+            "path": "metadata/" + tracks_path.name,
+            "bytes": tracks_path.stat().st_size,
+            "sha256": sha256_file(tracks_path),
+        }
+    ]
+    for track_id in kept_ids:
+        path = audio_files[track_id]
+        input_records.append(
+            {
+                "path": "audio/" + path.resolve().relative_to(audio_root).as_posix(),
+                "bytes": path.stat().st_size,
+                "sha256": sha256_file(path),
+            }
+        )
+    manifest_path = cache_path.with_suffix(".manifest.json")
+    write_json(
+        manifest_path,
+        {
+            "schema_version": FMA_CACHE_SCHEMA_VERSION,
+            "cache": {
+                "path": cache_path.name,
+                "bytes": cache_path.stat().st_size,
+                "sha256": sha256_file(cache_path),
+            },
+            "inputs": input_records,
+            "sample_rate": sample_rate,
+            "max_seconds": max_seconds,
+            "max_tracks": max_tracks,
+            "selection_seed": seed,
+            "descriptor_transform_seed": 0,
+            "decoded_tracks": len(kept_ids),
+            "decode_failures": len(failures),
+            "decode_failure_fraction": failure_fraction,
+            "decode_failure_report": failure_report_path.name,
+        },
+    )
+    return {
+        **out,
+        "transforms": list(transform_names),
+        "cache_path": str(cache_path),
+        "cache_manifest_path": str(manifest_path),
+        "decode_failure_report": str(failure_report_path),
+        "decode_failures": len(failures),
+        "input_records": input_records,
+    }
 
 
 def _sample_fma_pairs(
@@ -1282,6 +1435,7 @@ def generate_fma_audio_benchmark(
     negative_ratio: float = 1.0,
     sample_rate: int = 8000,
     max_seconds: float = 25.0,
+    max_decode_failure_fraction: float = 0.05,
     seed: int = 31,
 ) -> BenchmarkData:
     """Build an audio copy-detection benchmark from FMA-small MP3 files."""
@@ -1294,6 +1448,7 @@ def generate_fma_audio_benchmark(
         sample_rate=sample_rate,
         max_seconds=max_seconds,
         seed=seed,
+        max_decode_failure_fraction=max_decode_failure_fraction,
     )
     track_ids = cache["track_ids"]
     genres = cache["genres"].astype(str)
@@ -1347,6 +1502,11 @@ def generate_fma_audio_benchmark(
         "max_tracks": max_tracks,
         "sample_rate": sample_rate,
         "max_seconds": max_seconds,
+        "max_decode_failure_fraction": max_decode_failure_fraction,
+        "decode_failures": int(cache.get("decode_failures", 0)),
+        "decode_failure_report": cache.get("decode_failure_report"),
+        "cache_manifest_path": cache.get("cache_manifest_path"),
+        "input_records": cache.get("input_records", []),
         "max_train_positive_pairs": max_train_pairs,
         "max_test_positive_pairs": max_test_pairs,
         "negative_ratio": negative_ratio,

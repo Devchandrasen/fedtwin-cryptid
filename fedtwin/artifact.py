@@ -14,7 +14,7 @@ import pandas as pd
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-from .manifests import file_records, verify_file_records, write_json
+from .manifests import file_records, resolve_within_root, verify_file_records, write_json
 
 ARTIFACT_MANIFEST = "manifest.json"
 
@@ -70,7 +70,11 @@ def verify_artifact(manifest_path: str | Path) -> dict[str, Any]:
             forbidden.append(file_path)
     if forbidden:
         errors.extend(f"forbidden generated file: {item}" for item in forbidden)
-    claims = path.parent / str(payload.get("claims_file", "claims.csv"))
+    try:
+        claims = resolve_within_root(path.parent, str(payload.get("claims_file", "claims.csv")))
+    except ValueError as exc:
+        errors.append(str(exc))
+        claims = path.parent / "__invalid_claims_path__"
     if claims.is_file():
         frame = pd.read_csv(claims)
         required_claim_columns = {"claim_id", "manuscript_location", "evidence_file", "status"}
@@ -84,7 +88,12 @@ def verify_artifact(manifest_path: str | Path) -> dict[str, Any]:
             if unresolved:
                 errors.append(f"claims still require replacement evidence: {', '.join(unresolved)}")
         for evidence in frame.get("evidence_file", pd.Series(dtype=str)).dropna().astype(str):
-            if not (path.parent / evidence).is_file():
+            try:
+                evidence_path = resolve_within_root(path.parent, evidence)
+            except ValueError as exc:
+                errors.append(str(exc))
+                continue
+            if not evidence_path.is_file():
                 errors.append(f"claim evidence is missing: {evidence}")
     if errors:
         raise ValueError("artifact verification failed:\n- " + "\n- ".join(errors))

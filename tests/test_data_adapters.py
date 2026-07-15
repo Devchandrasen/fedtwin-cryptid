@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -13,6 +14,7 @@ from fedtwin.data import (
     _audio_transform,
     _frame_audio,
     _frame_match_scores,
+    _prepare_fma_audio_cache,
     _sample_vcsl_pairs,
     _UnionFind,
     dataframe_from_split,
@@ -128,6 +130,99 @@ def test_audio_transform_and_descriptor_branches() -> None:
     descriptor = _audio_descriptor(audio, sample_rate)
     assert descriptor.ndim == 1
     assert np.linalg.norm(descriptor) == pytest.approx(1.0, abs=1e-5)
+
+
+def test_fma_cache_is_pickle_free_hashed_and_schema_validated(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    audio = tmp_path / "audio"
+    metadata = tmp_path / "metadata"
+    cache = tmp_path / "cache"
+    audio.mkdir()
+    metadata.mkdir()
+    (metadata / "tracks.csv").write_text("fixture", encoding="utf-8")
+    genres = {1: "Rock", 2: "Jazz", 3: "Folk"}
+    for track_id in genres:
+        (audio / f"{track_id:06d}.mp3").write_bytes(f"audio-{track_id}".encode())
+    monkeypatch.setattr(data_module, "_load_fma_tracks", lambda _path: genres)
+    monkeypatch.setattr(
+        data_module,
+        "_decode_mp3",
+        lambda _path, **_kwargs: np.linspace(-1.0, 1.0, 2048, dtype=np.float32),
+    )
+    monkeypatch.setattr(
+        data_module,
+        "_audio_descriptor",
+        lambda _audio, _sample_rate: np.ones(8, dtype=np.float32) / np.sqrt(8),
+    )
+
+    generated = _prepare_fma_audio_cache(
+        audio_dir=audio,
+        metadata_dir=metadata,
+        cache_dir=cache,
+        max_tracks=3,
+        sample_rate=8000,
+        max_seconds=1.0,
+        seed=31,
+    )
+    assert generated["genres"].dtype.kind == "U"
+    assert Path(generated["cache_manifest_path"]).is_file()
+    with np.load(generated["cache_path"], allow_pickle=False) as loaded:
+        assert loaded["genres"].dtype.kind == "U"
+        assert loaded["transforms"].dtype.kind == "U"
+
+    reloaded = _prepare_fma_audio_cache(
+        audio_dir=audio,
+        metadata_dir=metadata,
+        cache_dir=cache,
+        max_tracks=3,
+        sample_rate=8000,
+        max_seconds=1.0,
+        seed=31,
+    )
+    assert reloaded["input_records"] == generated["input_records"]
+
+
+def test_fma_decode_failures_are_recorded_and_thresholded(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    audio = tmp_path / "audio"
+    metadata = tmp_path / "metadata"
+    cache = tmp_path / "cache"
+    audio.mkdir()
+    metadata.mkdir()
+    (metadata / "tracks.csv").write_text("fixture", encoding="utf-8")
+    genres = {1: "Rock", 2: "Jazz", 3: "Folk"}
+    for track_id in genres:
+        (audio / f"{track_id:06d}.mp3").write_bytes(b"audio")
+    monkeypatch.setattr(data_module, "_load_fma_tracks", lambda _path: genres)
+
+    def decode(path: Path, **_kwargs: object) -> np.ndarray:
+        if path.stem == "000002":
+            raise RuntimeError("fixture decode failure")
+        return np.linspace(-1.0, 1.0, 2048, dtype=np.float32)
+
+    monkeypatch.setattr(data_module, "_decode_mp3", decode)
+    monkeypatch.setattr(
+        data_module,
+        "_audio_descriptor",
+        lambda _audio, _sample_rate: np.ones(8, dtype=np.float32) / np.sqrt(8),
+    )
+    with pytest.raises(RuntimeError, match="decode failure fraction"):
+        _prepare_fma_audio_cache(
+            audio_dir=audio,
+            metadata_dir=metadata,
+            cache_dir=cache,
+            max_tracks=3,
+            sample_rate=8000,
+            max_seconds=1.0,
+            seed=31,
+            max_decode_failure_fraction=0.2,
+        )
+    failure_report = cache / "fma_audio_sr8000_sec1_tracks3.decode_failures.json"
+    payload = json.loads(failure_report.read_text(encoding="utf-8"))
+    assert payload["decode_failures"] == 1
+    assert payload["failures"][0]["track_id"] == 2
 
 
 def test_adapter_missing_source_errors(tmp_path: Path) -> None:

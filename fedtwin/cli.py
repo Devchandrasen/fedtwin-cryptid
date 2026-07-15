@@ -114,7 +114,8 @@ def _run_reproduction(config: ExperimentConfig, *, data_root: Path, output_dir: 
         "license_note": source.license_note,
         "warnings": list(source.warnings),
     }
-    manifest["inputs"] = list(source.files)
+    recorded_inputs = dataset_manifest.get("input_records")
+    manifest["inputs"] = list(recorded_inputs) if isinstance(recorded_inputs, list) else list(source.files)
     manifest["outputs"] = file_records(outputs, relative_to=run_dir)
     write_json(run_dir / "run_manifest.json", manifest)
     return run_dir

@@ -43,6 +43,7 @@ class ExperimentConfig:
     attacker_fractions: tuple[float, ...] = (0.0, 0.1, 0.2)
     attacks: tuple[str, ...] = ("label_flip", "sign_flip")
     dropout_rates: tuple[float, ...] = (0.0, 0.1, 0.2)
+    fma_max_decode_failure_fraction: float = 0.05
     paillier_key_bits: int = 2048
     output_tag: str = "paper"
 
@@ -67,6 +68,8 @@ class ExperimentConfig:
         for values, name in ((self.attacker_fractions, "attacker_fractions"), (self.dropout_rates, "dropout_rates")):
             if any(value < 0 or value >= 1 for value in values):
                 raise ValueError(f"{name} values must lie in [0, 1)")
+        if not 0 <= self.fma_max_decode_failure_fraction < 1:
+            raise ValueError("fma_max_decode_failure_fraction must lie in [0, 1)")
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

@@ -75,6 +75,31 @@ def file_records(paths: Iterable[str | Path], *, relative_to: str | Path | None 
     return records
 
 
+def resolve_within_root(root: str | Path, relative_path: str | Path) -> Path:
+    """Resolve a manifest path without permitting reads outside ``root``.
+
+    Artifact manifests are untrusted input. Absolute paths, parent traversal,
+    and symlinks that escape the artifact directory are rejected before a file
+    is opened or hashed.
+    """
+
+    base = Path(root).resolve()
+    raw = str(relative_path)
+    if not raw.strip():
+        raise ValueError("manifest path must be a non-empty relative path")
+    relative = Path(raw)
+    if relative.is_absolute() or relative.drive or relative.anchor:
+        raise ValueError(f"manifest path must be relative: {raw}")
+    if any(part == ".." for part in relative.parts):
+        raise ValueError(f"manifest path escapes artifact root: {raw}")
+    candidate = (base / relative).resolve()
+    try:
+        candidate.relative_to(base)
+    except ValueError as exc:
+        raise ValueError(f"manifest path escapes artifact root: {raw}") from exc
+    return candidate
+
+
 def build_run_manifest(
     *,
     repository_root: str | Path,
@@ -120,17 +145,36 @@ def build_run_manifest(
 
 
 def verify_file_records(root: str | Path, records: Iterable[dict[str, Any]]) -> list[str]:
-    base = Path(root)
+    base = Path(root).resolve()
     errors: list[str] = []
+    seen: set[str] = set()
     for record in records:
-        path = base / str(record["path"])
-        if not path.is_file():
-            errors.append(f"missing: {record['path']}")
+        if not isinstance(record, dict) or "path" not in record:
+            errors.append("invalid file record: missing path")
             continue
-        if int(record.get("bytes", -1)) != path.stat().st_size:
-            errors.append(f"size mismatch: {record['path']}")
+        display = str(record["path"])
+        try:
+            path = resolve_within_root(base, display)
+        except ValueError as exc:
+            errors.append(str(exc))
+            continue
+        normalized = path.relative_to(base).as_posix().casefold()
+        if normalized in seen:
+            errors.append(f"duplicate file record: {display}")
+            continue
+        seen.add(normalized)
+        if not path.is_file():
+            errors.append(f"missing: {display}")
+            continue
+        try:
+            expected_bytes = int(record.get("bytes", -1))
+        except (TypeError, ValueError):
+            errors.append(f"invalid byte count: {display}")
+            continue
+        if expected_bytes != path.stat().st_size:
+            errors.append(f"size mismatch: {display}")
         expected = str(record.get("sha256", ""))
         actual = sha256_file(path)
         if expected != actual:
-            errors.append(f"sha256 mismatch: {record['path']}")
+            errors.append(f"sha256 mismatch: {display}")
     return errors

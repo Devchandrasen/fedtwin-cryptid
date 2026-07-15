@@ -64,8 +64,14 @@ def test_clustered_paired_statistics_and_holm_correction() -> None:
     )
     assert bootstrap["clusters"] == 4
     assert bootstrap["delta"] >= 0
+    assert 0 < bootstrap["p_two_sided"] <= 1
+    assert bootstrap["discarded_resamples"] >= 0
     assert 0 <= permutation["p_two_sided"] <= 1
     adjusted = holm_adjust([0.01, 0.04, 0.03])
     assert np.all(adjusted >= np.array([0.01, 0.04, 0.03]))
     with pytest.raises(ValueError):
         holm_adjust([np.nan])
+    with pytest.raises(ValueError):
+        holm_adjust([])
+    with pytest.raises(ValueError, match="confidence"):
+        paired_bootstrap_delta(y, left, right, metric=lambda labels, values: 0.0, confidence=1.0)

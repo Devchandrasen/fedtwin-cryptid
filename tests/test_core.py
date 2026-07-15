@@ -44,7 +44,10 @@ def test_real_paillier_additive_aggregation_matches_plain_compact_sum() -> None:
     assert np.max(np.abs(plain - paillier)) < 1e-6
     assert report.mode == "paillier"
     assert report.ciphertext_expansion > 1.0
+    assert report.max_abs_error_vs_plain < 1e-6
     assert details["scheme"] == "Paillier"
+    assert int(details["max_safe_abs_aggregate_integer"]) > int(details["observed_max_abs_aggregate_integer"])
+    assert details["max_safe_quantization_scale"]
 
 
 def test_hash_chain_detects_payload_and_previous_hash_tampering() -> None:

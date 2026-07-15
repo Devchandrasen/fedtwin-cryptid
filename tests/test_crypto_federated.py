@@ -4,8 +4,11 @@ import numpy as np
 import pytest
 
 from fedtwin.crypto import (
+    PaillierPrivateKey,
+    PaillierPublicKey,
     aggregate_updates,
     generate_paillier_keypair,
+    paillier_aggregate_updates,
     paillier_decrypt_int,
     paillier_encrypt_int,
     secureagg_simulate,
@@ -73,6 +76,17 @@ def test_paillier_signed_round_trip_and_key_floor() -> None:
     public, private = generate_paillier_keypair(512)
     for value in (-123, 0, 456):
         assert paillier_decrypt_int(paillier_encrypt_int(value, public), private) == value
+
+
+def test_quantization_and_paillier_aggregate_range_guards(monkeypatch: pytest.MonkeyPatch) -> None:
+    with pytest.raises(OverflowError, match="64-bit"):
+        aggregate_updates([np.array([1e20])], [1.0], mode="quantized_transport_proxy", he_scale=1e6)
+
+    public = PaillierPublicKey(n=101, g=102, n_square=10201, key_bits=7)
+    private = PaillierPrivateKey(public_key=public, lam=100, mu=1)
+    monkeypatch.setattr("fedtwin.crypto.generate_paillier_keypair", lambda _bits: (public, private))
+    with pytest.raises(OverflowError, match="weighted quantized"):
+        paillier_aggregate_updates([np.array([1.0])], [40.0], key_bits=512, he_scale=1.0)
 
 
 def test_federated_training_modes_dropout_and_guards() -> None:

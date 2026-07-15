@@ -27,6 +27,8 @@ def paired_bootstrap_delta(
         raise ValueError("paired arrays must have the same nonzero length")
     if resamples < 100:
         raise ValueError("resamples must be at least 100")
+    if not 0.0 < confidence < 1.0:
+        raise ValueError("confidence must lie strictly between 0 and 1")
     rng = np.random.default_rng(seed)
     if groups is None:
         unique_groups = np.arange(len(y))
@@ -37,19 +39,42 @@ def paired_bootstrap_delta(
             raise ValueError("groups must have the same length as y")
         unique_groups = np.unique(groups)
         row_indices = [np.flatnonzero(groups == group) for group in unique_groups]
-    deltas = np.empty(resamples, dtype=float)
-    for idx in range(resamples):
+    observed = float(metric(y, left) - metric(y, right))
+    if not np.isfinite(observed):
+        raise ValueError("metric produced a non-finite observed delta")
+    valid_deltas: list[float] = []
+    attempts = 0
+    max_attempts = resamples * 10
+    while len(valid_deltas) < resamples and attempts < max_attempts:
+        attempts += 1
         sampled_groups = rng.integers(0, len(unique_groups), size=len(unique_groups))
         sampled_rows = np.concatenate([row_indices[int(group_idx)] for group_idx in sampled_groups])
-        deltas[idx] = metric(y[sampled_rows], left[sampled_rows]) - metric(y[sampled_rows], right[sampled_rows])
+        try:
+            delta = float(
+                metric(y[sampled_rows], left[sampled_rows])
+                - metric(y[sampled_rows], right[sampled_rows])
+            )
+        except ValueError:
+            continue
+        if np.isfinite(delta):
+            valid_deltas.append(delta)
+    if len(valid_deltas) != resamples:
+        raise ValueError(
+            f"metric produced only {len(valid_deltas)} finite bootstrap resamples "
+            f"after {attempts} attempts"
+        )
+    deltas = np.asarray(valid_deltas, dtype=float)
     alpha = (1.0 - confidence) / 2.0
-    observed = metric(y, left) - metric(y, right)
+    lower_tail = int(np.count_nonzero(deltas <= 0.0))
+    upper_tail = int(np.count_nonzero(deltas >= 0.0))
+    p_two_sided = min(1.0, 2.0 * (min(lower_tail, upper_tail) + 1) / (resamples + 1))
     return {
         "delta": float(observed),
         "ci_low": float(np.quantile(deltas, alpha)),
         "ci_high": float(np.quantile(deltas, 1.0 - alpha)),
-        "p_two_sided": float(min(1.0, 2.0 * min(np.mean(deltas <= 0), np.mean(deltas >= 0)))),
+        "p_two_sided": float(p_two_sided),
         "resamples": int(resamples),
+        "discarded_resamples": int(attempts - resamples),
         "clusters": int(len(unique_groups)),
     }
 
@@ -71,13 +96,17 @@ def paired_permutation_delta(
     if permutations < 100:
         raise ValueError("permutations must be at least 100")
     rng = np.random.default_rng(seed)
-    observed = metric(y, left) - metric(y, right)
+    observed = float(metric(y, left) - metric(y, right))
+    if not np.isfinite(observed):
+        raise ValueError("metric produced a non-finite observed delta")
     extreme = 0
     for _ in range(permutations):
         swap = rng.random(len(y)) < 0.5
         perm_left = np.where(swap, right, left)
         perm_right = np.where(swap, left, right)
-        delta = metric(y, perm_left) - metric(y, perm_right)
+        delta = float(metric(y, perm_left) - metric(y, perm_right))
+        if not np.isfinite(delta):
+            raise ValueError("metric produced a non-finite permutation delta")
         extreme += int(abs(delta) >= abs(observed))
     return {
         "delta": float(observed),
@@ -88,7 +117,12 @@ def paired_permutation_delta(
 
 def holm_adjust(p_values: list[float] | np.ndarray) -> np.ndarray:
     values = np.asarray(p_values, dtype=float)
-    if values.ndim != 1 or np.any(~np.isfinite(values)) or np.any((values < 0) | (values > 1)):
+    if (
+        values.ndim != 1
+        or len(values) == 0
+        or np.any(~np.isfinite(values))
+        or np.any((values < 0) | (values > 1))
+    ):
         raise ValueError("p-values must be a finite one-dimensional array in [0, 1]")
     order = np.argsort(values)
     adjusted = np.empty_like(values)

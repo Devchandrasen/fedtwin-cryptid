@@ -55,6 +55,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fma-max-tracks", type=int, default=1200)
     parser.add_argument("--fma-sample-rate", type=int, default=8000)
     parser.add_argument("--fma-max-seconds", type=float, default=25.0)
+    parser.add_argument("--fma-max-decode-failure-fraction", type=float, default=0.05)
     parser.add_argument("--max-train-pairs", type=int, default=60000)
     parser.add_argument("--max-test-pairs", type=int, default=30000)
     parser.add_argument("--negative-ratio", type=float, default=1.0)
@@ -201,6 +202,7 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             negative_ratio=args.negative_ratio,
             sample_rate=args.fma_sample_rate,
             max_seconds=args.fma_max_seconds,
+            max_decode_failure_fraction=args.fma_max_decode_failure_fraction,
             seed=seed,
         )
     else:

@@ -18,6 +18,7 @@ import math
 import secrets
 import time
 from dataclasses import dataclass
+from decimal import Decimal, localcontext
 
 import numpy as np
 
@@ -144,6 +145,23 @@ def paillier_decrypt_int(ciphertext: int, private_key: PaillierPrivateKey) -> in
     return _decode_signed((l_value * private_key.mu) % pub.n, pub.n)
 
 
+def _quantize_updates(updates: list[np.ndarray], he_scale: float) -> list[np.ndarray]:
+    if not np.isfinite(he_scale) or he_scale <= 0:
+        raise ValueError("he_scale must be a positive finite value")
+    minimum = np.iinfo(np.int64).min
+    maximum = np.iinfo(np.int64).max
+    quantized: list[np.ndarray] = []
+    for update in updates:
+        with np.errstate(over="ignore", invalid="ignore"):
+            scaled = np.rint(update * he_scale)
+        if not np.isfinite(scaled).all():
+            raise OverflowError("quantization produced a non-finite integer value")
+        if np.any(scaled < minimum) or np.any(scaled > maximum):
+            raise OverflowError("quantized update exceeds the signed 64-bit transport range")
+        quantized.append(scaled.astype(np.int64))
+    return quantized
+
+
 def paillier_aggregate_updates(
     updates: list[np.ndarray],
     weights: list[float],
@@ -159,15 +177,35 @@ def paillier_aggregate_updates(
     """
 
     update_arrays, weight_values = _validate_updates(updates, weights)
+    if any(update.ndim != 1 for update in update_arrays):
+        raise ValueError("Paillier aggregation requires one-dimensional compact updates")
+    quantized = _quantize_updates(update_arrays, he_scale)
+    rounded_weights = np.rint(weight_values)
+    if np.any(rounded_weights < np.iinfo(np.int64).min) or np.any(
+        rounded_weights > np.iinfo(np.int64).max
+    ):
+        raise OverflowError("Paillier client weights exceed the signed 64-bit range")
+    int_weights = rounded_weights.astype(np.int64)
+    integer_weight_sum = sum(map(int, int_weights))
+    if np.any(int_weights < 0) or integer_weight_sum <= 0:
+        raise ValueError("Paillier aggregation requires positive integer-like weights")
+
     start_encrypt = time.perf_counter()
     public_key, private_key = generate_paillier_keypair(key_bits)
     plain_bytes = int(sum(update.nbytes for update in update_arrays))
-    int_weights = np.asarray(np.rint(weight_values), dtype=np.int64)
-    if np.any(int_weights < 0) or int_weights.sum() <= 0:
-        raise ValueError("Paillier aggregation requires positive integer-like weights")
-    if not np.isfinite(he_scale) or he_scale <= 0:
-        raise ValueError("he_scale must be a positive finite value")
-    quantized = [np.rint(update * he_scale).astype(np.int64) for update in update_arrays]
+    safe_aggregate_limit = public_key.n // 3 - 1
+    observed_max_abs_aggregate = 0
+    for dimension in range(len(quantized[0])):
+        dimension_total = sum(
+            abs(int(update[dimension])) * int(weight)
+            for update, weight in zip(quantized, int_weights, strict=True)
+        )
+        observed_max_abs_aggregate = max(observed_max_abs_aggregate, dimension_total)
+    if observed_max_abs_aggregate > safe_aggregate_limit:
+        raise OverflowError(
+            "weighted quantized Paillier sum exceeds the signed plaintext range; "
+            "reduce he_scale, client weights, or update magnitude"
+        )
     encrypted = [[paillier_encrypt_int(int(v), public_key) for v in update] for update in quantized]
     encryption_time = time.perf_counter() - start_encrypt
 
@@ -179,8 +217,30 @@ def paillier_aggregate_updates(
             c = (c * pow(client_ciphertexts[dim], int(weight), public_key.n_square)) % public_key.n_square
         aggregated_ciphertexts.append(c)
     decrypted = np.asarray([paillier_decrypt_int(c, private_key) for c in aggregated_ciphertexts], dtype=np.float64)
-    aggregate = decrypted / float(int_weights.sum()) / he_scale
+    aggregate = decrypted / float(integer_weight_sum) / he_scale
     aggregation_time = time.perf_counter() - start_agg
+    normalized_weights = int_weights.astype(np.float64) / float(integer_weight_sum)
+    plain_reference = np.zeros_like(update_arrays[0], dtype=float)
+    for weight, update in zip(normalized_weights, update_arrays, strict=True):
+        plain_reference += weight * update
+    max_abs_error = float(np.max(np.abs(aggregate - plain_reference)))
+
+    weighted_float_max = max(
+        sum(
+            abs(float(update[dimension])) * int(weight)
+            for update, weight in zip(update_arrays, int_weights, strict=True)
+        )
+        for dimension in range(len(update_arrays[0]))
+    )
+    if weighted_float_max == 0.0:
+        max_safe_scale = "unbounded-for-zero-updates"
+    else:
+        with localcontext() as context:
+            context.prec = 24
+            max_safe_scale = format(
+                Decimal(safe_aggregate_limit) / Decimal(str(weighted_float_max)),
+                ".8E",
+            )
 
     ciphertext_bytes = math.ceil(public_key.n_square.bit_length() / 8) * len(quantized[0]) * len(quantized)
     report = AggregationReport(
@@ -192,6 +252,7 @@ def paillier_aggregate_updates(
         ciphertext_expansion=float(ciphertext_bytes / max(plain_bytes, 1)),
         protocol_scope="real additive Paillier aggregation for compact quantized update sums only",
         active_clients=len(update_arrays),
+        max_abs_error_vs_plain=max_abs_error,
     )
     details = {
         "scheme": "Paillier",
@@ -200,7 +261,11 @@ def paillier_aggregate_updates(
         "clients": int(len(updates)),
         "update_dimension": int(len(quantized[0])),
         "quantization_scale": float(he_scale),
-        "integer_weight_sum": int(int_weights.sum()),
+        "integer_weight_sum": integer_weight_sum,
+        "max_safe_abs_aggregate_integer": str(safe_aggregate_limit),
+        "observed_max_abs_aggregate_integer": str(observed_max_abs_aggregate),
+        "max_safe_quantization_scale": max_safe_scale,
+        "max_abs_error_vs_integer_weighted_plain": max_abs_error,
     }
     return aggregate, report, details
 
@@ -334,7 +399,7 @@ def aggregate_updates(
         protected = updates
         protected_bytes = plain_bytes
     elif mode == "quantized_transport_proxy":
-        protected = [np.round(update * he_scale).astype(np.int64) for update in updates]
+        protected = _quantize_updates(updates, he_scale)
         # Conservative byte expansion for packed protected transport accounting.
         protected_bytes = plain_bytes * 16
     else:
