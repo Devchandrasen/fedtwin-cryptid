@@ -14,7 +14,7 @@ Date: 2026-07-15
 - Versioned `paper_results/v1` artifact with configurations, permitted results, source provenance, claims mapping, figures, and a complete hash manifest.
 - Main manuscript and supplement revised around fixed-evidence calibration, protected compact-update accounting, and signed media-free audit receipts.
 - IEEE/SPS AI-use disclosure added; author attestation remains mandatory because the policy requires thorough human verification of AI-assisted material.
-- Current Python 3.12 validation passes: Ruff, 40 tests, 85.80% branch-aware package coverage, installed-wheel CLI packaging, smoke execution, 362-file artifact verification, paper-asset regeneration, and clean PDF compilation. Final clean-clone Python 3.10/3.12 and remote GitHub Actions remain release gates until the branch is committed and pushed.
+- Clean clones of code/evidence commit `7a12415` pass on Python 3.10.20 and 3.12.10: Ruff, 40 tests, 85.80% branch-aware package coverage, installed CLI execution, smoke reproduction, 362-file artifact verification, 34-table/six-figure-pair paper regeneration, and clean PDF compilation. Remote GitHub Actions remains a release gate until the branch is pushed.
 
 ## Deliberate interpretation limits
 

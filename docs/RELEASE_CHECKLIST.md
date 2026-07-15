@@ -2,7 +2,7 @@
 
 ## Automated gates
 
-- [ ] Final committed clean-clone validation passes on Python 3.10 and 3.12: lint, tests, coverage, smoke reproduction, artifact verification, and paper regeneration.
+- [x] Clean-clone validation of code/evidence commit `7a12415` passes on Python 3.10 and 3.12: lint, tests, coverage, smoke reproduction, artifact verification, and paper regeneration.
 - [ ] The same matrix passes on public GitHub Actions after the branch is pushed.
 - [x] Package coverage is at least 85% (85.80% in the current Python 3.12 run).
 - [x] `paper_results/v1/manifest.json` verifies and all active claims resolve.
