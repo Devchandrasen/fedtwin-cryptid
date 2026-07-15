@@ -1601,6 +1601,7 @@ def generate_fma_audio_benchmark(
         "cache_path": cache["cache_path"],
         "clients": clients,
         "tracks_loaded": int(len(track_ids)),
+        "decoded_tracks": int(len(track_ids)),
         "max_tracks": max_tracks,
         "sample_rate": sample_rate,
         "max_seconds": max_seconds,
@@ -1613,7 +1614,11 @@ def generate_fma_audio_benchmark(
         "max_test_positive_pairs": max_test_pairs,
         "negative_ratio": negative_ratio,
         "seed": seed,
-        "source": "FMA-small MP3 audio and FMA metadata",
+        "source": "pinned FMA-small-compatible mirror audio and official FMA metadata",
+        "feature_note": (
+            "audio-only evidence tier; shared-schema video fields are fixed non-informative placeholders "
+            "and do not constitute visual or audiovisual evidence"
+        ),
         "train_rows": int(len(y_train)),
         "test_rows": int(len(y_test)),
         "train_positive_rows": int(y_train.sum()),
@@ -1622,6 +1627,10 @@ def generate_fma_audio_benchmark(
         "test_negative_rows": int(len(y_test) - y_test.sum()),
         "train_query_count": int(len({pair[0] for pair in train_pairs})),
         "test_query_count": int(len({pair[0] for pair in test_pairs})),
+        "train_assets": int(len(train_idx)),
+        "test_assets": int(len(test_idx)),
+        "train_asset_ids": sorted(map(int, track_ids[train_idx])),
+        "test_asset_ids": sorted(map(int, track_ids[test_idx])),
         "transformations": FMA_AUDIO_TRANSFORMS,
         "split_policy": "track-identity-disjoint random split",
         "asset_overlap": int(len(set(train_idx) & set(test_idx))),

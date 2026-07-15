@@ -248,10 +248,15 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
 
     simple_scores = {
         "random": np.full_like(y_test, float(np.mean(data.y_train)), dtype=float),
-        "video_similarity": video_score,
         "audio_similarity": audio_score,
-        "early_fusion_similarity": fusion_score,
     }
+    if args.tier != "fma_audio":
+        simple_scores.update(
+            {
+                "video_similarity": video_score,
+                "early_fusion_similarity": fusion_score,
+            }
+        )
     for method, score in simple_scores.items():
         modality = "video" if "video" in method else "audio" if "audio" in method else "multimodal"
         row = detection_metrics(y_test, score, method=method, modality=modality)
@@ -267,9 +272,14 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             idx = modality_indices(feature_names, modality, args.feature_policy)
             model, summary = train_centralized(x_train_std[:, idx], data.y_train, epochs=140)
             score = model.predict_proba(x_test_std[:, idx])
-            method_name = f"centralized_{modality}"
+            method_name = (
+                "centralized_audio_evidence"
+                if args.tier == "fma_audio" and modality == "multimodal"
+                else f"centralized_{modality}"
+            )
+            reported_modality = "audio" if args.tier == "fma_audio" else modality
             trained_models[method_name] = (score, model_digest(model.weights))
-            row = detection_metrics(y_test, score, method=method_name, modality=modality)
+            row = detection_metrics(y_test, score, method=method_name, modality=reported_modality)
             row["seed"] = seed
             detection_rows.append(row)
             summary.update({"seed": seed, "method": method_name, "privacy_mode": "none"})
@@ -284,7 +294,8 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             score[client_idx] = model_map[client_id].predict_proba(x_test_std[client_idx][:, feature_idx])
         digest = model_digest(np.mean([m.weights for m in model_map.values()], axis=0))
         trained_models["local_multimodal"] = (score, digest)
-        row = detection_metrics(y_test, score, method="local_multimodal", modality="multimodal")
+        reported_modality = "audio" if args.tier == "fma_audio" else "multimodal"
+        row = detection_metrics(y_test, score, method="local_multimodal", modality=reported_modality)
         row["seed"] = seed
         detection_rows.append(row)
         summary.update({"seed": seed, "method": "local_multimodal", "privacy_mode": "local"})
@@ -316,7 +327,8 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
         score = model.predict_proba(x_test_std[:, feature_idx])
         method_name = f"{method}_{privacy_mode}"
         trained_models[method_name] = (score, model_digest(model.weights))
-        row = detection_metrics(y_test, score, method=method_name, modality="multimodal", privacy_mode=privacy_mode)
+        reported_modality = "audio" if args.tier == "fma_audio" else "multimodal"
+        row = detection_metrics(y_test, score, method=method_name, modality=reported_modality, privacy_mode=privacy_mode)
         row["seed"] = seed
         detection_rows.append(row)
 
@@ -369,7 +381,8 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             score[client_idx] = model_map[client_id].predict_proba(x_test_std[client_idx][:, feature_idx])
         digest = model_digest(np.mean([m.weights for m in model_map.values()], axis=0))
         trained_models["fedavgft_plain"] = (score, digest)
-        row = detection_metrics(y_test, score, method="fedavgft_plain", modality="multimodal", privacy_mode="plain")
+        reported_modality = "audio" if args.tier == "fma_audio" else "multimodal"
+        row = detection_metrics(y_test, score, method="fedavgft_plain", modality=reported_modality, privacy_mode="plain")
         row["seed"] = seed
         detection_rows.append(row)
         client_df = client_metrics(y_test, score, data.client_test, method="fedavgft_plain")

@@ -72,6 +72,7 @@ def test_cli_verify_regenerate_and_smoke(tmp_path: Path) -> None:
     run_manifest = tmp_path / "runs" / "smoke" / "run_manifest.json"
     payload = json.loads(run_manifest.read_text(encoding="utf-8"))
     assert payload["config"]["tier"] == "tier0"
+    assert payload["data_source"]["root"] == "generated-in-memory"
     assert payload["outputs"]
     for csv_path in (tmp_path / "runs" / "smoke").rglob("*.csv"):
         assert b"\r\n" not in csv_path.read_bytes()

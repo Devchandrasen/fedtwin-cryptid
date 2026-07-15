@@ -130,6 +130,9 @@ def test_fma_adapter_validation_and_feature_pipeline(tmp_path: Path, monkeypatch
         seed=31,
     )
     assert benchmark.manifest["generator"] == "fma_small_audio_transform_features"
+    assert benchmark.manifest["train_assets"] + benchmark.manifest["test_assets"] == 6
+    assert not set(benchmark.manifest["train_asset_ids"]) & set(benchmark.manifest["test_asset_ids"])
+    assert "audio-only" in benchmark.manifest["feature_note"]
     assert len(benchmark.y_test) == 4
 
 

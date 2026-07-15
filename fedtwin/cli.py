@@ -113,9 +113,22 @@ def _run_reproduction(config: ExperimentConfig, *, data_root: Path, output_dir: 
         feature_schema=list(map(str, transformation_manifest.get("feature_names", []))),
         timing={"total_runtime": float(summary.get("total_runtime_sec", 0.0))},
     )
+    if source.root == "generated-in-memory":
+        source_root = source.root
+    else:
+        resolved_source_root = Path(source.root).resolve()
+        try:
+            relative_source_root = resolved_source_root.relative_to(data_root.resolve())
+        except ValueError as exc:
+            raise ValueError(f"validated data source root escapes --data-root: {resolved_source_root}") from exc
+        source_root = (
+            "${DATA_ROOT}"
+            if not relative_source_root.parts
+            else "${DATA_ROOT}/" + relative_source_root.as_posix()
+        )
     manifest["data_source"] = {
         "tier": source.tier,
-        "root": "${DATA_ROOT}",
+        "root": source_root,
         "files": list(source.files),
         "license_note": source.license_note,
         "warnings": list(source.warnings),
