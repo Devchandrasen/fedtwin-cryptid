@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import csv
 import hashlib
 import json
+import os
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from .features import cosine, l2_normalize
+from .manifests import sha256_file, write_json
+from .pairs import construct_asset_disjoint_pairs
 from .transformations import TRANSFORMATIONS, Transformation
 
 
@@ -121,7 +125,7 @@ def generate_synthetic_benchmark(
     client_ids: list[int] = []
     scenarios: list[str] = []
 
-    for qid in range(queries):
+    for _qid in range(queries):
         client_id = int(rng.integers(0, clients))
         positive = bool(rng.random() < positive_rate)
         if positive:
@@ -208,6 +212,14 @@ def generate_synthetic_benchmark(
         "test_fraction": test_fraction,
         "seed": seed,
         "transformations": [t.name for t in TRANSFORMATIONS],
+        "train_rows": int(len(train_idx)),
+        "test_rows": int(len(test_idx)),
+        "train_positive_rows": int(y[train_idx].sum()),
+        "train_negative_rows": int(len(train_idx) - y[train_idx].sum()),
+        "test_positive_rows": int(y[test_idx].sum()),
+        "test_negative_rows": int(len(test_idx) - y[test_idx].sum()),
+        "train_query_count": int(len(train_idx)),
+        "test_query_count": int(len(test_idx)),
     }
 
     return BenchmarkData(
@@ -251,7 +263,7 @@ class _UnionFind:
 
 
 def _hash_seed(text: str, seed: int) -> int:
-    digest = hashlib.sha256(f"{seed}:{text}".encode("utf-8")).digest()
+    digest = hashlib.sha256(f"{seed}:{text}".encode()).digest()
     return int.from_bytes(digest[:8], "little", signed=False)
 
 
@@ -266,22 +278,32 @@ def _load_vcsl_metadata(metadata_dir: str | Path) -> tuple[pd.DataFrame, pd.Data
     val = pd.read_csv(base / "pair_file_val.csv")
     test = pd.read_csv(base / "pair_file_test.csv")
     frames = pd.read_csv(base / "frames_all.csv")
-    with open(base / "video_categories.json", "r", encoding="utf-8") as fh:
+    with open(base / "video_categories.json", encoding="utf-8") as fh:
         categories = json.load(fh)
     category_by_uuid: dict[str, str] = {}
     for category, ids in categories.items():
         for uuid in ids:
             category_by_uuid[str(uuid)] = str(category)
-    frame_count = dict(zip(frames["uuid"].astype(str), frames["frame_count"].astype(int)))
+    frame_count = dict(zip(frames["uuid"].astype(str), frames["frame_count"].astype(int), strict=True))
     return train, val, test, category_by_uuid, frame_count
 
 
 def _build_vcsl_groups(*pair_frames: pd.DataFrame) -> _UnionFind:
     uf = _UnionFind()
     for frame in pair_frames:
-        for q, r in zip(frame["query_id"].astype(str), frame["reference_id"].astype(str)):
+        for q, r in zip(frame["query_id"].astype(str), frame["reference_id"].astype(str), strict=True):
             uf.union(q, r)
     return uf
+
+
+def _clean_vcsl_positive_pairs(*pair_frames: pd.DataFrame) -> pd.DataFrame:
+    """Normalize VCSL positives and remove trivial identity pairs."""
+
+    frame = pd.concat(pair_frames, ignore_index=True)[["query_id", "reference_id"]].copy()
+    frame["query_id"] = frame["query_id"].astype(str)
+    frame["reference_id"] = frame["reference_id"].astype(str)
+    frame = frame[frame["query_id"].ne(frame["reference_id"])]
+    return frame.drop_duplicates(["query_id", "reference_id"], keep="first").reset_index(drop=True)
 
 
 def _sample_vcsl_pairs(
@@ -293,10 +315,50 @@ def _sample_vcsl_pairs(
     *,
     max_positive_pairs: int,
     negative_ratio: float,
+    min_positive_queries: int = 0,
 ) -> pd.DataFrame:
     pos = positives.copy()
+    if min_positive_queries < 0:
+        raise ValueError("min_positive_queries must be non-negative")
+    available_queries = pos["query_id"].astype(str).nunique()
+    if min_positive_queries > available_queries:
+        raise ValueError(
+            f"requested {min_positive_queries} positive-bearing queries, "
+            f"but only {available_queries} are available"
+        )
+    if max_positive_pairs and max_positive_pairs < min_positive_queries:
+        raise ValueError("max_positive_pairs cannot be smaller than min_positive_queries")
     if max_positive_pairs and len(pos) > max_positive_pairs:
-        pos = pos.sample(n=max_positive_pairs, random_state=int(rng.integers(0, 2**31 - 1)))
+        if min_positive_queries:
+            query_values = pos["query_id"].astype(str)
+            selected_queries = rng.choice(
+                np.asarray(sorted(query_values.unique())),
+                size=min_positive_queries,
+                replace=False,
+            )
+            anchor_indices = []
+            for query_id in selected_queries:
+                candidates = pos.index[query_values.eq(str(query_id))].to_numpy()
+                anchor_indices.append(int(rng.choice(candidates)))
+            anchors = pos.loc[anchor_indices]
+            remaining = pos.drop(index=anchor_indices)
+            fill_count = max_positive_pairs - len(anchors)
+            if fill_count:
+                fill = remaining.sample(
+                    n=fill_count,
+                    random_state=int(rng.integers(0, 2**31 - 1)),
+                )
+                pos = pd.concat([anchors, fill], ignore_index=True)
+            else:
+                pos = anchors.reset_index(drop=True)
+            pos = pos.sample(
+                frac=1.0,
+                random_state=int(rng.integers(0, 2**31 - 1)),
+            ).reset_index(drop=True)
+        else:
+            pos = pos.sample(n=max_positive_pairs, random_state=int(rng.integers(0, 2**31 - 1)))
+    if pos["query_id"].astype(str).nunique() < min_positive_queries:
+        raise RuntimeError("positive-pair sampling failed the distinct-query invariant")
     pos = pos.assign(label=1)
     id_by_category: dict[str, list[str]] = {}
     for vid in all_ids:
@@ -338,24 +400,35 @@ def _vcsl_pair_to_features(
     client_ids = []
     scenarios = []
     rng = np.random.default_rng(seed)
+    vector_cache: dict[str, np.ndarray] = {}
+
+    def cached_hash_vector(key: str) -> np.ndarray:
+        if key not in vector_cache:
+            vector_cache[key] = _hash_vector(key, dim, seed)
+        return vector_cache[key]
 
     max_frame = max(frame_count.values()) if frame_count else 1
-    for q, r, label in zip(pair_df["query_id"].astype(str), pair_df["reference_id"].astype(str), pair_df["label"].astype(int)):
+    for q, r, label in zip(
+        pair_df["query_id"].astype(str),
+        pair_df["reference_id"].astype(str),
+        pair_df["label"].astype(int),
+        strict=True,
+    ):
         q_group = uf.find(q)
         r_group = uf.find(r)
         q_cat = category_by_uuid.get(q, "unknown")
         r_cat = category_by_uuid.get(r, "unknown")
         q_frame = frame_count.get(q, int(max_frame * 0.25))
         r_frame = frame_count.get(r, int(max_frame * 0.25))
-        q_cat_v = _hash_vector(f"video-category:{q_cat}", dim, seed)
-        r_cat_v = _hash_vector(f"video-category:{r_cat}", dim, seed)
-        q_base_v = _hash_vector(f"video-group:{q_group}", dim, seed)
-        r_base_v = _hash_vector(f"video-group:{r_group}", dim, seed)
+        q_cat_v = cached_hash_vector(f"video-category:{q_cat}")
+        r_cat_v = cached_hash_vector(f"video-category:{r_cat}")
+        q_base_v = cached_hash_vector(f"video-group:{q_group}")
+        r_base_v = cached_hash_vector(f"video-group:{r_group}")
         q_vid = l2_normalize(
             (
                 0.34 * q_cat_v
                 + 0.52 * q_base_v
-                + 0.34 * _hash_vector(f"video-id:{q}", dim, seed)
+                + 0.34 * cached_hash_vector(f"video-id:{q}")
                 + rng.normal(0, 0.10, size=dim)
             )[None, :]
         )[0]
@@ -363,23 +436,22 @@ def _vcsl_pair_to_features(
             (
                 0.34 * r_cat_v
                 + 0.52 * r_base_v
-                + 0.34 * _hash_vector(f"video-id:{r}", dim, seed)
+                + 0.34 * cached_hash_vector(f"video-id:{r}")
                 + rng.normal(0, 0.10, size=dim)
             )[None, :]
         )[0]
 
         # VCSL is video-centric; audio here is a deterministic proxy used to
         # stress multimodal fusion and missing/replaced audio behavior.
-        q_audio_base = _hash_vector(f"audio-cat:{q_cat}", dim, seed)
-        r_audio_base = _hash_vector(f"audio-cat:{r_cat}", dim, seed)
-        q_audio_group = _hash_vector(f"audio-group:{q_group}", dim, seed)
-        r_audio_group = _hash_vector(f"audio-group:{r_group}", dim, seed)
+        q_audio_base = cached_hash_vector(f"audio-cat:{q_cat}")
+        r_audio_base = cached_hash_vector(f"audio-cat:{r_cat}")
+        q_audio_group = cached_hash_vector(f"audio-group:{q_group}")
         if label:
-            q_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * _hash_vector(f"audio-id:{q}", dim, seed) + rng.normal(0, 0.13, size=dim))[None, :])[0]
-            r_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * _hash_vector(f"audio-id:{r}", dim, seed) + rng.normal(0, 0.13, size=dim))[None, :])[0]
+            q_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * cached_hash_vector(f"audio-id:{q}") + rng.normal(0, 0.13, size=dim))[None, :])[0]
+            r_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * cached_hash_vector(f"audio-id:{r}") + rng.normal(0, 0.13, size=dim))[None, :])[0]
         else:
-            q_aud = l2_normalize((0.40 * q_audio_base + 0.60 * _hash_vector(f"audio-id:{q}", dim, seed) + rng.normal(0, 0.16, size=dim))[None, :])[0]
-            r_aud = l2_normalize((0.40 * r_audio_base + 0.60 * _hash_vector(f"audio-id:{r}", dim, seed) + rng.normal(0, 0.16, size=dim))[None, :])[0]
+            q_aud = l2_normalize((0.40 * q_audio_base + 0.60 * cached_hash_vector(f"audio-id:{q}") + rng.normal(0, 0.16, size=dim))[None, :])[0]
+            r_aud = l2_normalize((0.40 * r_audio_base + 0.60 * cached_hash_vector(f"audio-id:{r}") + rng.normal(0, 0.16, size=dim))[None, :])[0]
 
         video_score = float(cosine(q_vid[None, :], r_vid[None, :])[0])
         audio_score = float(cosine(q_aud[None, :], r_aud[None, :])[0])
@@ -492,12 +564,22 @@ def generate_vcsl_public_benchmark(
     """
 
     train, val, test, category_by_uuid, frame_count = _load_vcsl_metadata(metadata_dir)
-    uf = _build_vcsl_groups(train, val, test)
+    all_positive_pairs = _clean_vcsl_positive_pairs(train, val, test)
+    uf = _build_vcsl_groups(all_positive_pairs)
     all_ids = sorted(set(frame_count) | set(category_by_uuid))
+    split_pairs = construct_asset_disjoint_pairs(
+        all_positive_pairs,
+        asset_ids=all_ids,
+        negative_ratio=0.0,
+        test_fraction=0.2,
+        seed=seed,
+    )
+    train_assets = sorted(set(split_pairs.train["query_id"]) | set(split_pairs.train["reference_id"]))
+    test_assets = sorted(set(split_pairs.test["query_id"]) | set(split_pairs.test["reference_id"]))
     rng = np.random.default_rng(seed)
     train_pairs = _sample_vcsl_pairs(
-        pd.concat([train, val], ignore_index=True),
-        all_ids,
+        split_pairs.train,
+        train_assets,
         category_by_uuid,
         uf,
         rng,
@@ -505,8 +587,8 @@ def generate_vcsl_public_benchmark(
         negative_ratio=negative_ratio,
     )
     test_pairs = _sample_vcsl_pairs(
-        test,
-        all_ids,
+        split_pairs.test,
+        test_assets,
         category_by_uuid,
         uf,
         rng,
@@ -531,7 +613,17 @@ def generate_vcsl_public_benchmark(
         "source": "VCSL public GitHub metadata and labels",
         "train_rows": int(len(y_train)),
         "test_rows": int(len(y_test)),
+        "train_positive_rows": int(y_train.sum()),
+        "train_negative_rows": int(len(y_train) - y_train.sum()),
+        "test_positive_rows": int(y_test.sum()),
+        "test_negative_rows": int(len(y_test) - y_test.sum()),
+        "train_query_count": int(train_pairs["query_id"].nunique()),
+        "test_query_count": int(test_pairs["query_id"].nunique()),
         "feature_note": "deterministic public-label topology features; large visual feature archive not required",
+        "split_policy": split_pairs.manifest["split_policy"],
+        "asset_overlap": split_pairs.manifest["asset_overlap"],
+        "train_assets": len(train_assets),
+        "test_assets": len(test_assets),
     }
     return BenchmarkData(
         x_train=x_train,
@@ -605,7 +697,12 @@ def _vcsl_isc_pair_to_features(
     scenarios = []
 
     max_frame = max(frame_count.values()) if frame_count else 1
-    for q, r, label in zip(pair_df["query_id"].astype(str), pair_df["reference_id"].astype(str), pair_df["label"].astype(int)):
+    for q, r, label in zip(
+        pair_df["query_id"].astype(str),
+        pair_df["reference_id"].astype(str),
+        pair_df["label"].astype(int),
+        strict=True,
+    ):
         q_cat = category_by_uuid.get(q, "unknown")
         r_cat = category_by_uuid.get(r, "unknown")
         q_frame = frame_count.get(q, int(max_frame * 0.25))
@@ -723,14 +820,27 @@ def generate_vcsl_isc_benchmark(
     """Build a VCSL benchmark from released ISC frame descriptors."""
 
     train, val, test, category_by_uuid, frame_count = _load_vcsl_metadata(metadata_dir)
-    uf = _build_vcsl_groups(train, val, test)
     feature_root = _resolve_isc_feature_root(feature_dir)
     available_ids = {path.stem for path in feature_root.glob("*.npy")}
     all_ids = sorted((set(frame_count) | set(category_by_uuid)) & available_ids)
+    all_positive_pairs = _clean_vcsl_positive_pairs(train, val, test)
+    all_positive_pairs = all_positive_pairs[
+        all_positive_pairs["query_id"].isin(available_ids) & all_positive_pairs["reference_id"].isin(available_ids)
+    ].reset_index(drop=True)
+    uf = _build_vcsl_groups(all_positive_pairs)
+    split_pairs = construct_asset_disjoint_pairs(
+        all_positive_pairs,
+        asset_ids=all_ids,
+        negative_ratio=0.0,
+        test_fraction=0.2,
+        seed=seed,
+    )
+    train_assets = sorted(set(split_pairs.train["query_id"]) | set(split_pairs.train["reference_id"]))
+    test_assets = sorted(set(split_pairs.test["query_id"]) | set(split_pairs.test["reference_id"]))
     rng = np.random.default_rng(seed)
     train_pairs = _sample_vcsl_pairs(
-        pd.concat([train, val], ignore_index=True),
-        all_ids,
+        split_pairs.train,
+        train_assets,
         category_by_uuid,
         uf,
         rng,
@@ -738,8 +848,8 @@ def generate_vcsl_isc_benchmark(
         negative_ratio=negative_ratio,
     )
     test_pairs = _sample_vcsl_pairs(
-        test,
-        all_ids,
+        split_pairs.test,
+        test_assets,
         category_by_uuid,
         uf,
         rng,
@@ -778,7 +888,17 @@ def generate_vcsl_isc_benchmark(
         "source": "VCSL public GitHub metadata plus released ISC frame descriptors",
         "train_rows": int(len(y_train)),
         "test_rows": int(len(y_test)),
+        "train_positive_rows": int(y_train.sum()),
+        "train_negative_rows": int(len(y_train) - y_train.sum()),
+        "test_positive_rows": int(y_test.sum()),
+        "test_negative_rows": int(len(y_test) - y_test.sum()),
+        "train_query_count": int(train_pairs["query_id"].nunique()),
+        "test_query_count": int(test_pairs["query_id"].nunique()),
         "feature_note": "released visual ISC frame descriptors; audio fields are low-confidence schema placeholders",
+        "split_policy": split_pairs.manifest["split_policy"],
+        "asset_overlap": split_pairs.manifest["asset_overlap"],
+        "train_assets": len(train_assets),
+        "test_assets": len(test_assets),
     }
     return BenchmarkData(
         x_train=x_train,
@@ -795,31 +915,94 @@ def generate_vcsl_isc_benchmark(
 
 
 FMA_AUDIO_TRANSFORMS = ["crop", "noise", "lowpass", "dropout", "speed"]
+FMA_CACHE_SCHEMA_VERSION = "3.0"
+
+
+def _resolve_fma_tracks_path(metadata_dir: str | Path) -> Path | None:
+    base = Path(metadata_dir).resolve()
+    candidates = [base / "tracks.csv", base / "fma_metadata" / "tracks.csv"]
+    return next((path.resolve() for path in candidates if path.is_file()), None)
+
+
+def _load_fma_metadata_fields(metadata_dir: str | Path) -> dict[int, dict[str, str]]:
+    """Read only the three FMA fields needed by this study."""
+
+    tracks_path = _resolve_fma_tracks_path(metadata_dir)
+    if tracks_path is None:
+        return {}
+    required = {
+        ("set", "subset"): "subset",
+        ("track", "genre_top"): "genre_top",
+        ("track", "license"): "license",
+    }
+    with tracks_path.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.reader(handle)
+        try:
+            level_zero = next(reader)
+            level_one = next(reader)
+            index_row = next(reader)
+        except StopIteration as exc:
+            raise ValueError(f"FMA tracks.csv is missing its three-row header: {tracks_path}") from exc
+        if len(level_zero) != len(level_one) or len(index_row) != len(level_zero):
+            raise ValueError(f"FMA tracks.csv has inconsistent header widths: {tracks_path}")
+        if not index_row or index_row[0].strip() != "track_id":
+            raise ValueError(f"FMA tracks.csv index header must be 'track_id': {tracks_path}")
+        column_indices = {
+            output_name: next(
+                (index for index, pair in enumerate(zip(level_zero, level_one, strict=True)) if pair == source_pair),
+                None,
+            )
+            for source_pair, output_name in required.items()
+        }
+        missing = sorted(name for name, index in column_indices.items() if index is None)
+        if missing:
+            raise ValueError(f"FMA tracks.csv is missing required columns: {', '.join(missing)}")
+
+        fields: dict[int, dict[str, str]] = {}
+        for row_number, row in enumerate(reader, start=4):
+            if not row or not any(cell.strip() for cell in row):
+                continue
+            if len(row) != len(level_zero):
+                raise ValueError(f"FMA tracks.csv row {row_number} has {len(row)} fields; expected {len(level_zero)}")
+            try:
+                track_id = int(row[0])
+            except ValueError as exc:
+                raise ValueError(f"FMA tracks.csv row {row_number} has an invalid track_id: {row[0]!r}") from exc
+            if track_id in fields:
+                raise ValueError(f"FMA tracks.csv contains duplicate track_id {track_id}")
+            fields[track_id] = {
+                name: row[int(index)].strip()
+                for name, index in column_indices.items()
+                if index is not None
+            }
+    if not fields:
+        raise ValueError(f"FMA tracks.csv contains no track records: {tracks_path}")
+    return fields
 
 
 def _load_fma_tracks(metadata_dir: str | Path) -> dict[int, str]:
-    base = Path(metadata_dir)
-    candidates = [base / "tracks.csv", base / "fma_metadata" / "tracks.csv"]
-    tracks_path = next((p for p in candidates if p.exists()), None)
-    if tracks_path is None:
-        return {}
-    tracks = pd.read_csv(tracks_path, header=[0, 1], index_col=0)
-    genre_col = ("track", "genre_top")
-    if genre_col not in tracks.columns:
-        return {}
-    genres = tracks[genre_col].fillna("unknown").astype(str)
-    return {int(track_id): genre for track_id, genre in genres.items()}
+    return {
+        track_id: values["genre_top"] or "unknown"
+        for track_id, values in _load_fma_metadata_fields(metadata_dir).items()
+    }
 
 
 def _discover_fma_audio_files(audio_dir: str | Path) -> dict[int, Path]:
-    base = Path(audio_dir)
-    files = {}
+    base = Path(audio_dir).resolve()
+    files: dict[int, Path] = {}
     for path in base.rglob("*.mp3"):
+        resolved = path.resolve()
         try:
-            track_id = int(path.stem)
+            resolved.relative_to(base)
+        except ValueError as exc:
+            raise ValueError(f"FMA audio path escapes configured root: {path}") from exc
+        try:
+            track_id = int(resolved.stem)
         except ValueError:
             continue
-        files[track_id] = path
+        if track_id in files:
+            raise ValueError(f"duplicate FMA track identifier {track_id}: {files[track_id]} and {resolved}")
+        files[track_id] = resolved
     return files
 
 
@@ -893,7 +1076,7 @@ def _audio_descriptor(y: np.ndarray, sample_rate: int) -> np.ndarray:
 
     edges = np.geomspace(60, sample_rate / 2, 33)
     bands = []
-    for lo, hi in zip(edges[:-1], edges[1:]):
+    for lo, hi in zip(edges[:-1], edges[1:], strict=True):
         idx = (freqs >= lo) & (freqs < hi)
         if not idx.any():
             bands.append(np.zeros(spec.shape[0], dtype=float))
@@ -947,6 +1130,102 @@ def _audio_descriptor(y: np.ndarray, sample_rate: int) -> np.ndarray:
     return l2_normalize(desc[None, :])[0].astype(np.float32)
 
 
+def _load_validated_fma_cache(cache_path: Path, *, source_root: Path | None = None) -> dict:
+    manifest_path = cache_path.with_suffix(".manifest.json")
+    if not manifest_path.is_file():
+        raise ValueError(
+            f"FMA cache provenance manifest is missing: {manifest_path}; "
+            "delete the cache and regenerate it from licensed source audio"
+        )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("schema_version") != FMA_CACHE_SCHEMA_VERSION:
+        raise ValueError(
+            f"unsupported FMA cache schema {manifest.get('schema_version')!r}; "
+            "delete the cache and regenerate it"
+        )
+    cache_record = manifest.get("cache", {})
+    if int(cache_record.get("bytes", -1)) != cache_path.stat().st_size:
+        raise ValueError("FMA cache size does not match its provenance manifest")
+    if str(cache_record.get("sha256", "")) != sha256_file(cache_path):
+        raise ValueError("FMA cache hash does not match its provenance manifest")
+    if source_root is not None:
+        root = source_root.resolve()
+        inputs = manifest.get("inputs")
+        if not isinstance(inputs, list) or not inputs:
+            raise ValueError("FMA cache provenance manifest has no source inputs")
+        seen_paths: set[str] = set()
+        for record in inputs:
+            if not isinstance(record, dict):
+                raise ValueError("FMA cache provenance input records must be objects")
+            relative = Path(str(record.get("path", "")))
+            if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+                raise ValueError(f"unsafe FMA cache input path: {relative}")
+            portable = relative.as_posix()
+            if portable in seen_paths:
+                raise ValueError(f"duplicate FMA cache input path: {portable}")
+            seen_paths.add(portable)
+            source = (root / relative).resolve()
+            try:
+                source.relative_to(root)
+            except ValueError as exc:
+                raise ValueError(f"FMA cache input escapes source root: {relative}") from exc
+            if not source.is_file():
+                raise ValueError(f"FMA cache input is missing: {relative}")
+            if source.stat().st_size != int(record.get("bytes", -1)):
+                raise ValueError(f"FMA cache input size changed: {relative}")
+            if sha256_file(source) != str(record.get("sha256", "")):
+                raise ValueError(f"FMA cache input hash changed: {relative}")
+
+    required = {"track_ids", "genres", "clients", "descriptors", "transforms"}
+    try:
+        with np.load(cache_path, allow_pickle=False) as loaded:
+            missing = sorted(required - set(loaded.files))
+            if missing:
+                raise ValueError(f"FMA cache is missing arrays: {missing}")
+            arrays = {name: np.asarray(loaded[name]).copy() for name in required}
+    except ValueError as exc:
+        if "Object arrays cannot be loaded" in str(exc):
+            raise ValueError(
+                "legacy FMA cache contains executable object arrays; delete it and regenerate a safe cache"
+            ) from exc
+        raise
+
+    track_ids = arrays["track_ids"]
+    genres = arrays["genres"]
+    clients = arrays["clients"]
+    descriptors = arrays["descriptors"]
+    transforms = arrays["transforms"]
+    if track_ids.ndim != 1 or track_ids.dtype.kind not in "iu":
+        raise ValueError("FMA cache track_ids must be a one-dimensional integer array")
+    if clients.ndim != 1 or clients.dtype.kind not in "iu":
+        raise ValueError("FMA cache clients must be a one-dimensional integer array")
+    if genres.ndim != 1 or genres.dtype.kind not in "US":
+        raise ValueError("FMA cache genres must be a one-dimensional string array")
+    if transforms.ndim != 1 or transforms.dtype.kind not in "US":
+        raise ValueError("FMA cache transforms must be a one-dimensional string array")
+    if descriptors.ndim != 3 or descriptors.dtype.kind not in "fc" or not np.isfinite(descriptors).all():
+        raise ValueError("FMA cache descriptors must be a finite three-dimensional numeric array")
+    if not (len(track_ids) == len(genres) == len(clients) == len(descriptors)):
+        raise ValueError("FMA cache track, genre, client, and descriptor counts do not match")
+    if descriptors.shape[1] != len(transforms):
+        raise ValueError("FMA cache transform count does not match descriptor shape")
+    if len(track_ids) < 2:
+        raise ValueError("FMA cache must contain at least two successfully decoded tracks")
+
+    return {
+        "track_ids": track_ids,
+        "genres": genres,
+        "clients": clients,
+        "descriptors": descriptors,
+        "transforms": list(map(str, transforms)),
+        "cache_path": str(cache_path),
+        "cache_manifest_path": str(manifest_path),
+        "decode_failure_report": str(cache_path.with_suffix(".decode_failures.json")),
+        "decode_failures": int(manifest.get("decode_failures", 0)),
+        "input_records": list(manifest.get("inputs", [])),
+    }
+
+
 def _prepare_fma_audio_cache(
     *,
     audio_dir: str | Path,
@@ -956,20 +1235,18 @@ def _prepare_fma_audio_cache(
     sample_rate: int,
     max_seconds: float,
     seed: int,
+    max_decode_failure_fraction: float = 0.05,
 ) -> dict:
+    if not 0.0 <= max_decode_failure_fraction < 1.0:
+        raise ValueError("max_decode_failure_fraction must lie in [0, 1)")
+    audio_root = Path(audio_dir).resolve()
+    metadata_root = Path(metadata_dir).resolve()
+    common_root = Path(os.path.commonpath((audio_root, metadata_root))).resolve()
     cache_base = Path(cache_dir)
     cache_base.mkdir(parents=True, exist_ok=True)
     cache_path = cache_base / f"fma_audio_sr{sample_rate}_sec{int(max_seconds)}_tracks{max_tracks}.npz"
     if cache_path.exists():
-        loaded = np.load(cache_path, allow_pickle=True)
-        return {
-            "track_ids": loaded["track_ids"],
-            "genres": loaded["genres"],
-            "clients": loaded["clients"],
-            "descriptors": loaded["descriptors"],
-            "transforms": list(loaded["transforms"]),
-            "cache_path": str(cache_path),
-        }
+        return _load_validated_fma_cache(cache_path, source_root=common_root)
 
     genres_by_id = _load_fma_tracks(metadata_dir)
     audio_files = _discover_fma_audio_files(audio_dir)
@@ -977,7 +1254,6 @@ def _prepare_fma_audio_cache(
     if not common_ids:
         raise FileNotFoundError(f"No FMA mp3 files matched metadata under {audio_dir}")
 
-    rng = np.random.default_rng(seed)
     by_genre: dict[str, list[int]] = {}
     for track_id in common_ids:
         by_genre.setdefault(genres_by_id.get(track_id, "unknown"), []).append(track_id)
@@ -1001,6 +1277,7 @@ def _prepare_fma_audio_cache(
     kept_ids = []
     kept_genres = []
     kept_clients = []
+    failures: list[dict[str, object]] = []
     for track_id in selected:
         try:
             y = _decode_mp3(audio_files[track_id], sample_rate=sample_rate, max_seconds=max_seconds)
@@ -1013,21 +1290,95 @@ def _prepare_fma_audio_cache(
             kept_ids.append(track_id)
             kept_genres.append(genre)
             kept_clients.append(int(genre_index.get(genre, 0) % 32))
-        except Exception:
-            continue
+        except Exception as exc:
+            failures.append(
+                {
+                    "track_id": int(track_id),
+                    "path": audio_files[track_id].resolve().relative_to(audio_root).as_posix(),
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                }
+            )
+    failure_fraction = len(failures) / max(len(selected), 1)
+    failure_report_path = cache_path.with_suffix(".decode_failures.json")
+    write_json(
+        failure_report_path,
+        {
+            "schema_version": "1.0",
+            "selected_tracks": len(selected),
+            "decoded_tracks": len(kept_ids),
+            "decode_failures": len(failures),
+            "decode_failure_fraction": failure_fraction,
+            "maximum_allowed_fraction": max_decode_failure_fraction,
+            "failures": failures,
+        },
+    )
+    if failure_fraction > max_decode_failure_fraction:
+        raise RuntimeError(
+            f"FMA decode failure fraction {failure_fraction:.3f} exceeds configured maximum "
+            f"{max_decode_failure_fraction:.3f}; see {failure_report_path}"
+        )
     if not descriptors:
         raise RuntimeError("FMA descriptor cache could not decode any tracks")
 
     out = {
         "track_ids": np.asarray(kept_ids, dtype=int),
-        "genres": np.asarray(kept_genres, dtype=object),
+        "genres": np.asarray(kept_genres, dtype=str),
         "clients": np.asarray(kept_clients, dtype=int),
         "descriptors": np.asarray(descriptors, dtype=np.float32),
-        "transforms": np.asarray(transform_names, dtype=object),
-        "cache_path": str(cache_path),
+        "transforms": np.asarray(transform_names, dtype=str),
     }
     np.savez_compressed(cache_path, **out)
-    return {**out, "transforms": list(transform_names)}
+    tracks_path = _resolve_fma_tracks_path(metadata_dir)
+    if tracks_path is None:
+        raise FileNotFoundError(f"missing FMA tracks.csv under {metadata_dir}")
+    input_records = [
+        {
+            "path": tracks_path.resolve().relative_to(common_root).as_posix(),
+            "bytes": tracks_path.stat().st_size,
+            "sha256": sha256_file(tracks_path),
+        }
+    ]
+    for track_id in kept_ids:
+        path = audio_files[track_id]
+        input_records.append(
+            {
+                "path": path.resolve().relative_to(common_root).as_posix(),
+                "bytes": path.stat().st_size,
+                "sha256": sha256_file(path),
+            }
+        )
+    manifest_path = cache_path.with_suffix(".manifest.json")
+    write_json(
+        manifest_path,
+        {
+            "schema_version": FMA_CACHE_SCHEMA_VERSION,
+            "cache": {
+                "path": cache_path.name,
+                "bytes": cache_path.stat().st_size,
+                "sha256": sha256_file(cache_path),
+            },
+            "inputs": input_records,
+            "sample_rate": sample_rate,
+            "max_seconds": max_seconds,
+            "max_tracks": max_tracks,
+            "selection_policy": "sorted round-robin by top-level genre and track identifier",
+            "descriptor_transform_seed": 0,
+            "decoded_tracks": len(kept_ids),
+            "decode_failures": len(failures),
+            "decode_failure_fraction": failure_fraction,
+            "decode_failure_report": failure_report_path.name,
+        },
+    )
+    return {
+        **out,
+        "transforms": list(transform_names),
+        "cache_path": str(cache_path),
+        "cache_manifest_path": str(manifest_path),
+        "decode_failure_report": str(failure_report_path),
+        "decode_failures": len(failures),
+        "input_records": input_records,
+    }
 
 
 def _sample_fma_pairs(
@@ -1186,6 +1537,7 @@ def generate_fma_audio_benchmark(
     negative_ratio: float = 1.0,
     sample_rate: int = 8000,
     max_seconds: float = 25.0,
+    max_decode_failure_fraction: float = 0.05,
     seed: int = 31,
 ) -> BenchmarkData:
     """Build an audio copy-detection benchmark from FMA-small MP3 files."""
@@ -1198,6 +1550,7 @@ def generate_fma_audio_benchmark(
         sample_rate=sample_rate,
         max_seconds=max_seconds,
         seed=seed,
+        max_decode_failure_fraction=max_decode_failure_fraction,
     )
     track_ids = cache["track_ids"]
     genres = cache["genres"].astype(str)
@@ -1248,17 +1601,39 @@ def generate_fma_audio_benchmark(
         "cache_path": cache["cache_path"],
         "clients": clients,
         "tracks_loaded": int(len(track_ids)),
+        "decoded_tracks": int(len(track_ids)),
         "max_tracks": max_tracks,
         "sample_rate": sample_rate,
         "max_seconds": max_seconds,
+        "max_decode_failure_fraction": max_decode_failure_fraction,
+        "decode_failures": int(cache.get("decode_failures", 0)),
+        "decode_failure_report": cache.get("decode_failure_report"),
+        "cache_manifest_path": cache.get("cache_manifest_path"),
+        "input_records": cache.get("input_records", []),
         "max_train_positive_pairs": max_train_pairs,
         "max_test_positive_pairs": max_test_pairs,
         "negative_ratio": negative_ratio,
         "seed": seed,
-        "source": "FMA-small MP3 audio and FMA metadata",
+        "source": "pinned FMA-small-compatible mirror audio and official FMA metadata",
+        "feature_note": (
+            "audio-only evidence tier; shared-schema video fields are fixed non-informative placeholders "
+            "and do not constitute visual or audiovisual evidence"
+        ),
         "train_rows": int(len(y_train)),
         "test_rows": int(len(y_test)),
+        "train_positive_rows": int(y_train.sum()),
+        "train_negative_rows": int(len(y_train) - y_train.sum()),
+        "test_positive_rows": int(y_test.sum()),
+        "test_negative_rows": int(len(y_test) - y_test.sum()),
+        "train_query_count": int(len({pair[0] for pair in train_pairs})),
+        "test_query_count": int(len({pair[0] for pair in test_pairs})),
+        "train_assets": int(len(train_idx)),
+        "test_assets": int(len(test_idx)),
+        "train_asset_ids": sorted(map(int, track_ids[train_idx])),
+        "test_asset_ids": sorted(map(int, track_ids[test_idx])),
         "transformations": FMA_AUDIO_TRANSFORMS,
+        "split_policy": "track-identity-disjoint random split",
+        "asset_overlap": int(len(set(train_idx) & set(test_idx))),
     }
     return BenchmarkData(
         x_train=x_train,

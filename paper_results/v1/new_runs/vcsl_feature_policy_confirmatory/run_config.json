@@ -1,0 +1,39 @@
+{
+  "centralized_epochs": 140,
+  "clients": 11,
+  "dataset_tier": "vcsl_public_labels",
+  "embedding_dimension": 64,
+  "feature_map": "poly2",
+  "feature_policies": [
+    "all",
+    "invariant",
+    "linear_all",
+    "score_only",
+    "visual_temporal",
+    "audio",
+    "no_context",
+    "no_reliability",
+    "no_interactions"
+  ],
+  "fedopt": {
+    "beta1": 0.9,
+    "beta2": 0.99,
+    "client_learning_rate": 0.08,
+    "local_epochs": 5,
+    "rounds": 30,
+    "server_learning_rate": 0.65,
+    "tau": 1e-06
+  },
+  "l2": 0.0001,
+  "learning_rate": 0.08,
+  "max_test_positive_pairs": 7500,
+  "max_train_positive_pairs": 15000,
+  "negative_ratio": 1.0,
+  "paired_bootstrap_resamples": 5000,
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "split_policy": "positive-connected-component asset-disjoint"
+}

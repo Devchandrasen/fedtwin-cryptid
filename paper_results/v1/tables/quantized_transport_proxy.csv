@@ -1,0 +1,3 @@
+mode,scheme,security_level_bits,quantization_scale,ciphertext_expansion,numeric_error_tested,max_abs_error_vs_plain,full_encrypted_inference,notes
+Quantized transport proxy,none,not claimed,1000000.0,16.0,True,2.641843818220217e-07,False,Quantized compact-update accounting only; not homomorphic encryption and not extrapolated to media embeddings.
+Paillier compact-update aggregation,Paillier additive HE,2048-bit modulus generated for artifact run,1000000.0,64.0,True,3.142996114410823e-07,False,Three-seed real encrypted compact-update sums with signed integer encoding; no CKKS/BFV packing and no encryption of multimedia inference.

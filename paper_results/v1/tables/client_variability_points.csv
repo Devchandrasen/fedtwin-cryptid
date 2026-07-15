@@ -1,0 +1,151 @@
+tier,method,pr_auc
+VCSL ISC visual,fedavg_plain,0.5265937481333232
+VCSL ISC visual,fedavg_plain,1.0
+VCSL ISC visual,fedavg_plain,0.7758839918302074
+VCSL ISC visual,fedavg_plain,0.5762256160310386
+VCSL ISC visual,fedavg_plain,0.9877096421852974
+VCSL ISC visual,fedavg_plain,0.9999836750685646
+VCSL ISC visual,fedavg_plain,0.4260456383691139
+VCSL ISC visual,fedavg_plain,0.4365495991795859
+VCSL ISC visual,fedavg_plain,0.6541342596785794
+VCSL ISC visual,fedavg_plain,0.4982442812094366
+VCSL ISC visual,fedavg_plain,1.0
+VCSL ISC visual,fedavg_plain,0.773638750883878
+VCSL ISC visual,fedavg_plain,0.647854029107858
+VCSL ISC visual,fedavg_plain,0.9845168044338188
+VCSL ISC visual,fedavg_plain,0.9958965534645184
+VCSL ISC visual,fedavg_plain,0.4459969351376304
+VCSL ISC visual,fedavg_plain,0.6155603732220759
+VCSL ISC visual,fedavg_plain,0.5950162554265522
+VCSL ISC visual,fedavg_plain,0.5320985225937273
+VCSL ISC visual,fedavg_plain,0.7373879282699586
+VCSL ISC visual,fedavg_plain,0.6561518082390629
+VCSL ISC visual,fedavg_plain,0.9811426736452098
+VCSL ISC visual,fedavg_plain,0.9982196035874772
+VCSL ISC visual,fedavg_plain,0.4475982174955084
+VCSL ISC visual,fedavg_plain,0.4709181551831297
+VCSL ISC visual,fedavg_plain,0.6043386877113635
+VCSL ISC visual,fedavg_secureagg_sim,0.5265937481333232
+VCSL ISC visual,fedavg_secureagg_sim,1.0
+VCSL ISC visual,fedavg_secureagg_sim,0.7758839918302074
+VCSL ISC visual,fedavg_secureagg_sim,0.5762256160310386
+VCSL ISC visual,fedavg_secureagg_sim,0.9877096421852974
+VCSL ISC visual,fedavg_secureagg_sim,0.9999836750685646
+VCSL ISC visual,fedavg_secureagg_sim,0.4260456383691139
+VCSL ISC visual,fedavg_secureagg_sim,0.4365495991795859
+VCSL ISC visual,fedavg_secureagg_sim,0.6541342596785794
+VCSL ISC visual,fedavg_secureagg_sim,0.4982442812094366
+VCSL ISC visual,fedavg_secureagg_sim,1.0
+VCSL ISC visual,fedavg_secureagg_sim,0.773638750883878
+VCSL ISC visual,fedavg_secureagg_sim,0.647854029107858
+VCSL ISC visual,fedavg_secureagg_sim,0.9845168044338188
+VCSL ISC visual,fedavg_secureagg_sim,0.9958965534645184
+VCSL ISC visual,fedavg_secureagg_sim,0.4459969351376304
+VCSL ISC visual,fedavg_secureagg_sim,0.6155603732220759
+VCSL ISC visual,fedavg_secureagg_sim,0.5950162554265522
+VCSL ISC visual,fedavg_secureagg_sim,0.5320985225937273
+VCSL ISC visual,fedavg_secureagg_sim,0.7373879282699586
+VCSL ISC visual,fedavg_secureagg_sim,0.6561518082390629
+VCSL ISC visual,fedavg_secureagg_sim,0.9811426736452098
+VCSL ISC visual,fedavg_secureagg_sim,0.9982196035874772
+VCSL ISC visual,fedavg_secureagg_sim,0.4475982174955084
+VCSL ISC visual,fedavg_secureagg_sim,0.4709181551831297
+VCSL ISC visual,fedavg_secureagg_sim,0.6043386877113635
+VCSL ISC visual,fedavgft_plain,0.5267628957646896
+VCSL ISC visual,fedavgft_plain,1.0
+VCSL ISC visual,fedavgft_plain,0.7756107338612015
+VCSL ISC visual,fedavgft_plain,0.5729200628563602
+VCSL ISC visual,fedavgft_plain,0.9877838127596934
+VCSL ISC visual,fedavgft_plain,0.9999836750685646
+VCSL ISC visual,fedavgft_plain,0.4260329404067378
+VCSL ISC visual,fedavgft_plain,0.4361201123618948
+VCSL ISC visual,fedavgft_plain,0.6555736111986313
+VCSL ISC visual,fedavgft_plain,0.4991949879710325
+VCSL ISC visual,fedavgft_plain,1.0
+VCSL ISC visual,fedavgft_plain,0.774797652360351
+VCSL ISC visual,fedavgft_plain,0.6482610874159551
+VCSL ISC visual,fedavgft_plain,0.9845743384134064
+VCSL ISC visual,fedavgft_plain,0.9958965534645184
+VCSL ISC visual,fedavgft_plain,0.4461890621705279
+VCSL ISC visual,fedavgft_plain,0.6159606082048817
+VCSL ISC visual,fedavgft_plain,0.5937182136575603
+VCSL ISC visual,fedavgft_plain,0.5323955420596829
+VCSL ISC visual,fedavgft_plain,0.7382973705669138
+VCSL ISC visual,fedavgft_plain,0.6567154812569442
+VCSL ISC visual,fedavgft_plain,0.981200276553236
+VCSL ISC visual,fedavgft_plain,0.9982786409790824
+VCSL ISC visual,fedavgft_plain,0.4475902036750823
+VCSL ISC visual,fedavgft_plain,0.4709166141598837
+VCSL ISC visual,fedavgft_plain,0.6044308811988535
+FMA 5 s audio,fedavg_plain,0.9955504797018806
+FMA 5 s audio,fedavg_plain,0.9911689189704372
+FMA 5 s audio,fedavg_plain,0.9988208381129218
+FMA 5 s audio,fedavg_plain,0.9953264256435952
+FMA 5 s audio,fedavg_plain,0.9987383364755852
+FMA 5 s audio,fedavg_plain,0.9973214333175744
+FMA 5 s audio,fedavg_plain,0.9971949234548676
+FMA 5 s audio,fedavg_plain,0.9915625121435692
+FMA 5 s audio,fedavg_plain,0.994302536197278
+FMA 5 s audio,fedavg_plain,0.9966101406602228
+FMA 5 s audio,fedavg_plain,0.999280911923052
+FMA 5 s audio,fedavg_plain,0.9964528941664378
+FMA 5 s audio,fedavg_plain,0.9932930838424592
+FMA 5 s audio,fedavg_plain,0.9965524375220828
+FMA 5 s audio,fedavg_plain,0.9969285641767274
+FMA 5 s audio,fedavg_plain,0.9929648938075016
+FMA 5 s audio,fedavg_plain,0.9944291701101962
+FMA 5 s audio,fedavg_plain,0.9977744821287124
+FMA 5 s audio,fedavg_plain,0.9988610101656432
+FMA 5 s audio,fedavg_plain,0.9982460814567872
+FMA 5 s audio,fedavg_plain,0.997629904416071
+FMA 5 s audio,fedavg_plain,0.9992336133233268
+FMA 5 s audio,fedavg_plain,0.9961542867745864
+FMA 5 s audio,fedavg_plain,0.9946626793744529
+FMA 5 s audio,fedavg_secureagg_sim,0.9955504797018806
+FMA 5 s audio,fedavg_secureagg_sim,0.9911689189704372
+FMA 5 s audio,fedavg_secureagg_sim,0.9988208381129218
+FMA 5 s audio,fedavg_secureagg_sim,0.9953264256435952
+FMA 5 s audio,fedavg_secureagg_sim,0.9987383364755852
+FMA 5 s audio,fedavg_secureagg_sim,0.9973214333175744
+FMA 5 s audio,fedavg_secureagg_sim,0.9971949234548676
+FMA 5 s audio,fedavg_secureagg_sim,0.9915625121435692
+FMA 5 s audio,fedavg_secureagg_sim,0.994302536197278
+FMA 5 s audio,fedavg_secureagg_sim,0.9966101406602228
+FMA 5 s audio,fedavg_secureagg_sim,0.999280911923052
+FMA 5 s audio,fedavg_secureagg_sim,0.9964528941664378
+FMA 5 s audio,fedavg_secureagg_sim,0.9932930838424592
+FMA 5 s audio,fedavg_secureagg_sim,0.9965524375220828
+FMA 5 s audio,fedavg_secureagg_sim,0.9969285641767274
+FMA 5 s audio,fedavg_secureagg_sim,0.9929648938075016
+FMA 5 s audio,fedavg_secureagg_sim,0.9944291701101962
+FMA 5 s audio,fedavg_secureagg_sim,0.9977744821287124
+FMA 5 s audio,fedavg_secureagg_sim,0.9988610101656432
+FMA 5 s audio,fedavg_secureagg_sim,0.9982460814567872
+FMA 5 s audio,fedavg_secureagg_sim,0.997629904416071
+FMA 5 s audio,fedavg_secureagg_sim,0.9992336133233268
+FMA 5 s audio,fedavg_secureagg_sim,0.9961542867745864
+FMA 5 s audio,fedavg_secureagg_sim,0.9946626793744529
+FMA 5 s audio,fedavgft_plain,0.9956208738354664
+FMA 5 s audio,fedavgft_plain,0.9911149411034498
+FMA 5 s audio,fedavgft_plain,0.99882084020029
+FMA 5 s audio,fedavgft_plain,0.9952255685636738
+FMA 5 s audio,fedavgft_plain,0.9987312656039228
+FMA 5 s audio,fedavgft_plain,0.9973214341693176
+FMA 5 s audio,fedavgft_plain,0.9971827055820434
+FMA 5 s audio,fedavgft_plain,0.991433928622834
+FMA 5 s audio,fedavgft_plain,0.994198964710417
+FMA 5 s audio,fedavgft_plain,0.9966101406602228
+FMA 5 s audio,fedavgft_plain,0.999280911923052
+FMA 5 s audio,fedavgft_plain,0.996468887542838
+FMA 5 s audio,fedavgft_plain,0.9932786941855808
+FMA 5 s audio,fedavgft_plain,0.9965448819366928
+FMA 5 s audio,fedavgft_plain,0.9969285641767274
+FMA 5 s audio,fedavgft_plain,0.9926982609436934
+FMA 5 s audio,fedavgft_plain,0.9942877425663852
+FMA 5 s audio,fedavgft_plain,0.9977643379959498
+FMA 5 s audio,fedavgft_plain,0.998861010662051
+FMA 5 s audio,fedavgft_plain,0.9982264829930232
+FMA 5 s audio,fedavgft_plain,0.997629904416071
+FMA 5 s audio,fedavgft_plain,0.9992336133233268
+FMA 5 s audio,fedavgft_plain,0.9961542867745864
+FMA 5 s audio,fedavgft_plain,0.9945272547367798

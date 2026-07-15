@@ -1,0 +1,10 @@
+{
+  "source": "fma_small_audio_transform_features",
+  "transformations": [
+    "crop",
+    "noise",
+    "lowpass",
+    "dropout",
+    "speed"
+  ]
+}

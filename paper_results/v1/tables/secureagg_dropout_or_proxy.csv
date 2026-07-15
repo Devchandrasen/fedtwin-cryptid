@@ -1,0 +1,4 @@
+test,dropout_rate,dropout_stage,active_clients,dropped_clients,implemented,max_abs_error_vs_active_plain,masks_cancel,pre_recovery_residual_norm,reconstructed_mask_norm,recovery_applied,byte_expansion,claim_scope
+pairwise_mask_cancellation,0.0,after_mask_setup,8,0,True,2.856655884064807e-15,True,4.3434527211278e-15,0.0,False,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof
+pairwise_mask_cancellation,0.1,after_mask_setup,7,1,True,1.824929096727601e-15,True,12.80704902093064,12.80704902093064,True,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof
+pairwise_mask_cancellation,0.2,after_mask_setup,6,2,True,1.824495415858607e-15,True,21.914858449270525,21.914858449270522,True,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof

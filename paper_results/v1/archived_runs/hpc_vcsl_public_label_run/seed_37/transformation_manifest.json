@@ -1,0 +1,12 @@
+{
+  "expanded_feature_count": 151,
+  "feature_map": "poly2",
+  "feature_policy": "invariant",
+  "source": "vcsl_public_label_topology",
+  "transformations": [
+    "vcsl_cross_category_negative",
+    "vcsl_labeled_copy",
+    "vcsl_partial_copy",
+    "vcsl_same_category_negative"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "assets": 1000,
+  "clients": 8,
+  "data_dir": "data",
+  "difficulty": 1.0,
+  "dim": 32,
+  "feature_map": "poly2",
+  "feature_policy": "invariant",
+  "federated_methods": [
+    "centralized",
+    "local",
+    "fedavg",
+    "fedprox",
+    "secureagg",
+    "heagg",
+    "fedavgft"
+  ],
+  "fma_audio_dir": "data/fma/fma_small",
+  "fma_cache_dir": "data/fma/cache",
+  "fma_max_seconds": 5.0,
+  "fma_max_tracks": 1200,
+  "fma_metadata_dir": "data/fma/fma_metadata",
+  "fma_sample_rate": 8000,
+  "isc_max_frames": 160,
+  "ledger_modes": [
+    "none",
+    "hashchain"
+  ],
+  "local_epochs": 8,
+  "max_test_pairs": 3000,
+  "max_train_pairs": 6000,
+  "modalities": [
+    "audio",
+    "multimodal"
+  ],
+  "negative_ratio": 1.0,
+  "noniid_alpha": 0.3,
+  "output_tag": "hpc_fma_audio_shortclip_stress",
+  "queries": 1000,
+  "rounds": 30,
+  "run_dir": "outputs",
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "fma_audio",
+  "vcsl_feature_dir": "data/vcsl_features/isc_extracted",
+  "vcsl_metadata_dir": "public_data/vcsl_metadata",
+  "write_pair_csv": false
+}

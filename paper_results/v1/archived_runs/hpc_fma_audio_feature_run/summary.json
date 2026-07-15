@@ -1,0 +1,50 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.9371666666666667,
+    "fn": 21,
+    "fp": 356,
+    "fpr_at_95_recall": 0.034666666666666665,
+    "method": "local_multimodal",
+    "modality": "multimodal",
+    "n": 6000,
+    "pr_auc": 0.9945766629209964,
+    "precision": 0.8932533733133433,
+    "privacy_mode": "none",
+    "recall": 0.993,
+    "roc_auc": 0.9938196666666665,
+    "seed": 41,
+    "tn": 2644,
+    "tp": 2979
+  },
+  "output_tag": "hpc_fma_audio_feature_run",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.9944413762933825,
+      "runtime_sec": 105.77508599311113,
+      "seed": 31,
+      "test_rows": 6000,
+      "train_rows": 12000
+    },
+    {
+      "best_pr_auc": 0.9932886963502812,
+      "runtime_sec": 1.6651918259449303,
+      "seed": 37,
+      "test_rows": 6000,
+      "train_rows": 12000
+    },
+    {
+      "best_pr_auc": 0.9945766629209964,
+      "runtime_sec": 1.673123394139111,
+      "seed": 41,
+      "test_rows": 6000,
+      "train_rows": 12000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "fma_audio",
+  "total_runtime_sec": 109.17319556325674
+}

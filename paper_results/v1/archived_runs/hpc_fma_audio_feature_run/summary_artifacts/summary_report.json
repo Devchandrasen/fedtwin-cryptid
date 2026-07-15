@@ -1,0 +1,20 @@
+{
+  "best_detection_method": {
+    "accuracy_mean": 0.9400000000000001,
+    "accuracy_std": 0.01005402075457051,
+    "fpr_at_95_recall_mean": 0.0373333333333333,
+    "fpr_at_95_recall_std": 0.0080069414329762,
+    "method": "local_multimodal",
+    "modality": "multimodal",
+    "pr_auc_mean": 0.9940426063583536,
+    "pr_auc_std": 0.000810678465219998,
+    "precision_mean": 0.9009686086162851,
+    "precision_std": 0.02096127006680426,
+    "privacy_mode": "none",
+    "recall_mean": 0.9892222222222221,
+    "recall_std": 0.005975257626555053,
+    "roc_auc_mean": 0.9931988518518517,
+    "roc_auc_std": 0.001148306022001395
+  },
+  "summary_dir": "outputs/hpc_fma_audio_feature_run/summary_artifacts"
+}

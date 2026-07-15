@@ -1,0 +1,17 @@
+{
+  "archive": {
+    "bytes": 358412441,
+    "expected_sha1": "f0df49ffe5f2a6008d7dc83c6915b31835dfe733",
+    "observed_sha1": "f0df49ffe5f2a6008d7dc83c6915b31835dfe733",
+    "source_url": "https://os.unil.cloud.switch.ch/fma/fma_metadata.zip"
+  },
+  "extracted_inputs": [
+    {
+      "bytes": 260414445,
+      "path": "fma_metadata/tracks.csv",
+      "sha256": "f73260fd112b8cd42bcd4f7c8918fc66b19d9d4c7b97f4faedce524b59e95d6b"
+    }
+  ],
+  "schema_version": "1.0",
+  "upstream_project": "https://github.com/mdeff/fma"
+}

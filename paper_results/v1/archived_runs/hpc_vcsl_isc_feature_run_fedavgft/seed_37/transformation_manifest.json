@@ -1,0 +1,12 @@
+{
+  "expanded_feature_count": 151,
+  "feature_map": "poly2",
+  "feature_policy": "invariant",
+  "source": "vcsl_released_isc_frame_features",
+  "transformations": [
+    "isc_cross_category_negative",
+    "isc_labeled_copy",
+    "isc_partial_copy",
+    "isc_same_category_negative"
+  ]
+}

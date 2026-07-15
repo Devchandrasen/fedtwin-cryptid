@@ -1,0 +1,21 @@
+{
+  "title": "FedTwin-CryptID: Fixed-Evidence Calibration and Audit Implementation",
+  "upload_type": "software",
+  "description": "Versioned implementation and permitted derived evidence for privacy-aware federated fixed-evidence calibration and signed audit receipts in multimedia copy review.",
+  "creators": [
+    {
+      "name": "Pandey, Chandrasen"
+    }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": [
+    "multimedia copy review",
+    "federated learning",
+    "calibration",
+    "secure aggregation simulation",
+    "Paillier",
+    "audit receipts"
+  ],
+  "version": "1.0.0"
+}

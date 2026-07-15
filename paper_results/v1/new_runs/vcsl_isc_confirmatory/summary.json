@@ -1,0 +1,52 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.964,
+    "brier": 0.08044505948399056,
+    "ece_15": 0.21719696025073848,
+    "fn": 93,
+    "fp": 15,
+    "fpr_at_95_recall": 0.014666666666666666,
+    "method": "video_similarity",
+    "modality": "video",
+    "n": 3000,
+    "pr_auc": 0.9884606818128848,
+    "precision": 0.989451476793249,
+    "privacy_mode": "none",
+    "recall": 0.938,
+    "roc_auc": 0.9855959999999999,
+    "seed": 31,
+    "tn": 1485,
+    "tp": 1407
+  },
+  "output_tag": "vcsl_isc_paper",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.9884606818128848,
+      "runtime_sec": 6.742517799997586,
+      "seed": 31,
+      "test_rows": 3000,
+      "train_rows": 6000
+    },
+    {
+      "best_pr_auc": 0.8801258752420449,
+      "runtime_sec": 7.085592099996575,
+      "seed": 37,
+      "test_rows": 3000,
+      "train_rows": 6000
+    },
+    {
+      "best_pr_auc": 0.8888261839777664,
+      "runtime_sec": 6.810068099999626,
+      "seed": 41,
+      "test_rows": 3000,
+      "train_rows": 6000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "vcsl_isc",
+  "total_runtime_sec": 20.661409899999853
+}

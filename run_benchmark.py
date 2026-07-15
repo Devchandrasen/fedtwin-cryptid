@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from itertools import combinations
 import json
 import time
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +24,7 @@ from fedtwin.metrics import client_metrics, detection_metrics, scenario_metrics
 from fedtwin.models import model_digest
 
 
-def parse_args() -> argparse.Namespace:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run FedTwin-CryptID benchmark.")
     parser.add_argument("--tier", default="tier0", choices=["tier0", "tier1", "vcsl_public", "vcsl_isc", "fma_audio"], help="Benchmark tier.")
     parser.add_argument("--data-dir", default="data", help="Data/cache directory.")
@@ -37,7 +37,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seeds", type=int, nargs="+", default=[7])
     parser.add_argument("--rounds", type=int, default=20)
     parser.add_argument("--local-epochs", type=int, default=5)
-    parser.add_argument("--federated-methods", nargs="+", default=["centralized", "local", "fedavg", "fedprox", "secureagg", "heagg"])
+    parser.add_argument(
+        "--federated-methods",
+        nargs="+",
+        default=["centralized", "local", "fedavg", "fedprox", "secureagg_sim", "quantized_transport_proxy"],
+    )
     parser.add_argument("--modalities", nargs="+", default=["video", "audio", "multimodal"])
     parser.add_argument("--ledger-modes", nargs="+", default=["none", "hashchain"])
     parser.add_argument("--noniid-alpha", type=float, default=0.3)
@@ -51,13 +55,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fma-max-tracks", type=int, default=1200)
     parser.add_argument("--fma-sample-rate", type=int, default=8000)
     parser.add_argument("--fma-max-seconds", type=float, default=25.0)
+    parser.add_argument("--fma-max-decode-failure-fraction", type=float, default=0.05)
     parser.add_argument("--max-train-pairs", type=int, default=60000)
     parser.add_argument("--max-test-pairs", type=int, default=30000)
     parser.add_argument("--negative-ratio", type=float, default=1.0)
     parser.add_argument("--feature-map", default="poly2", choices=["linear", "poly2"])
     parser.add_argument("--feature-policy", default="invariant", choices=["all", "invariant"])
     parser.add_argument("--write-pair-csv", action="store_true", help="Write expanded train/test pair feature CSV files.")
-    return parser.parse_args()
+    return parser
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    return build_parser().parse_args(argv)
 
 
 def _feature_atoms(name: str) -> list[str]:
@@ -193,6 +202,7 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             negative_ratio=args.negative_ratio,
             sample_rate=args.fma_sample_rate,
             max_seconds=args.fma_max_seconds,
+            max_decode_failure_fraction=args.fma_max_decode_failure_fraction,
             seed=seed,
         )
     else:
@@ -219,8 +229,8 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
     if args.write_pair_csv:
         train_df = dataframe_from_split(x_train_raw, data.y_train, data.client_train, data.scenario_train, feature_names)
         test_df = dataframe_from_split(x_test_raw, data.y_test, data.client_test, data.scenario_test, feature_names)
-        train_df.to_csv(seed_dir / "train_pairs.csv", index=False)
-        test_df.to_csv(seed_dir / "test_pairs.csv", index=False)
+        train_df.to_csv(seed_dir / "train_pairs.csv", index=False, lineterminator="\n")
+        test_df.to_csv(seed_dir / "test_pairs.csv", index=False, lineterminator="\n")
 
     detection_rows: list[dict] = []
     federated_rows: list[dict] = []
@@ -238,12 +248,25 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
 
     simple_scores = {
         "random": np.full_like(y_test, float(np.mean(data.y_train)), dtype=float),
-        "video_similarity": video_score,
         "audio_similarity": audio_score,
-        "early_fusion_similarity": fusion_score,
     }
+    if args.tier != "fma_audio":
+        simple_scores.update(
+            {
+                "video_similarity": video_score,
+                "early_fusion_similarity": fusion_score,
+            }
+        )
     for method, score in simple_scores.items():
-        modality = "video" if "video" in method else "audio" if "audio" in method else "multimodal"
+        modality = (
+            "audio"
+            if args.tier == "fma_audio"
+            else "video"
+            if "video" in method
+            else "audio"
+            if "audio" in method
+            else "multimodal"
+        )
         row = detection_metrics(y_test, score, method=method, modality=modality)
         row["seed"] = seed
         detection_rows.append(row)
@@ -257,9 +280,14 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             idx = modality_indices(feature_names, modality, args.feature_policy)
             model, summary = train_centralized(x_train_std[:, idx], data.y_train, epochs=140)
             score = model.predict_proba(x_test_std[:, idx])
-            method_name = f"centralized_{modality}"
+            method_name = (
+                "centralized_audio_evidence"
+                if args.tier == "fma_audio" and modality == "multimodal"
+                else f"centralized_{modality}"
+            )
+            reported_modality = "audio" if args.tier == "fma_audio" else modality
             trained_models[method_name] = (score, model_digest(model.weights))
-            row = detection_metrics(y_test, score, method=method_name, modality=modality)
+            row = detection_metrics(y_test, score, method=method_name, modality=reported_modality)
             row["seed"] = seed
             detection_rows.append(row)
             summary.update({"seed": seed, "method": method_name, "privacy_mode": "none"})
@@ -273,11 +301,13 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             client_idx = data.client_test == client_id
             score[client_idx] = model_map[client_id].predict_proba(x_test_std[client_idx][:, feature_idx])
         digest = model_digest(np.mean([m.weights for m in model_map.values()], axis=0))
-        trained_models["local_multimodal"] = (score, digest)
-        row = detection_metrics(y_test, score, method="local_multimodal", modality="multimodal")
+        local_method_name = "local_audio_evidence" if args.tier == "fma_audio" else "local_multimodal"
+        trained_models[local_method_name] = (score, digest)
+        reported_modality = "audio" if args.tier == "fma_audio" else "multimodal"
+        row = detection_metrics(y_test, score, method=local_method_name, modality=reported_modality)
         row["seed"] = seed
         detection_rows.append(row)
-        summary.update({"seed": seed, "method": "local_multimodal", "privacy_mode": "local"})
+        summary.update({"seed": seed, "method": local_method_name, "privacy_mode": "local"})
         runtime_rows.append(summary)
 
     fed_specs = []
@@ -285,10 +315,10 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
         fed_specs.append(("fedavg", "plain", 0.0))
     if "fedprox" in args.federated_methods:
         fed_specs.append(("fedprox", "plain", 0.02))
-    if "secureagg" in args.federated_methods:
-        fed_specs.append(("fedavg", "secureagg", 0.0))
-    if "heagg" in args.federated_methods:
-        fed_specs.append(("fedavg", "heagg", 0.0))
+    if {"secureagg", "secureagg_sim"} & set(args.federated_methods):
+        fed_specs.append(("fedavg", "secureagg_sim", 0.0))
+    if {"heagg", "quantized_transport_proxy"} & set(args.federated_methods):
+        fed_specs.append(("fedavg", "quantized_transport_proxy", 0.0))
 
     for method, privacy_mode, prox_mu in fed_specs:
         feature_idx = modality_indices(feature_names, "multimodal", args.feature_policy)
@@ -301,11 +331,13 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             rounds=args.rounds,
             local_epochs=args.local_epochs,
             prox_mu=prox_mu,
+            seed=seed,
         )
         score = model.predict_proba(x_test_std[:, feature_idx])
         method_name = f"{method}_{privacy_mode}"
         trained_models[method_name] = (score, model_digest(model.weights))
-        row = detection_metrics(y_test, score, method=method_name, modality="multimodal", privacy_mode=privacy_mode)
+        reported_modality = "audio" if args.tier == "fma_audio" else "multimodal"
+        row = detection_metrics(y_test, score, method=method_name, modality=reported_modality, privacy_mode=privacy_mode)
         row["seed"] = seed
         detection_rows.append(row)
 
@@ -344,6 +376,7 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             privacy_mode="plain",
             rounds=args.rounds,
             local_epochs=args.local_epochs,
+            seed=seed,
         )
         model_map, ft_summary = train_personalized_models(
             x_train_std[:, feature_idx],
@@ -357,7 +390,8 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             score[client_idx] = model_map[client_id].predict_proba(x_test_std[client_idx][:, feature_idx])
         digest = model_digest(np.mean([m.weights for m in model_map.values()], axis=0))
         trained_models["fedavgft_plain"] = (score, digest)
-        row = detection_metrics(y_test, score, method="fedavgft_plain", modality="multimodal", privacy_mode="plain")
+        reported_modality = "audio" if args.tier == "fma_audio" else "multimodal"
+        row = detection_metrics(y_test, score, method="fedavgft_plain", modality=reported_modality, privacy_mode="plain")
         row["seed"] = seed
         detection_rows.append(row)
         client_df = client_metrics(y_test, score, data.client_test, method="fedavgft_plain")
@@ -382,12 +416,12 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
         runtime_rows.append(ft_summary)
 
     if "hashchain" in args.ledger_modes:
-        if "fedavg_secureagg" in trained_models:
-            ledger_score, digest = trained_models["fedavg_secureagg"]
-            ledger_method = "fedavg_secureagg"
-        elif "fedavg_heagg" in trained_models:
-            ledger_score, digest = trained_models["fedavg_heagg"]
-            ledger_method = "fedavg_heagg"
+        if "fedavg_secureagg_sim" in trained_models:
+            ledger_score, digest = trained_models["fedavg_secureagg_sim"]
+            ledger_method = "fedavg_secureagg_sim"
+        elif "fedavg_quantized_transport_proxy" in trained_models:
+            ledger_score, digest = trained_models["fedavg_quantized_transport_proxy"]
+            ledger_method = "fedavg_quantized_transport_proxy"
         else:
             ledger_score, digest = fusion_score, "similarity"
             ledger_method = "early_fusion_similarity"
@@ -425,6 +459,7 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             "feature_map": args.feature_map,
             "feature_policy": args.feature_policy,
             "expanded_feature_count": len(feature_names),
+            "feature_names": feature_names,
         },
     )
 
@@ -446,11 +481,11 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
         "scenario": scenario_frames,
         "client": client_frames,
         "manifest": data.manifest,
+        "feature_names": feature_names,
     }
 
 
-def main() -> None:
-    args = parse_args()
+def run_benchmark(args: argparse.Namespace) -> Path:
     output_root = Path(args.run_dir) / args.output_tag
     output_root.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter()
@@ -466,6 +501,7 @@ def main() -> None:
     all_client = []
     seed_summaries = []
     manifest = None
+    feature_schema: list[str] = []
 
     for seed_pos, seed in enumerate(args.seeds, start=1):
         print(f"[{seed_pos}/{len(args.seeds)}] running seed {seed} for tier {args.tier}", flush=True)
@@ -481,17 +517,25 @@ def main() -> None:
         all_scenario.extend(result["scenario"])
         all_client.extend(result["client"])
         manifest = result["manifest"]
+        feature_schema = result["feature_names"]
 
-    pd.DataFrame(all_detection).to_csv(output_root / "metrics_detection.csv", index=False)
-    pd.DataFrame(all_federated).to_csv(output_root / "metrics_federated.csv", index=False)
-    pd.DataFrame(all_privacy).to_csv(output_root / "metrics_privacy.csv", index=False)
-    pd.DataFrame(all_ledger).to_csv(output_root / "metrics_ledger.csv", index=False)
-    pd.DataFrame(all_localization).to_csv(output_root / "metrics_localization.csv", index=False)
-    pd.DataFrame(all_runtime).to_csv(output_root / "runtime_profile.csv", index=False)
+    pd.DataFrame(all_detection).to_csv(output_root / "metrics_detection.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_federated).to_csv(output_root / "metrics_federated.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_privacy).to_csv(output_root / "metrics_privacy.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_ledger).to_csv(output_root / "metrics_ledger.csv", index=False, lineterminator="\n")
+    pd.DataFrame(
+        all_localization,
+        columns=["seed", "method", "segment_f1_proxy", "segment_precision_proxy", "partial_segment_n"],
+    ).to_csv(output_root / "metrics_localization.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_runtime).to_csv(output_root / "runtime_profile.csv", index=False, lineterminator="\n")
     if all_scenario:
-        pd.concat(all_scenario, ignore_index=True).to_csv(output_root / "metrics_scenario.csv", index=False)
+        pd.concat(all_scenario, ignore_index=True).to_csv(
+            output_root / "metrics_scenario.csv", index=False, lineterminator="\n"
+        )
     if all_client:
-        pd.concat(all_client, ignore_index=True).to_csv(output_root / "metrics_client.csv", index=False)
+        pd.concat(all_client, ignore_index=True).to_csv(
+            output_root / "metrics_client.csv", index=False, lineterminator="\n"
+        )
     if manifest is not None:
         write_json(output_root / "dataset_manifest.json", manifest)
         write_json(output_root / "client_split_manifest.json", {"clients": args.clients, "noniid_alpha": args.noniid_alpha, "seeds": args.seeds})
@@ -500,6 +544,10 @@ def main() -> None:
             {
                 "transformations": manifest.get("transformations", []),
                 "source": manifest.get("generator", "unknown"),
+                "feature_map": args.feature_map,
+                "feature_policy": args.feature_policy,
+                "expanded_feature_count": len(feature_schema),
+                "feature_names": feature_schema,
             },
         )
 
@@ -514,6 +562,12 @@ def main() -> None:
     }
     write_json(output_root / "summary.json", summary)
     print(json.dumps(summary, indent=2))
+    return output_root
+
+
+def main(argv: list[str] | None = None) -> None:
+    args = parse_args(argv)
+    run_benchmark(args)
 
 
 if __name__ == "__main__":

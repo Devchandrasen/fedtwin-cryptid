@@ -1,0 +1,50 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.8081333333333334,
+    "fn": 8865,
+    "fp": 2647,
+    "fpr_at_95_recall": 0.4193,
+    "method": "centralized_multimodal",
+    "modality": "multimodal",
+    "n": 60000,
+    "pr_auc": 0.9080678819743057,
+    "precision": 0.8886973341182407,
+    "privacy_mode": "none",
+    "recall": 0.7045,
+    "roc_auc": 0.9070620755555555,
+    "seed": 31,
+    "tn": 27353,
+    "tp": 21135
+  },
+  "output_tag": "hpc_vcsl_public_label_run",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.9080678819743057,
+      "runtime_sec": 127.39877856709063,
+      "seed": 31,
+      "test_rows": 60000,
+      "train_rows": 120000
+    },
+    {
+      "best_pr_auc": 0.9015140269176185,
+      "runtime_sec": 127.06821167096496,
+      "seed": 37,
+      "test_rows": 60000,
+      "train_rows": 120000
+    },
+    {
+      "best_pr_auc": 0.8818492726233366,
+      "runtime_sec": 105.41787374718115,
+      "seed": 41,
+      "test_rows": 60000,
+      "train_rows": 120000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "vcsl_public",
+  "total_runtime_sec": 359.9837538776919
+}

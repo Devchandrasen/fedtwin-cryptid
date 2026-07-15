@@ -32,3 +32,15 @@ manuscript/
 *.bbl
 *.blg
 *.pdf
+
+# Versioned TMM source and frozen derived evidence are intentional exceptions.
+!paper/
+!paper/**
+!paper_results/
+!paper_results/**
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/main.pdf
+paper/supplement.pdf

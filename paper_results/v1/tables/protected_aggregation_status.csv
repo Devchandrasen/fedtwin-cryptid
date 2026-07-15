@@ -1,0 +1,5 @@
+mode,implementation_status,claim_label,production_crypto,dropout_handling,collusion_resistance,notes
+plain FedAvg,implemented numeric aggregation,plain compact-head aggregation,False,False,False,Reference mode; no update-protection claim.
+SecureAgg-style simulation,deterministic pairwise-mask arithmetic with post-mask dropout reconstruction,SecureAgg pairwise-mask simulation,False,post-mask residual reconstruction simulation at 0/10/20 percent,False,Pairwise masks and reconstructed dropout residuals cancel numerically; no network key agreement or collusion theorem is implemented.
+Quantized transport proxy,quantized compact-update transport accounting with 16x byte expansion,quantized transport proxy,False,False,False,This row is not homomorphic encryption; no CKKS or BFV security level is claimed.
+Paillier compact-update aggregation,real additive Paillier aggregation over quantized compact-head updates,real Paillier compact-update sum,False,False,False,Implements additive encrypted sums for compact updates with reviewer-run key generation; no encrypted media inference or production key management.

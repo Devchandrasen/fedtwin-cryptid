@@ -1,9 +1,10 @@
-"""Privacy-mode simulations and compact-update aggregation helpers.
+"""Protected compact-update aggregation helpers.
 
-The benchmark reports the cost of update protection without claiming a full
-production cryptosystem. HE mode uses quantization plus configurable ciphertext
-expansion to mimic small-head encrypted aggregation cost, which is sufficient
-for comparing overhead in the Phase 4 feature-level benchmark.
+The SecureAgg path is a deterministic, protocol-faithful arithmetic simulator:
+pairwise masks hide individual weighted updates and cancel in the aggregate.
+It is not a network deployment, collusion proof, or production dropout-recovery
+implementation.  The quantized transport mode is an accounting proxy and is
+never labelled as homomorphic encryption.
 
 The Paillier helper is a real additive homomorphic aggregation implementation
 for compact integer model-update sums. It is intentionally scoped to small
@@ -17,6 +18,7 @@ import math
 import secrets
 import time
 from dataclasses import dataclass
+from decimal import Decimal, localcontext
 
 import numpy as np
 
@@ -29,6 +31,10 @@ class AggregationReport:
     plain_bytes: int
     protected_bytes: int
     ciphertext_expansion: float
+    protocol_scope: str = ""
+    active_clients: int = 0
+    dropped_clients: int = 0
+    max_abs_error_vs_plain: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -139,6 +145,23 @@ def paillier_decrypt_int(ciphertext: int, private_key: PaillierPrivateKey) -> in
     return _decode_signed((l_value * private_key.mu) % pub.n, pub.n)
 
 
+def _quantize_updates(updates: list[np.ndarray], he_scale: float) -> list[np.ndarray]:
+    if not np.isfinite(he_scale) or he_scale <= 0:
+        raise ValueError("he_scale must be a positive finite value")
+    minimum = np.iinfo(np.int64).min
+    maximum = np.iinfo(np.int64).max
+    quantized: list[np.ndarray] = []
+    for update in updates:
+        with np.errstate(over="ignore", invalid="ignore"):
+            scaled = np.rint(update * he_scale)
+        if not np.isfinite(scaled).all():
+            raise OverflowError("quantization produced a non-finite integer value")
+        if np.any(scaled < minimum) or np.any(scaled > maximum):
+            raise OverflowError("quantized update exceeds the signed 64-bit transport range")
+        quantized.append(scaled.astype(np.int64))
+    return quantized
+
+
 def paillier_aggregate_updates(
     updates: list[np.ndarray],
     weights: list[float],
@@ -153,15 +176,36 @@ def paillier_aggregate_updates(
     client sample counts, matching FedAvg-style weighting in the benchmark.
     """
 
-    if not updates:
-        raise ValueError("updates must be non-empty")
+    update_arrays, weight_values = _validate_updates(updates, weights)
+    if any(update.ndim != 1 for update in update_arrays):
+        raise ValueError("Paillier aggregation requires one-dimensional compact updates")
+    quantized = _quantize_updates(update_arrays, he_scale)
+    rounded_weights = np.rint(weight_values)
+    if np.any(rounded_weights < np.iinfo(np.int64).min) or np.any(
+        rounded_weights > np.iinfo(np.int64).max
+    ):
+        raise OverflowError("Paillier client weights exceed the signed 64-bit range")
+    int_weights = rounded_weights.astype(np.int64)
+    integer_weight_sum = sum(map(int, int_weights))
+    if np.any(int_weights < 0) or integer_weight_sum <= 0:
+        raise ValueError("Paillier aggregation requires positive integer-like weights")
+
     start_encrypt = time.perf_counter()
     public_key, private_key = generate_paillier_keypair(key_bits)
-    plain_bytes = int(sum(update.nbytes for update in updates))
-    int_weights = np.asarray(np.rint(weights), dtype=np.int64)
-    if np.any(int_weights < 0) or int_weights.sum() <= 0:
-        raise ValueError("Paillier aggregation requires positive integer-like weights")
-    quantized = [np.rint(update * he_scale).astype(np.int64) for update in updates]
+    plain_bytes = int(sum(update.nbytes for update in update_arrays))
+    safe_aggregate_limit = public_key.n // 3 - 1
+    observed_max_abs_aggregate = 0
+    for dimension in range(len(quantized[0])):
+        dimension_total = sum(
+            abs(int(update[dimension])) * int(weight)
+            for update, weight in zip(quantized, int_weights, strict=True)
+        )
+        observed_max_abs_aggregate = max(observed_max_abs_aggregate, dimension_total)
+    if observed_max_abs_aggregate > safe_aggregate_limit:
+        raise OverflowError(
+            "weighted quantized Paillier sum exceeds the signed plaintext range; "
+            "reduce he_scale, client weights, or update magnitude"
+        )
     encrypted = [[paillier_encrypt_int(int(v), public_key) for v in update] for update in quantized]
     encryption_time = time.perf_counter() - start_encrypt
 
@@ -169,12 +213,34 @@ def paillier_aggregate_updates(
     aggregated_ciphertexts = []
     for dim in range(len(quantized[0])):
         c = 1
-        for client_ciphertexts, weight in zip(encrypted, int_weights):
+        for client_ciphertexts, weight in zip(encrypted, int_weights, strict=True):
             c = (c * pow(client_ciphertexts[dim], int(weight), public_key.n_square)) % public_key.n_square
         aggregated_ciphertexts.append(c)
     decrypted = np.asarray([paillier_decrypt_int(c, private_key) for c in aggregated_ciphertexts], dtype=np.float64)
-    aggregate = decrypted / float(int_weights.sum()) / he_scale
+    aggregate = decrypted / float(integer_weight_sum) / he_scale
     aggregation_time = time.perf_counter() - start_agg
+    normalized_weights = int_weights.astype(np.float64) / float(integer_weight_sum)
+    plain_reference = np.zeros_like(update_arrays[0], dtype=float)
+    for weight, update in zip(normalized_weights, update_arrays, strict=True):
+        plain_reference += weight * update
+    max_abs_error = float(np.max(np.abs(aggregate - plain_reference)))
+
+    weighted_float_max = max(
+        sum(
+            abs(float(update[dimension])) * int(weight)
+            for update, weight in zip(update_arrays, int_weights, strict=True)
+        )
+        for dimension in range(len(update_arrays[0]))
+    )
+    if weighted_float_max == 0.0:
+        max_safe_scale = "unbounded-for-zero-updates"
+    else:
+        with localcontext() as context:
+            context.prec = 24
+            max_safe_scale = format(
+                Decimal(safe_aggregate_limit) / Decimal(str(weighted_float_max)),
+                ".8E",
+            )
 
     ciphertext_bytes = math.ceil(public_key.n_square.bit_length() / 8) * len(quantized[0]) * len(quantized)
     report = AggregationReport(
@@ -184,6 +250,9 @@ def paillier_aggregate_updates(
         plain_bytes=plain_bytes,
         protected_bytes=int(ciphertext_bytes),
         ciphertext_expansion=float(ciphertext_bytes / max(plain_bytes, 1)),
+        protocol_scope="real additive Paillier aggregation for compact quantized update sums only",
+        active_clients=len(update_arrays),
+        max_abs_error_vs_plain=max_abs_error,
     )
     details = {
         "scheme": "Paillier",
@@ -192,7 +261,113 @@ def paillier_aggregate_updates(
         "clients": int(len(updates)),
         "update_dimension": int(len(quantized[0])),
         "quantization_scale": float(he_scale),
-        "integer_weight_sum": int(int_weights.sum()),
+        "integer_weight_sum": integer_weight_sum,
+        "max_safe_abs_aggregate_integer": str(safe_aggregate_limit),
+        "observed_max_abs_aggregate_integer": str(observed_max_abs_aggregate),
+        "max_safe_quantization_scale": max_safe_scale,
+        "max_abs_error_vs_integer_weighted_plain": max_abs_error,
+    }
+    return aggregate, report, details
+
+
+def _validate_updates(
+    updates: list[np.ndarray], weights: list[float]
+) -> tuple[list[np.ndarray], np.ndarray]:
+    if not updates:
+        raise ValueError("updates must be non-empty")
+    if len(updates) != len(weights):
+        raise ValueError("updates and weights must have the same length")
+    arrays = [np.asarray(update, dtype=float) for update in updates]
+    shape = arrays[0].shape
+    if not shape or any(array.shape != shape for array in arrays):
+        raise ValueError("all updates must have the same non-scalar shape")
+    if any(not np.isfinite(array).all() for array in arrays):
+        raise ValueError("updates must contain only finite values")
+    values = np.asarray(weights, dtype=float)
+    if not np.isfinite(values).all() or np.any(values < 0) or values.sum() <= 0:
+        raise ValueError("weights must be finite, nonnegative, and have positive sum")
+    return arrays, values
+
+
+def secureagg_simulate(
+    updates: list[np.ndarray],
+    weights: list[float],
+    *,
+    active_clients: list[int] | None = None,
+    mask_seed: int = 0,
+    dropout_stage: str = "before_mask_setup",
+) -> tuple[np.ndarray, AggregationReport, dict[str, object]]:
+    """Simulate aggregate-only visibility with cancelling pairwise masks.
+
+    ``after_mask_setup`` reconstructs the residual pairwise masks associated
+    with dropped clients and removes them from the active aggregate. This is an
+    arithmetic protocol-behavior check, not production recovery or a security
+    proof.
+    """
+
+    arrays, weight_values = _validate_updates(updates, weights)
+    if dropout_stage not in {"before_mask_setup", "after_mask_setup"}:
+        raise ValueError("dropout_stage must be before_mask_setup or after_mask_setup")
+    total_clients = len(arrays)
+    if active_clients is None:
+        active = list(range(total_clients))
+    else:
+        active = sorted(set(map(int, active_clients)))
+        if not active or active[0] < 0 or active[-1] >= total_clients:
+            raise ValueError("active_clients must select at least one valid client")
+    active_updates = [arrays[index] for index in active]
+    active_weights = weight_values[active]
+    normalized = active_weights / active_weights.sum()
+    weighted = [weight * update for weight, update in zip(normalized, active_updates, strict=True)]
+    plain = np.sum(weighted, axis=0)
+
+    start_encrypt = time.perf_counter()
+    masked = [update.copy() for update in weighted]
+    active_position = {client: position for position, client in enumerate(active)}
+    residual_mask = np.zeros_like(plain)
+    mask_clients = active if dropout_stage == "before_mask_setup" else list(range(total_clients))
+    for left_pos in range(len(mask_clients)):
+        for right_pos in range(left_pos + 1, len(mask_clients)):
+            left_client = mask_clients[left_pos]
+            right_client = mask_clients[right_pos]
+            pair_seed = np.random.SeedSequence([int(mask_seed), left_client, right_client])
+            mask = np.random.default_rng(pair_seed).normal(0.0, 1.0, size=plain.shape)
+            if left_client in active_position:
+                masked[active_position[left_client]] += mask
+                if right_client not in active_position:
+                    residual_mask += mask
+            if right_client in active_position:
+                masked[active_position[right_client]] -= mask
+                if left_client not in active_position:
+                    residual_mask -= mask
+    encryption_time = time.perf_counter() - start_encrypt
+
+    start_aggregate = time.perf_counter()
+    masked_aggregate = np.sum(masked, axis=0)
+    aggregate = masked_aggregate - residual_mask
+    aggregation_time = time.perf_counter() - start_aggregate
+    max_error = float(np.max(np.abs(aggregate - plain)))
+    plain_bytes = int(sum(array.nbytes for array in active_updates))
+    report = AggregationReport(
+        mode="secureagg_sim",
+        encryption_time_sec=float(encryption_time),
+        aggregation_time_sec=float(aggregation_time),
+        plain_bytes=plain_bytes,
+        protected_bytes=plain_bytes * 2,
+        ciphertext_expansion=2.0,
+        protocol_scope="pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof",
+        active_clients=len(active),
+        dropped_clients=total_clients - len(active),
+        max_abs_error_vs_plain=max_error,
+    )
+    details: dict[str, object] = {
+        "active_clients": active,
+        "dropped_clients": sorted(set(range(total_clients)) - set(active)),
+        "dropout_stage": dropout_stage,
+        "pre_recovery_residual_norm": float(np.linalg.norm(masked_aggregate - plain)),
+        "reconstructed_mask_norm": float(np.linalg.norm(residual_mask)),
+        "recovery_applied": bool(dropout_stage == "after_mask_setup" and len(active) < total_clients),
+        "masks_cancel": bool(max_error <= 1e-10),
     }
     return aggregate, report, details
 
@@ -204,39 +379,45 @@ def aggregate_updates(
     mode: str,
     he_scale: float = 1e6,
 ) -> tuple[np.ndarray, AggregationReport]:
+    updates, weight_values = _validate_updates(updates, weights)
+    aliases = {
+        "secureagg": "secureagg_sim",
+        "heagg": "quantized_transport_proxy",
+    }
+    mode = aliases.get(mode, mode)
+    if mode == "secureagg_sim":
+        aggregate, report, _ = secureagg_simulate(updates, list(weight_values), mask_seed=0)
+        return aggregate, report
+    if mode == "paillier":
+        aggregate, report, _ = paillier_aggregate_updates(updates, list(weight_values), key_bits=2048, he_scale=he_scale)
+        return aggregate, report
+
     start_encrypt = time.perf_counter()
     plain_bytes = int(sum(update.nbytes for update in updates))
 
     if mode == "plain":
         protected = updates
         protected_bytes = plain_bytes
-    elif mode == "secureagg":
-        # Masking simulation: individual masks cancel in aggregate.
-        protected = updates
-        protected_bytes = plain_bytes * 2
-    elif mode == "heagg":
-        protected = [np.round(update * he_scale).astype(np.int64) for update in updates]
-        # Conservative expansion for packed approximate HE ciphertexts.
+    elif mode == "quantized_transport_proxy":
+        protected = _quantize_updates(updates, he_scale)
+        # Conservative byte expansion for packed protected transport accounting.
         protected_bytes = plain_bytes * 16
-    elif mode == "paillier":
-        aggregate, report, _ = paillier_aggregate_updates(updates, weights, key_bits=1024, he_scale=he_scale)
-        return aggregate, report
     else:
         raise ValueError(f"unknown aggregation mode: {mode}")
 
     encryption_time = time.perf_counter() - start_encrypt
     start_agg = time.perf_counter()
-    weight_arr = np.asarray(weights, dtype=float)
+    weight_arr = np.asarray(weight_values, dtype=float)
     weight_arr = weight_arr / max(weight_arr.sum(), 1e-12)
 
-    if mode == "heagg":
+    if mode == "quantized_transport_proxy":
         agg_int = np.zeros_like(protected[0], dtype=np.float64)
-        for w, update in zip(weight_arr, protected):
+        for w, update in zip(weight_arr, protected, strict=True):
             agg_int += w * update.astype(np.float64)
         aggregate = agg_int / he_scale
     else:
         aggregate = np.zeros_like(updates[0], dtype=float)
-        for w, update in zip(weight_arr, protected):
+        for w, update in zip(weight_arr, protected, strict=True):
             aggregate += w * update
 
     aggregation_time = time.perf_counter() - start_agg
@@ -247,5 +428,11 @@ def aggregate_updates(
         plain_bytes=plain_bytes,
         protected_bytes=int(protected_bytes),
         ciphertext_expansion=float(protected_bytes / max(plain_bytes, 1)),
+        protocol_scope=(
+            "plain weighted averaging"
+            if mode == "plain"
+            else "quantized transport accounting proxy; not homomorphic encryption"
+        ),
+        active_clients=len(updates),
     )
     return aggregate, report

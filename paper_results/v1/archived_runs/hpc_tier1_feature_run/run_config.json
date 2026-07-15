@@ -1,0 +1,38 @@
+{
+  "assets": 15000,
+  "clients": 20,
+  "data_dir": "data",
+  "difficulty": 3.0,
+  "dim": 32,
+  "federated_methods": [
+    "centralized",
+    "local",
+    "fedavg",
+    "fedprox",
+    "secureagg",
+    "heagg"
+  ],
+  "ledger_modes": [
+    "none",
+    "hashchain"
+  ],
+  "local_epochs": 5,
+  "modalities": [
+    "video",
+    "audio",
+    "multimodal"
+  ],
+  "noniid_alpha": 0.3,
+  "output_tag": "hpc_tier1_feature_run",
+  "queries": 20000,
+  "rounds": 30,
+  "run_dir": "outputs",
+  "seeds": [
+    31,
+    37,
+    41,
+    43,
+    47
+  ],
+  "tier": "tier1"
+}

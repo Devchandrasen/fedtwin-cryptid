@@ -1,0 +1,4 @@
+ledger_type,receipts,verification_success,mean_receipt_latency_sec,ledger_bytes,seed,method
+hashchain,250,True,1.0231081396341325e-05,246602,31,fedavg_secureagg
+hashchain,250,True,9.574484080076217e-06,246614,37,fedavg_secureagg
+hashchain,250,True,9.262893348932266e-06,246626,41,fedavg_secureagg

@@ -1,0 +1,49 @@
+{
+  "mode": "full",
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tables": [
+    "query_ranking_metrics.csv",
+    "open_set_prevalence_metrics.csv",
+    "prevalence_workload_metrics.csv",
+    "calibration_reliability_curves.csv",
+    "threshold_stability_by_client.csv",
+    "paired_permutation_tests.csv",
+    "personalization_strengthening.csv",
+    "per_client_metrics.csv",
+    "av_sync_tier_metrics.csv",
+    "av_sync_operating_points.csv",
+    "protected_aggregation_status.csv",
+    "secureagg_dropout_or_proxy.csv",
+    "he_proxy_or_real_he.csv",
+    "paillier_update_aggregation.csv",
+    "privacy_attack_results.csv",
+    "robustness_stress.csv",
+    "receipt_scaling.csv",
+    "receipt_test_vector.csv"
+  ],
+  "figures": [
+    "av_sync_tier_pr_auc.pdf",
+    "av_conflict_breakdown.pdf",
+    "query_recall_at_k.pdf",
+    "open_set_precision_curves.pdf",
+    "personalization_vs_local.pdf",
+    "vcsl_isc_client_variability.pdf",
+    "privacy_attack_summary.pdf",
+    "review_workload_vs_prevalence.pdf",
+    "calibration_reliability_curves.pdf",
+    "threshold_stability_by_client.pdf",
+    "robust_aggregation_stress.pdf",
+    "paillier_update_overhead.pdf"
+  ],
+  "checksums": 89,
+  "natural_synchronized_av_corpus_added": false,
+  "synthetic_av_stress_tier_added": true,
+  "real_paillier_compact_update_aggregation_added": true,
+  "paillier_key_bits": 2048,
+  "vcsl_isc_new_pair_level_methods_run": false,
+  "vcsl_isc_reason": "released ISC descriptor archive is not staged locally and pulled HPC artifact lacks pair-level descriptor CSVs"
+}

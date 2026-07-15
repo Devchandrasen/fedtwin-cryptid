@@ -37,21 +37,21 @@ def main() -> None:
         ["method", "modality", "privacy_mode"],
         ["roc_auc", "pr_auc", "accuracy", "precision", "recall", "fpr_at_95_recall"],
     )
-    det_summary.to_csv(out_dir / "detection_summary.csv", index=False)
+    det_summary.to_csv(out_dir / "detection_summary.csv", index=False, lineterminator="\n")
     if not privacy.empty:
         priv_summary = mean_std(
             privacy,
             ["method", "privacy_mode"],
             ["mean_encryption_time_sec", "mean_aggregation_time_sec", "ciphertext_expansion"],
         )
-        priv_summary.to_csv(out_dir / "privacy_summary.csv", index=False)
+        priv_summary.to_csv(out_dir / "privacy_summary.csv", index=False, lineterminator="\n")
     if not ledger.empty:
         ledger_summary = mean_std(
             ledger,
             ["method", "ledger_type"],
             ["receipts", "verification_success", "mean_receipt_latency_sec", "ledger_bytes"],
         )
-        ledger_summary.to_csv(out_dir / "ledger_summary.csv", index=False)
+        ledger_summary.to_csv(out_dir / "ledger_summary.csv", index=False, lineterminator="\n")
 
     top = det_summary.sort_values("pr_auc_mean", ascending=False).head(12)
     plt.figure(figsize=(10, 5))

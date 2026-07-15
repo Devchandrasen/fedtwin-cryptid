@@ -1,0 +1,9 @@
+{
+  "clients": 8,
+  "noniid_alpha": 0.3,
+  "seeds": [
+    31,
+    37,
+    41
+  ]
+}

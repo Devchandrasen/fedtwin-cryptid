@@ -1,0 +1,441 @@
+{
+  "config": {
+    "assets": 1000,
+    "attacker_fractions": [
+      0.0,
+      0.1,
+      0.2
+    ],
+    "attacks": [
+      "label_flip",
+      "sign_flip"
+    ],
+    "clients": 11,
+    "difficulty": 1.0,
+    "dim": 64,
+    "dropout_rates": [
+      0.0,
+      0.1,
+      0.2
+    ],
+    "feature_map": "poly2",
+    "feature_policy": "invariant",
+    "federated_methods": [
+      "centralized",
+      "local",
+      "fedavg",
+      "fedprox",
+      "secureagg_sim",
+      "quantized_transport_proxy"
+    ],
+    "fma_max_decode_failure_fraction": 0.05,
+    "fma_max_seconds": 25.0,
+    "fma_max_tracks": 1200,
+    "fma_sample_rate": 8000,
+    "isc_max_frames": 160,
+    "ledger_modes": [
+      "hashchain"
+    ],
+    "local_epochs": 5,
+    "max_test_pairs": 900,
+    "max_train_pairs": 2500,
+    "modalities": [
+      "video",
+      "audio",
+      "multimodal"
+    ],
+    "negative_ratio": 1.0,
+    "noniid_alpha": 0.3,
+    "output_tag": "vcsl_public_paper",
+    "paillier_key_bits": 2048,
+    "queries": 1000,
+    "rounds": 20,
+    "seeds": [
+      31,
+      37,
+      41
+    ],
+    "tier": "vcsl_public"
+  },
+  "config_sha256": "8922d13c085b6082f12c1ec2e6ce11606e2d29d7043ef1929d2c66013c2be7c0",
+  "counts": {
+    "clients": 11,
+    "seeds": 3,
+    "test_assets": 2063,
+    "test_negative_rows_per_seed": 900,
+    "test_positive_rows_per_seed": 900,
+    "test_queries_per_seed": 584,
+    "test_rows_per_seed": 1800,
+    "train_assets": 3128,
+    "train_negative_rows_per_seed": 2500,
+    "train_positive_rows_per_seed": 2500,
+    "train_queries_per_seed": 1270,
+    "train_rows_per_seed": 5000
+  },
+  "data_source": {
+    "files": [
+      {
+        "bytes": 642535,
+        "path": "frames_all.csv",
+        "sha256": "e9971d4bd08a31b03bc73fdf44b2f9d15e59ed7043b14af5ca410f2606e180b6"
+      },
+      {
+        "bytes": 3605602,
+        "path": "pair_file_test.csv",
+        "sha256": "b52c1b5fb394d117d7f02206493331e78ba26fdb7ee344fc4302aba0cf231880"
+      },
+      {
+        "bytes": 6404200,
+        "path": "pair_file_train.csv",
+        "sha256": "e7fb88859e29dc872c10fc2b9e1a1a5c5a6516a6346ec685aec42ecef14a5c9c"
+      },
+      {
+        "bytes": 2758690,
+        "path": "pair_file_val.csv",
+        "sha256": "f7065467eb71340576c1f83ce6ada8810b02311d8d932c269069c414fa746f91"
+      },
+      {
+        "bytes": 708944,
+        "path": "videos_url_uuid.csv",
+        "sha256": "f424111d2b5d20979f92472af1f5544a8fcfb168682236169e205d284c11a869"
+      },
+      {
+        "bytes": 188187,
+        "path": "video_categories.json",
+        "sha256": "112043737dfde578d3950bd9c29ab272d0e473cfc73f7eb1c70433f12c10bb42"
+      }
+    ],
+    "license_note": "Metadata is not redistributed. Users must obtain VCSL resources from the upstream project and comply with its dataset and source-video terms.",
+    "root": "${DATA_ROOT}/public_data/vcsl_metadata",
+    "tier": "vcsl_public",
+    "warnings": []
+  },
+  "feature_schema": [
+    "video_score",
+    "audio_score",
+    "temporal_score",
+    "metadata_score",
+    "video_reliability",
+    "audio_reliability",
+    "modality_gap",
+    "fusion_prior",
+    "frame_ratio",
+    "same_category",
+    "video_rel_score",
+    "audio_rel_score",
+    "temporal_rel_score",
+    "max_modality_score",
+    "mean_modality_score",
+    "product_modality_score",
+    "category_audio_score",
+    "frame_video_score",
+    "category_TV series",
+    "category_advertisement",
+    "category_animation",
+    "category_daily life",
+    "category_games",
+    "category_kichiku",
+    "category_movies",
+    "category_music videos",
+    "category_news",
+    "category_sports",
+    "category_unknown",
+    "category_variety show",
+    "client_norm",
+    "video_score__sq",
+    "audio_score__sq",
+    "temporal_score__sq",
+    "video_reliability__sq",
+    "audio_reliability__sq",
+    "modality_gap__sq",
+    "fusion_prior__sq",
+    "frame_ratio__sq",
+    "video_rel_score__sq",
+    "audio_rel_score__sq",
+    "temporal_rel_score__sq",
+    "max_modality_score__sq",
+    "mean_modality_score__sq",
+    "product_modality_score__sq",
+    "frame_video_score__sq",
+    "video_score__x__audio_score",
+    "video_score__x__temporal_score",
+    "video_score__x__video_reliability",
+    "video_score__x__audio_reliability",
+    "video_score__x__modality_gap",
+    "video_score__x__fusion_prior",
+    "video_score__x__frame_ratio",
+    "video_score__x__video_rel_score",
+    "video_score__x__audio_rel_score",
+    "video_score__x__temporal_rel_score",
+    "video_score__x__max_modality_score",
+    "video_score__x__mean_modality_score",
+    "video_score__x__product_modality_score",
+    "video_score__x__frame_video_score",
+    "audio_score__x__temporal_score",
+    "audio_score__x__video_reliability",
+    "audio_score__x__audio_reliability",
+    "audio_score__x__modality_gap",
+    "audio_score__x__fusion_prior",
+    "audio_score__x__frame_ratio",
+    "audio_score__x__video_rel_score",
+    "audio_score__x__audio_rel_score",
+    "audio_score__x__temporal_rel_score",
+    "audio_score__x__max_modality_score",
+    "audio_score__x__mean_modality_score",
+    "audio_score__x__product_modality_score",
+    "audio_score__x__frame_video_score",
+    "temporal_score__x__video_reliability",
+    "temporal_score__x__audio_reliability",
+    "temporal_score__x__modality_gap",
+    "temporal_score__x__fusion_prior",
+    "temporal_score__x__frame_ratio",
+    "temporal_score__x__video_rel_score",
+    "temporal_score__x__audio_rel_score",
+    "temporal_score__x__temporal_rel_score",
+    "temporal_score__x__max_modality_score",
+    "temporal_score__x__mean_modality_score",
+    "temporal_score__x__product_modality_score",
+    "temporal_score__x__frame_video_score",
+    "video_reliability__x__audio_reliability",
+    "video_reliability__x__modality_gap",
+    "video_reliability__x__fusion_prior",
+    "video_reliability__x__frame_ratio",
+    "video_reliability__x__video_rel_score",
+    "video_reliability__x__audio_rel_score",
+    "video_reliability__x__temporal_rel_score",
+    "video_reliability__x__max_modality_score",
+    "video_reliability__x__mean_modality_score",
+    "video_reliability__x__product_modality_score",
+    "video_reliability__x__frame_video_score",
+    "audio_reliability__x__modality_gap",
+    "audio_reliability__x__fusion_prior",
+    "audio_reliability__x__frame_ratio",
+    "audio_reliability__x__video_rel_score",
+    "audio_reliability__x__audio_rel_score",
+    "audio_reliability__x__temporal_rel_score",
+    "audio_reliability__x__max_modality_score",
+    "audio_reliability__x__mean_modality_score",
+    "audio_reliability__x__product_modality_score",
+    "audio_reliability__x__frame_video_score",
+    "modality_gap__x__fusion_prior",
+    "modality_gap__x__frame_ratio",
+    "modality_gap__x__video_rel_score",
+    "modality_gap__x__audio_rel_score",
+    "modality_gap__x__temporal_rel_score",
+    "modality_gap__x__max_modality_score",
+    "modality_gap__x__mean_modality_score",
+    "modality_gap__x__product_modality_score",
+    "modality_gap__x__frame_video_score",
+    "fusion_prior__x__frame_ratio",
+    "fusion_prior__x__video_rel_score",
+    "fusion_prior__x__audio_rel_score",
+    "fusion_prior__x__temporal_rel_score",
+    "fusion_prior__x__max_modality_score",
+    "fusion_prior__x__mean_modality_score",
+    "fusion_prior__x__product_modality_score",
+    "fusion_prior__x__frame_video_score",
+    "frame_ratio__x__video_rel_score",
+    "frame_ratio__x__audio_rel_score",
+    "frame_ratio__x__temporal_rel_score",
+    "frame_ratio__x__max_modality_score",
+    "frame_ratio__x__mean_modality_score",
+    "frame_ratio__x__product_modality_score",
+    "frame_ratio__x__frame_video_score",
+    "video_rel_score__x__audio_rel_score",
+    "video_rel_score__x__temporal_rel_score",
+    "video_rel_score__x__max_modality_score",
+    "video_rel_score__x__mean_modality_score",
+    "video_rel_score__x__product_modality_score",
+    "video_rel_score__x__frame_video_score",
+    "audio_rel_score__x__temporal_rel_score",
+    "audio_rel_score__x__max_modality_score",
+    "audio_rel_score__x__mean_modality_score",
+    "audio_rel_score__x__product_modality_score",
+    "audio_rel_score__x__frame_video_score",
+    "temporal_rel_score__x__max_modality_score",
+    "temporal_rel_score__x__mean_modality_score",
+    "temporal_rel_score__x__product_modality_score",
+    "temporal_rel_score__x__frame_video_score",
+    "max_modality_score__x__mean_modality_score",
+    "max_modality_score__x__product_modality_score",
+    "max_modality_score__x__frame_video_score",
+    "mean_modality_score__x__product_modality_score",
+    "mean_modality_score__x__frame_video_score",
+    "product_modality_score__x__frame_video_score"
+  ],
+  "git": {
+    "branch": "agent/tmm-ready-revision",
+    "commit": "210d82b73e2e53d98d95c138be75f3529b3e28a9",
+    "dirty": false
+  },
+  "hardware": {
+    "logical_cpu_count": 20,
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel"
+  },
+  "inputs": [
+    {
+      "bytes": 642535,
+      "path": "frames_all.csv",
+      "sha256": "e9971d4bd08a31b03bc73fdf44b2f9d15e59ed7043b14af5ca410f2606e180b6"
+    },
+    {
+      "bytes": 3605602,
+      "path": "pair_file_test.csv",
+      "sha256": "b52c1b5fb394d117d7f02206493331e78ba26fdb7ee344fc4302aba0cf231880"
+    },
+    {
+      "bytes": 6404200,
+      "path": "pair_file_train.csv",
+      "sha256": "e7fb88859e29dc872c10fc2b9e1a1a5c5a6516a6346ec685aec42ecef14a5c9c"
+    },
+    {
+      "bytes": 2758690,
+      "path": "pair_file_val.csv",
+      "sha256": "f7065467eb71340576c1f83ce6ada8810b02311d8d932c269069c414fa746f91"
+    },
+    {
+      "bytes": 708944,
+      "path": "videos_url_uuid.csv",
+      "sha256": "f424111d2b5d20979f92472af1f5544a8fcfb168682236169e205d284c11a869"
+    },
+    {
+      "bytes": 188187,
+      "path": "video_categories.json",
+      "sha256": "112043737dfde578d3950bd9c29ab272d0e473cfc73f7eb1c70433f12c10bb42"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 84,
+      "path": "client_split_manifest.json",
+      "sha256": "d94fd46d35ca0a21535541a143f0e28395e57320a1bfb195c592779d13914945"
+    },
+    {
+      "bytes": 773,
+      "path": "dataset_manifest.json",
+      "sha256": "d3ba013d0eb43f1a7d931aab0c316613f2db2bc64716fc34b680a196eaa76db2"
+    },
+    {
+      "bytes": 20760,
+      "path": "metrics_client.csv",
+      "sha256": "1960f2e531e69cd16a36c6b4dc3f5922e11170de516b43191f70080ce6ad8b8b"
+    },
+    {
+      "bytes": 7221,
+      "path": "metrics_detection.csv",
+      "sha256": "d237741276bf7aeeca5d3876d734573c0be83fc9cb03705472e87d33c77af7f3"
+    },
+    {
+      "bytes": 45199,
+      "path": "metrics_federated.csv",
+      "sha256": "2b0bb81af4fa608cc6b128b6d2d8b07fda22448ef6c90dfb41cab27006cdfaf8"
+    },
+    {
+      "bytes": 491,
+      "path": "metrics_ledger.csv",
+      "sha256": "12345fda5845c702a82bd722435a0fd348dfac762316661060b6617106c9cce3"
+    },
+    {
+      "bytes": 71,
+      "path": "metrics_localization.csv",
+      "sha256": "f34b1edf1962f678823535dd1222f132f4c4241dbf38cda7098066e050919ae5"
+    },
+    {
+      "bytes": 1211,
+      "path": "metrics_privacy.csv",
+      "sha256": "a0c1223d87d7c7188f6ee07e9c6fd273429878ce5724fe0f54ba49d3c8759ef6"
+    },
+    {
+      "bytes": 13958,
+      "path": "metrics_scenario.csv",
+      "sha256": "4695d0300d86b28edb121a818810d01805763854b56e035695af073262237d28"
+    },
+    {
+      "bytes": 1227,
+      "path": "run_config.json",
+      "sha256": "cd1085aac9f6b04a7c38877b2626fbf873401f0767a663adfdf9632f4c5f5e46"
+    },
+    {
+      "bytes": 2136,
+      "path": "runtime_profile.csv",
+      "sha256": "602b85ef5bccf931e5524defeed68778cb4cdbee425f716f03a769eacef71c6a"
+    },
+    {
+      "bytes": 57,
+      "path": "seed_31/client_split_manifest.json",
+      "sha256": "38afc9a06aab575068c3bde8cf037a5a753326e99b521aedcf9f4156e41649ff"
+    },
+    {
+      "bytes": 772,
+      "path": "seed_31/dataset_manifest.json",
+      "sha256": "cfeadc452b02e35966e7426670d29c38e44d840d069daa62492fc285f3d2865b"
+    },
+    {
+      "bytes": 6033,
+      "path": "seed_31/transformation_manifest.json",
+      "sha256": "b5b86c874d8752b12bbe3e72e59e6104f4a2d07d765a35ae48a7cc9639faf5b4"
+    },
+    {
+      "bytes": 57,
+      "path": "seed_37/client_split_manifest.json",
+      "sha256": "0c0c67512c38d094ec810a92398dbcbd66bd9a7f6fbf286f9bc5625cde427b5a"
+    },
+    {
+      "bytes": 773,
+      "path": "seed_37/dataset_manifest.json",
+      "sha256": "38af0448ffff8a253667da01461e17dded6a440d63ace78253d4cada9dd5204c"
+    },
+    {
+      "bytes": 6033,
+      "path": "seed_37/transformation_manifest.json",
+      "sha256": "b5b86c874d8752b12bbe3e72e59e6104f4a2d07d765a35ae48a7cc9639faf5b4"
+    },
+    {
+      "bytes": 57,
+      "path": "seed_41/client_split_manifest.json",
+      "sha256": "5fc8e39f1b308a2845f0e07c8611c9da9c9bce45aabce6896b1077862daf5aae"
+    },
+    {
+      "bytes": 773,
+      "path": "seed_41/dataset_manifest.json",
+      "sha256": "d3ba013d0eb43f1a7d931aab0c316613f2db2bc64716fc34b680a196eaa76db2"
+    },
+    {
+      "bytes": 6033,
+      "path": "seed_41/transformation_manifest.json",
+      "sha256": "b5b86c874d8752b12bbe3e72e59e6104f4a2d07d765a35ae48a7cc9639faf5b4"
+    },
+    {
+      "bytes": 1160,
+      "path": "summary.json",
+      "sha256": "a79508e4e29ea0c981ef7f99e0dbadac93f86d7439b0a63bd683fbe6e2a4566d"
+    },
+    {
+      "bytes": 5910,
+      "path": "transformation_manifest.json",
+      "sha256": "d4fea0d7c4b3bd2bf66cbe96a310ae9b8f04018919585ccd92e6a896b9056076"
+    }
+  ],
+  "runtime": {
+    "dependencies": {
+      "PyYAML": "6.0.3",
+      "cryptography": "49.0.0",
+      "matplotlib": "3.11.0",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scikit-learn": "1.9.0",
+      "seaborn": "0.13.2",
+      "tqdm": "4.68.4"
+    },
+    "executable": "python.exe",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "python_implementation": "CPython"
+  },
+  "schema_version": "1.0",
+  "timing_sec": {
+    "total_runtime": 6.329188399999111
+  }
+}

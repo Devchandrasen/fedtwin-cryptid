@@ -1,0 +1,51 @@
+{
+  "asset_overlap": 0,
+  "clients": 11,
+  "feature_note": "Deterministic public-label topology evidence; direct category and client fields are ablation-only.",
+  "generator": "vcsl_public_label_topology",
+  "metadata_dir": "${DATA_ROOT}/public_data/vcsl_metadata",
+  "negative_ratio": 1.0,
+  "per_seed": [
+    {
+      "seed": 31,
+      "test_assets": 989,
+      "test_negative_rows": 7500,
+      "test_positive_rows": 7500,
+      "test_queries": 787,
+      "test_rows": 15000,
+      "train_assets": 4202,
+      "train_negative_rows": 15000,
+      "train_positive_rows": 15000,
+      "train_queries": 2800,
+      "train_rows": 30000
+    },
+    {
+      "seed": 37,
+      "test_assets": 2171,
+      "test_negative_rows": 7500,
+      "test_positive_rows": 7500,
+      "test_queries": 1443,
+      "test_rows": 15000,
+      "train_assets": 3020,
+      "train_negative_rows": 15000,
+      "train_positive_rows": 15000,
+      "train_queries": 2177,
+      "train_rows": 30000
+    },
+    {
+      "seed": 41,
+      "test_assets": 2063,
+      "test_negative_rows": 7500,
+      "test_positive_rows": 7500,
+      "test_queries": 1388,
+      "test_rows": 15000,
+      "train_assets": 3128,
+      "train_negative_rows": 15000,
+      "train_positive_rows": 15000,
+      "train_queries": 2240,
+      "train_rows": 30000
+    }
+  ],
+  "source": "VCSL public GitHub metadata and labels",
+  "split_policy": "positive-connected-component asset-disjoint"
+}

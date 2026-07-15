@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -9,11 +10,18 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from fedtwin.ledger import canonical_hash, keyed_commitment, sha256_text
 
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "phase_5_manuscript" / "tables" / "receipt_test_vector.json"
+def main(argv: list[str] | None = None) -> None:
+    repository_root = Path(__file__).resolve().parent
+    parser = argparse.ArgumentParser(description="Generate the deterministic signed-receipt test vector")
+    parser.add_argument(
+        "--output",
+        default=str(repository_root / "outputs" / "receipt_test_vector.json"),
+        help="explicit output JSON path (defaults inside the repository)",
+    )
+    args = parser.parse_args(argv)
+    output = Path(args.output).resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
 
-
-def main() -> None:
     secret = "fedtwin-test-secret"
     private_key = Ed25519PrivateKey.from_private_bytes(bytes.fromhex(sha256_text("fedtwin-test-key")))
     public_key = private_key.public_key().public_bytes(
@@ -51,7 +59,7 @@ def main() -> None:
     signed_payload["signature"] = signature
     receipt_hash = canonical_hash(signed_payload)
     chain_hash = sha256_text(previous_chain_hash + receipt_hash)
-    OUT.write_text(
+    output.write_text(
         json.dumps(
             {
                 "canonicalization": "json.dumps(sort_keys=True,separators=(',',':')) encoded as UTF-8",
@@ -65,10 +73,11 @@ def main() -> None:
             },
             indent=2,
             sort_keys=True,
+            allow_nan=False,
         ),
         encoding="utf-8",
     )
-    print(OUT)
+    print(output)
 
 
 if __name__ == "__main__":

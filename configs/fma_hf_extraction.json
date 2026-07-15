@@ -1,0 +1,26 @@
+{
+  "dataset": {
+    "repository": "benjamin-paine/free-music-archive-small",
+    "revision": "d291bdb4c842bd5f007c60f9d3d6ba73199cd1c0",
+    "source_url": "https://huggingface.co/datasets/benjamin-paine/free-music-archive-small",
+    "upstream_relation": "FMA-small-compatible redistribution pack; six unreadable and 78 license-unclear files are omitted by the pack maintainer"
+  },
+  "schema_version": "1.0",
+  "shards": [
+    {
+      "bytes": 457964202,
+      "path": "train-00000-of-00015.parquet",
+      "sha256": "a5615981a1ab799fc719a11e08220919056d0b2bcfa11f6fa852eb71b2439863"
+    },
+    {
+      "bytes": 472299025,
+      "path": "train-00001-of-00015.parquet",
+      "sha256": "775506d332a3704420944022fc248d84c44ff2189301b3bb6233e97027841361"
+    },
+    {
+      "bytes": 487267857,
+      "path": "train-00002-of-00015.parquet",
+      "sha256": "bba3f656ecb50babf1cb940975955d4d02a0ae1f8f1dec1510b03001a1a5ff80"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.7073333333333334,
+    "fn": 851,
+    "fp": 27,
+    "fpr_at_95_recall": 0.878,
+    "method": "local_multimodal",
+    "modality": "multimodal",
+    "n": 3000,
+    "pr_auc": 0.7853145156403102,
+    "precision": 0.9600591715976331,
+    "privacy_mode": "none",
+    "recall": 0.43266666666666664,
+    "roc_auc": 0.710708888888889,
+    "seed": 31,
+    "tn": 1473,
+    "tp": 649
+  },
+  "output_tag": "hpc_vcsl_isc_feature_run_fedavgft",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.7853145156403102,
+      "runtime_sec": 10.620529131032526,
+      "seed": 31,
+      "test_rows": 3000,
+      "train_rows": 6000
+    },
+    {
+      "best_pr_auc": 0.7752446766327927,
+      "runtime_sec": 8.838899565394968,
+      "seed": 37,
+      "test_rows": 3000,
+      "train_rows": 6000
+    },
+    {
+      "best_pr_auc": 0.7673503387416879,
+      "runtime_sec": 8.831017945427448,
+      "seed": 41,
+      "test_rows": 3000,
+      "train_rows": 6000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "vcsl_isc",
+  "total_runtime_sec": 28.339875182602555
+}

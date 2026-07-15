@@ -1,0 +1,13 @@
+{
+  "expanded_feature_count": 148,
+  "feature_map": "poly2",
+  "feature_policy": "invariant",
+  "source": "fma_small_audio_transform_features",
+  "transformations": [
+    "crop",
+    "noise",
+    "lowpass",
+    "dropout",
+    "speed"
+  ]
+}
