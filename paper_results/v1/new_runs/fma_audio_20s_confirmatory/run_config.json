@@ -38,7 +38,7 @@
   "output_tag": "fma_audio_20s_paper",
   "queries": 1000,
   "rounds": 30,
-  "run_dir": "${REPOSITORY_ROOT}/outputs/confirmatory_fma_20s_21abf8b",
+  "run_dir": "${REPOSITORY_ROOT}/outputs/confirmatory_fma_20s_f74e045",
   "seeds": [
     31,
     37,

@@ -1,451 +1,451 @@
 mode,encryption_time_sec,aggregation_time_sec,plain_bytes,protected_bytes,ciphertext_expansion,protocol_scope,active_clients,dropped_clients,max_abs_error_vs_plain,round,method,privacy_mode,mean_client_loss,dropout_rate_requested,seed
-plain,4.2000028770416975e-06,2.5300003471784294e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavg,plain,0.3349334958153815,0.0,31
-plain,3.1000017770566046e-06,5.299999611452222e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavg,plain,0.274061457036752,0.0,31
-plain,2.0000006770715117e-06,2.3699998564552516e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavg,plain,0.24579328940787437,0.0,31
-plain,2.4000037228688598e-06,2.4599998141638935e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavg,plain,0.22838048688340057,0.0,31
-plain,3.5999983083456755e-06,3.4500000765547156e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavg,plain,0.21602946229851785,0.0,31
-plain,3.0999945010989904e-06,3.309999738121405e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavg,plain,0.20652437981744526,0.0,31
-plain,3.0999945010989904e-06,3.310000465717167e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavg,plain,0.19882704935468046,0.0,31
-plain,9.899995347950608e-06,2.5300003471784294e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavg,plain,0.19238018713284266,0.0,31
-plain,2.5999979698099196e-06,9.839999984251335e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavg,plain,0.18685334435420814,0.0,31
-plain,2.1999949240125716e-06,2.2599997464567423e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavg,plain,0.18203494397343328,0.0,31
-plain,2.5999979698099196e-06,2.7499998395796865e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavg,plain,0.17778100410938513,0.0,31
-plain,3.5999983083456755e-06,3.409999771974981e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavg,plain,0.1739886088389317,0.0,31
-plain,2.4000037228688598e-06,4.1200000850949436e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavg,plain,0.170581206988838,0.0,31
-plain,1.8999999156221747e-06,2.0300001779105514e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavg,plain,0.1674999871997854,0.0,31
-plain,2.0000006770715117e-06,2.59000007645227e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavg,plain,0.16469856515221748,0.0,31
-plain,2.0000006770715117e-06,2.0699997548945248e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavg,plain,0.1621395688211167,0.0,31
-plain,1.8999999156221747e-06,2.0699997548945248e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavg,plain,0.15979235939130942,0.0,31
-plain,1.8999999156221747e-06,1.9500002963468432e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavg,plain,0.15763145805659676,0.0,31
-plain,2.4999972083605826e-06,2.4000000848900527e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavg,plain,0.15563542682666356,0.0,31
-plain,1.6999983927235007e-06,2.239999594166875e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavg,plain,0.1537860505653673,0.0,31
-plain,1.7999991541728377e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavg,plain,0.15206772468170085,0.0,31
-plain,1.8999999156221747e-06,4.389999958220869e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavg,plain,0.15046698696295513,0.0,31
-plain,2.0000006770715117e-06,1.960000372491777e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavg,plain,0.14897215291393276,0.0,31
-plain,2.0999941625632346e-06,2.099999983329326e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavg,plain,0.1475730270909186,0.0,31
-plain,2.0000006770715117e-06,1.9500002963468432e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavg,plain,0.1462606713711587,0.0,31
-plain,1.700005668681115e-06,2.0900006347801536e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavg,plain,0.14502721666485685,0.0,31
-plain,1.8999999156221747e-06,2.0700004824902862e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavg,plain,0.1438657083210918,0.0,31
-plain,2.2000021999701858e-06,3.0800001695752144e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavg,plain,0.14276997804936814,0.0,31
-plain,2.0999941625632346e-06,2.6400004571769387e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavg,plain,0.14173453697734847,0.0,31
-plain,2.1000014385208488e-06,2.3399996280204505e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavg,plain,0.14075448574772315,0.0,31
-plain,2.3000029614195228e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedprox,plain,0.3359337877071613,0.0,31
-plain,2.6999987312592566e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedprox,plain,0.274689112222664,0.0,31
-plain,2.3000029614195228e-06,2.0500003302004188e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedprox,plain,0.24625920328105305,0.0,31
-plain,2.3000029614195228e-06,4.0899998566601425e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedprox,plain,0.22876004452372067,0.0,31
-plain,2.0000006770715117e-06,1.920000067912042e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedprox,plain,0.21635638301190147,0.0,31
-plain,2.6999987312592566e-06,2.1100000594742596e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedprox,plain,0.2068161135599623,0.0,31
-plain,2.1000014385208488e-06,2.0499996026046574e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedprox,plain,0.19909355143661334,0.0,31
-plain,2.3000029614195228e-06,2.179999864893034e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedprox,plain,0.19262755023635875,0.0,31
-plain,2.1000014385208488e-06,2.0300001779105514e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedprox,plain,0.18708550583664527,0.0,31
-plain,1.6999983927235007e-06,1.8999999156221747e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedprox,plain,0.18225456624574402,0.0,31
-plain,1.8999999156221747e-06,2.0899999071843922e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedprox,plain,0.17798996106321346,0.0,31
-plain,1.9999934011138976e-06,2.0899999071843922e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedprox,plain,0.17418826908538673,0.0,31
-plain,3.9000005926936865e-06,2.4900000425986946e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedprox,plain,0.17077260559277577,0.0,31
-plain,2.2999956854619086e-06,2.130000211764127e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedprox,plain,0.16768393315576993,0.0,31
-plain,2.7999994927085936e-06,3.170000127283856e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedprox,plain,0.1648757103666318,0.0,31
-plain,2.2000021999701858e-06,2.529999619582668e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedprox,plain,0.16231045331499022,0.0,31
-plain,2.6999987312592566e-06,2.7599999157246202e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedprox,plain,0.15995744145091498,0.0,31
-plain,2.2999956854619086e-06,2.8200003725942224e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedprox,plain,0.15779113466920178,0.0,31
-plain,2.6000052457675338e-06,2.5000001187436283e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedprox,plain,0.1557900477478375,0.0,31
-plain,2.2000021999701858e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedprox,plain,0.1539359281581945,0.0,31
-plain,2.5999979698099196e-06,4.5900000259280205e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedprox,plain,0.1522131409187505,0.0,31
-plain,2.4999972083605826e-06,2.4500004656147212e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedprox,plain,0.15060819850620943,0.0,31
-plain,3.2999960239976645e-06,2.0500003302004188e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedprox,plain,0.1491093948808391,0.0,31
-plain,1.9999934011138976e-06,1.9800005247816443e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedprox,plain,0.14770651591382955,0.0,31
-plain,2.2000021999701858e-06,2.0399995264597237e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedprox,plain,0.1463906070245627,0.0,31
-plain,2.6999987312592566e-06,2.4300003133248538e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedprox,plain,0.1451537844462174,0.0,31
-plain,2.3000029614195228e-06,2.359999780310318e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedprox,plain,0.14398908031168606,0.0,31
-plain,3.0999945010989904e-06,2.220000169472769e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedprox,plain,0.14289031434147606,0.0,31
-plain,2.6999987312592566e-06,2.9800001357216388e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedprox,plain,0.14185198672708285,0.0,31
-plain,2.4000037228688598e-06,2.9699993319809437e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedprox,plain,0.14086918809446924,0.0,31
-secureagg_sim,0.00048230000538751483,1.4099998224992305e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.762479051592436e-15,1,fedavg,secureagg_sim,0.3349334958153815,0.0,31
-secureagg_sim,0.00045449999743141234,1.1500000255182385e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0192181260370035e-15,2,fedavg,secureagg_sim,0.27406145703675194,0.0,31
-secureagg_sim,0.00042460000258870423,9.900002623908222e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4702462297909733e-15,3,fedavg,secureagg_sim,0.2457932894078742,0.0,31
-secureagg_sim,0.00042720000055851415,1.479999627918005e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.9671764217576992e-15,4,fedavg,secureagg_sim,0.22838048688340026,0.0,31
-secureagg_sim,0.0004287999981897883,1.2899996363557875e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6930901125533637e-15,5,fedavg,secureagg_sim,0.21602946229851744,0.0,31
-secureagg_sim,0.0005805999971926212,1.219999830937013e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6393136847980827e-15,6,fedavg,secureagg_sim,0.20652437981744481,0.0,31
-secureagg_sim,0.00044100000377511606,9.899995347950608e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4424906541753444e-15,7,fedavg,secureagg_sim,0.19882704935467996,0.0,31
-secureagg_sim,0.0004121000019949861,1.0099996870849282e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2568071583451967e-15,8,fedavg,secureagg_sim,0.19238018713284202,0.0,31
-secureagg_sim,0.0004189000028418377,1.1099997209385037e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6284716630732277e-15,9,fedavg,secureagg_sim,0.18685334435420747,0.0,31
-secureagg_sim,0.00041459999920334667,1.049999991664663e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.8891819492393722e-15,10,fedavg,secureagg_sim,0.18203494397343262,0.0,31
-secureagg_sim,0.00046039999870117754,1.0799994925037026e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5918256296432176e-15,11,fedavg,secureagg_sim,0.1777810041093844,0.0,31
-secureagg_sim,0.0004346999994595535,1.0000003385357559e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6001336500547367e-15,12,fedavg,secureagg_sim,0.17398860883893097,0.0,31
-secureagg_sim,0.0007265000022016466,1.7300000763498247e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.316140764764164e-15,13,fedavg,secureagg_sim,0.17058120698883728,0.0,31
-secureagg_sim,0.0004177000009804033,1.0600000678095967e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.3166551182663966e-15,14,fedavg,secureagg_sim,0.1674999871997847,0.0,31
-secureagg_sim,0.0004195000001345761,1.0100004146806896e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5118115093137874e-15,15,fedavg,secureagg_sim,0.16469856515221684,0.0,31
-secureagg_sim,0.0004639999970095232,1.0600000678095967e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.203681251893407e-15,16,fedavg,secureagg_sim,0.16213956882111596,0.0,31
-secureagg_sim,0.0008818999995128252,1.8200000340584666e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.1090581498194325e-15,17,fedavg,secureagg_sim,0.15979235939130873,0.0,31
-secureagg_sim,0.0004117999997106381,9.499999578110874e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.2690183065776637e-15,18,fedavg,secureagg_sim,0.15763145805659612,0.0,31
-secureagg_sim,0.0004763000033563003,1.3299999409355223e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0018708912772354e-15,19,fedavg,secureagg_sim,0.15563542682666287,0.0,31
-secureagg_sim,0.0004670000053010881,1.170000177808106e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4446590585203154e-15,20,fedavg,secureagg_sim,0.15378605056536662,0.0,31
-secureagg_sim,0.0004358999940450303,1.1000003723893315e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.1764274410474016e-15,21,fedavg,secureagg_sim,0.1520677246817002,0.0,31
-secureagg_sim,0.0004668000037781894,1.410000550094992e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.9012569296705806e-15,22,fedavg,secureagg_sim,0.1504669869629545,0.0,31
-secureagg_sim,0.00048519999836571515,1.2299999070819467e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6046192152785466e-15,23,fedavg,secureagg_sim,0.14897215291393212,0.0,31
-secureagg_sim,0.0004241999995429069,1.069999416358769e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0469737016526324e-15,24,fedavg,secureagg_sim,0.14757302709091794,0.0,31
-secureagg_sim,0.0004413999995449558,1.309999788645655e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.3366044382401299e-15,25,fedavg,secureagg_sim,0.14626067137115806,0.0,31
-secureagg_sim,0.0004419000033522025,1.4299999747890979e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6627324517237696e-15,26,fedavg,secureagg_sim,0.14502721666485624,0.0,31
-secureagg_sim,0.0014362999936565757,1.6500001947861165e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8257964584655895e-15,27,fedavg,secureagg_sim,0.14386570832109113,0.0,31
-secureagg_sim,0.0004782999967574142,2.2300002456177026e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5187504032176946e-15,28,fedavg,secureagg_sim,0.14276997804936747,0.0,31
-secureagg_sim,0.0004611999975168146,1.0900002962443978e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.669739429528306e-15,29,fedavg,secureagg_sim,0.14173453697734784,0.0,31
-secureagg_sim,0.0005065000004833564,1.3100005162414163e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0192181260370035e-15,30,fedavg,secureagg_sim,0.14075448574772256,0.0,31
-quantized_transport_proxy,0.0003632000007200986,3.2699994335416704e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,1,fedavg,quantized_transport_proxy,0.3349334958153815,0.0,31
-quantized_transport_proxy,8.550000347895548e-05,2.469999890308827e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,2,fedavg,quantized_transport_proxy,0.2740614399944349,0.0,31
-quantized_transport_proxy,9.159999899566174e-05,2.680000034160912e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,3,fedavg,quantized_transport_proxy,0.24579328959265412,0.0,31
-quantized_transport_proxy,8.669999806443229e-05,2.7399997634347528e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,4,fedavg,quantized_transport_proxy,0.2283804976655273,0.0,31
-quantized_transport_proxy,9.780000254977494e-05,3.0000002880115062e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,5,fedavg,quantized_transport_proxy,0.2160294574827723,0.0,31
-quantized_transport_proxy,8.47000046633184e-05,2.609999501146376e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,6,fedavg,quantized_transport_proxy,0.20652438510207702,0.0,31
-quantized_transport_proxy,8.430000161752105e-05,2.6599998818710446e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,7,fedavg,quantized_transport_proxy,0.19882705118177407,0.0,31
-quantized_transport_proxy,9.050000517163426e-05,3.0000002880115062e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,8,fedavg,quantized_transport_proxy,0.19238018200881757,0.0,31
-quantized_transport_proxy,9.00999948498793e-05,2.8700000257231295e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,9,fedavg,quantized_transport_proxy,0.18685334630844924,0.0,31
-quantized_transport_proxy,0.00010320000001229346,3.139999898849055e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,10,fedavg,quantized_transport_proxy,0.1820349572324135,0.0,31
-quantized_transport_proxy,0.00014660000306321308,3.449999348958954e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,11,fedavg,quantized_transport_proxy,0.17778101710902394,0.0,31
-quantized_transport_proxy,0.00016350000078091398,4.4200001866556704e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,12,fedavg,quantized_transport_proxy,0.17398862177158742,0.0,31
-quantized_transport_proxy,0.0001190999973914586,0.00018249999993713573,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,13,fedavg,quantized_transport_proxy,0.17058123199002634,0.0,31
-quantized_transport_proxy,0.00011960000119870529,6.230000144569203e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,14,fedavg,quantized_transport_proxy,0.1675000197151914,0.0,31
-quantized_transport_proxy,0.00011250000534346327,2.9400005587376654e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,15,fedavg,quantized_transport_proxy,0.1646985916831959,0.0,31
-quantized_transport_proxy,9.419999696547166e-05,3.850000211969018e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,16,fedavg,quantized_transport_proxy,0.16213959441204195,0.0,31
-quantized_transport_proxy,9.23000043258071e-05,2.939999831141904e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,17,fedavg,quantized_transport_proxy,0.1597923751517704,0.0,31
-quantized_transport_proxy,8.22000001790002e-05,2.529999619582668e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,18,fedavg,quantized_transport_proxy,0.15763147691327306,0.0,31
-quantized_transport_proxy,8.309999975608662e-05,2.5000001187436283e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,19,fedavg,quantized_transport_proxy,0.15563544100803853,0.0,31
-quantized_transport_proxy,8.879999950295314e-05,2.890000178012997e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,20,fedavg,quantized_transport_proxy,0.15378605906315512,0.0,31
-quantized_transport_proxy,8.429999434156343e-05,2.680000034160912e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,21,fedavg,quantized_transport_proxy,0.15206773339075041,0.0,31
-quantized_transport_proxy,8.510000043315813e-05,2.649999805726111e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,22,fedavg,quantized_transport_proxy,0.15046699003913272,0.0,31
-quantized_transport_proxy,8.130000060191378e-05,2.4499997380189598e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,23,fedavg,quantized_transport_proxy,0.1489721610215669,0.0,31
-quantized_transport_proxy,8.080000407062471e-05,2.6399997295811772e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,24,fedavg,quantized_transport_proxy,0.14757302180084356,0.0,31
-quantized_transport_proxy,8.379999781027436e-05,2.7499998395796865e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,25,fedavg,quantized_transport_proxy,0.14626065960827087,0.0,31
-quantized_transport_proxy,8.230000094044954e-05,4.5400003727991134e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,26,fedavg,quantized_transport_proxy,0.1450271959592218,0.0,31
-quantized_transport_proxy,7.819999882485718e-05,2.4199995095841587e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,27,fedavg,quantized_transport_proxy,0.1438656878651063,0.0,31
-quantized_transport_proxy,9.329999738838524e-05,2.6299996534362435e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,28,fedavg,quantized_transport_proxy,0.14276995975337597,0.0,31
-quantized_transport_proxy,7.819999882485718e-05,2.5300003471784294e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,29,fedavg,quantized_transport_proxy,0.14173451024601813,0.0,31
-quantized_transport_proxy,8.230000094044954e-05,2.5699999241624027e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,30,fedavg,quantized_transport_proxy,0.1407544554553186,0.0,31
-plain,2.0999941625632346e-06,3.51999988197349e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavgft_base,plain,0.3349334958153815,0.0,31
-plain,2.5999979698099196e-06,2.479999966453761e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavgft_base,plain,0.274061457036752,0.0,31
-plain,2.4000037228688598e-06,2.2000000171829015e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavgft_base,plain,0.24579328940787437,0.0,31
-plain,2.0000006770715117e-06,2.1900006686337292e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavgft_base,plain,0.22838048688340057,0.0,31
-plain,2.4999972083605826e-06,2.0899999071843922e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavgft_base,plain,0.21602946229851785,0.0,31
-plain,2.2000021999701858e-06,2.0899999071843922e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavgft_base,plain,0.20652437981744526,0.0,31
-plain,2.3000029614195228e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavgft_base,plain,0.19882704935468046,0.0,31
-plain,2.4999972083605826e-06,2.3499997041653842e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavgft_base,plain,0.19238018713284266,0.0,31
-plain,2.5999979698099196e-06,2.2100000933278352e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavgft_base,plain,0.18685334435420814,0.0,31
-plain,2.3000029614195228e-06,2.3699998564552516e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavgft_base,plain,0.18203494397343328,0.0,31
-plain,2.1000014385208488e-06,2.099999983329326e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavgft_base,plain,0.17778100410938513,0.0,31
-plain,2.0000006770715117e-06,2.0699997548945248e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavgft_base,plain,0.1739886088389317,0.0,31
-plain,2.0000006770715117e-06,1.9599996448960155e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavgft_base,plain,0.170581206988838,0.0,31
-plain,3.1999952625483274e-06,3.290000313427299e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavgft_base,plain,0.1674999871997854,0.0,31
-plain,2.4999972083605826e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavgft_base,plain,0.16469856515221748,0.0,31
-plain,2.3000029614195228e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavgft_base,plain,0.1621395688211167,0.0,31
-plain,2.2000021999701858e-06,2.1599997126031667e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavgft_base,plain,0.15979235939130942,0.0,31
-plain,2.2000021999701858e-06,2.2299995180219412e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavgft_base,plain,0.15763145805659676,0.0,31
-plain,2.1000014385208488e-06,3.1299998227041215e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavgft_base,plain,0.15563542682666356,0.0,31
-plain,2.3999964469112456e-06,2.1100000594742596e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavgft_base,plain,0.1537860505653673,0.0,31
-plain,2.0000006770715117e-06,2.099999983329326e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavgft_base,plain,0.15206772468170085,0.0,31
-plain,2.2999956854619086e-06,1.9800005247816443e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavgft_base,plain,0.15046698696295513,0.0,31
-plain,2.1000014385208488e-06,2.1899999410379678e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavgft_base,plain,0.14897215291393276,0.0,31
-plain,2.5000044843181968e-06,2.1200001356191933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavgft_base,plain,0.1475730270909186,0.0,31
-plain,2.1000014385208488e-06,2.0500003302004188e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavgft_base,plain,0.1462606713711587,0.0,31
-plain,2.2999956854619086e-06,3.809999907389283e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavgft_base,plain,0.14502721666485685,0.0,31
-plain,2.1999949240125716e-06,2.1100000594742596e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavgft_base,plain,0.1438657083210918,0.0,31
-plain,2.3000029614195228e-06,2.439999661874026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavgft_base,plain,0.14276997804936814,0.0,31
-plain,2.1999949240125716e-06,4.320000152802095e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavgft_base,plain,0.14173453697734847,0.0,31
-plain,2.3000029614195228e-06,1.9700004486367106e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavgft_base,plain,0.14075448574772315,0.0,31
-plain,6.100002792663872e-06,3.9500002458225936e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavg,plain,0.3396823239323372,0.0,37
-plain,2.6999987312592566e-06,2.479999966453761e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavg,plain,0.27972919240176664,0.0,37
-plain,2.7999994927085936e-06,2.6100002287421376e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavg,plain,0.251739729555005,0.0,37
-plain,3.1000017770566046e-06,2.609999501146376e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavg,plain,0.23453552295440097,0.0,37
-plain,5.30000397702679e-06,5.220000457484275e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavg,plain,0.22235311691045437,0.0,37
-plain,3.2000025385059416e-06,2.3200002033263445e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavg,plain,0.21299098551225307,0.0,37
-plain,3.899993316736072e-06,2.660000609466806e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavg,plain,0.20541951168960665,0.0,37
-plain,3.2999960239976645e-06,3.650000144261867e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavg,plain,0.19908675826590758,0.0,37
-plain,3.2000025385059416e-06,2.6599998818710446e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavg,plain,0.19366569770795017,0.0,37
-plain,2.9999937396496534e-06,3.670000296551734e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavg,plain,0.18894699356874856,0.0,37
-plain,2.5999979698099196e-06,2.4100001610349864e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavg,plain,0.1847881630918209,0.0,37
-plain,4.099994839634746e-06,3.599999763537198e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavg,plain,0.18108731342023382,0.0,37
-plain,3.0000010156072676e-06,2.5300003471784294e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavg,plain,0.17776860451016718,0.0,37
-plain,2.9000002541579306e-06,2.9299997549969703e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavg,plain,0.17477372786352036,0.0,37
-plain,3.5999983083456755e-06,2.849999873433262e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavg,plain,0.1720566605296246,0.0,37
-plain,2.9000002541579306e-06,2.559999848017469e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavg,plain,0.16958029415690612,0.0,37
-plain,2.9000002541579306e-06,3.070000093430281e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavg,plain,0.1673141851247354,0.0,37
-plain,3.2000025385059416e-06,3.300000389572233e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavg,plain,0.1652330011495609,0.0,37
-plain,2.7999994927085936e-06,2.7999994927085936e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavg,plain,0.16331541572952765,0.0,37
-plain,3.2000025385059416e-06,2.800000220304355e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavg,plain,0.16154329971414466,0.0,37
-plain,3.3999967854470015e-06,2.9900002118665725e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavg,plain,0.15990111575295038,0.0,37
-plain,2.6999987312592566e-06,2.9299997549969703e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavg,plain,0.15837545498541905,0.0,37
-plain,3.0999945010989904e-06,2.890000178012997e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavg,plain,0.15695467591508028,0.0,37
-plain,2.9000002541579306e-06,3.0099996365606785e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavg,plain,0.15562861834593872,0.0,37
-plain,3.0999945010989904e-06,2.5600005756132305e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavg,plain,0.15438837358725976,0.0,37
-plain,2.7999994927085936e-06,2.4599998141638935e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavg,plain,0.15322609761699668,0.0,37
-plain,2.6999987312592566e-06,2.359999780310318e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavg,plain,0.15213485758363438,0.0,37
-plain,3.2000025385059416e-06,2.359999780310318e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavg,plain,0.15110850455937097,0.0,37
-plain,2.9000002541579306e-06,2.179999864893034e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavg,plain,0.1501415672309135,0.0,37
-plain,2.5999979698099196e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavg,plain,0.14922916247887255,0.0,37
-plain,3.3999967854470015e-06,3.460000152699649e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedprox,plain,0.3406622402444863,0.0,37
-plain,2.5999979698099196e-06,2.890000178012997e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedprox,plain,0.2803435418964792,0.0,37
-plain,5.199995939619839e-06,5.819999933009967e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedprox,plain,0.2521946671364437,0.0,37
-plain,5.299996701069176e-06,5.419999797595665e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedprox,plain,0.2349052243361619,0.0,37
-plain,4.29999636253342e-06,4.289999924367294e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedprox,plain,0.22267091657473417,0.0,37
-plain,5.800000508315861e-06,5.510000482900068e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedprox,plain,0.2132741376897626,0.0,37
-plain,4.699999408330768e-06,4.6399996790569276e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedprox,plain,0.20567784976766007,0.0,37
-plain,2.5999979698099196e-06,2.649999805726111e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedprox,plain,0.1993262909966294,0.0,37
-plain,2.7999994927085936e-06,2.819999644998461e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedprox,plain,0.19389030109750877,0.0,37
-plain,2.7999994927085936e-06,2.8100002964492887e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedprox,plain,0.1891592832107998,0.0,37
-plain,2.2000021999701858e-06,2.6699999580159783e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedprox,plain,0.1849899759019423,0.0,37
-plain,3.4000040614046156e-06,3.130000550299883e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedprox,plain,0.18127998795415196,0.0,37
-plain,3.4999975468963385e-06,4.08000050811097e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedprox,plain,0.17795315080747923,0.0,37
-plain,2.2000021999701858e-06,2.42000023717992e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedprox,plain,0.17495093366789288,0.0,37
-plain,4.2000028770416975e-06,3.440000000409782e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedprox,plain,0.17222715942042816,0.0,37
-plain,3.3000032999552786e-06,3.139999898849055e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedprox,plain,0.16974461016562717,0.0,37
-plain,3.7999998312443495e-06,3.429999924264848e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedprox,plain,0.16747276247306578,0.0,37
-plain,2.7999994927085936e-06,2.680000034160912e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedprox,plain,0.165386224387748,0.0,37
-plain,3.3999967854470015e-06,3.2999996619764715e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedprox,plain,0.16346362358262606,0.0,37
-plain,2.7999994927085936e-06,2.7900001441594213e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedprox,plain,0.16168679475090758,0.0,37
-plain,3.1000017770566046e-06,2.9599999834317714e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedprox,plain,0.1600401712513493,0.0,37
-plain,2.6999987312592566e-06,2.7399997634347528e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedprox,plain,0.15851031989898223,0.0,37
-plain,2.6999987312592566e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedprox,plain,0.15708557854111121,0.0,37
-plain,2.3000029614195228e-06,2.390000008745119e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedprox,plain,0.1557557690983645,0.0,37
-plain,2.7999994927085936e-06,2.7599999157246202e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedprox,plain,0.1545119671456897,0.0,37
-plain,3.2000025385059416e-06,2.7900001441594213e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedprox,plain,0.15334631463607354,0.0,37
-plain,2.9000002541579306e-06,2.510000194888562e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedprox,plain,0.1522518660880136,0.0,37
-plain,2.6000052457675338e-06,2.7199996111448854e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedprox,plain,0.15122246111003493,0.0,37
-plain,2.7999994927085936e-06,2.479999966453761e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedprox,plain,0.15025261792170466,0.0,37
-plain,2.4000037228688598e-06,2.4499997380189598e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedprox,plain,0.14933744380393485,0.0,37
-secureagg_sim,0.000635899996268563,1.1399999493733048e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.4416913763379853e-15,1,fedavg,secureagg_sim,0.3396823239323372,0.0,37
-secureagg_sim,0.0006649999995715916,1.5000005078036338e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.185751579730777e-15,2,fedavg,secureagg_sim,0.2797291924017664,0.0,37
-secureagg_sim,0.0006341999978758395,1.2700002116616815e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5092094240998222e-15,3,fedavg,secureagg_sim,0.2517397295550047,0.0,37
-secureagg_sim,0.0006194000015966594,1.1800002539530396e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2437967322753707e-15,4,fedavg,secureagg_sim,0.23453552295440055,0.0,37
-secureagg_sim,0.0006797999958507717,1.3299999409355223e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.4623718902484484e-15,5,fedavg,secureagg_sim,0.22235311691045395,0.0,37
-secureagg_sim,0.0006196000031195581,1.2100004823878407e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.7373255611907723e-15,6,fedavg,secureagg_sim,0.21299098551225268,0.0,37
-secureagg_sim,0.0006294999984675087,1.0899995686486363e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6930901125533637e-15,7,fedavg,secureagg_sim,0.20541951168960632,0.0,37
-secureagg_sim,0.0006520999959320761,1.4400000509340316e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4494295480792516e-15,8,fedavg,secureagg_sim,0.1990867582659073,0.0,37
-secureagg_sim,0.0006238000059965998,1.670000347075984e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.1874182193061245e-15,9,fedavg,secureagg_sim,0.19366569770794972,0.0,37
-secureagg_sim,0.0006333999990602024,1.4299999747890979e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8318679906315083e-15,10,fedavg,secureagg_sim,0.1889469935687481,0.0,37
-secureagg_sim,0.000665100000333041,1.5400000847876072e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8769708010069053e-15,11,fedavg,secureagg_sim,0.18478816309182036,0.0,37
-secureagg_sim,0.0006100999962654896,1.1500000255182385e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0816681711721685e-15,12,fedavg,secureagg_sim,0.18108731342023332,0.0,37
-secureagg_sim,0.0006420999998226762,1.2500000593718141e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.412851598549871e-15,13,fedavg,secureagg_sim,0.17776860451016663,0.0,37
-secureagg_sim,0.0006414000017684884,1.1500000255182385e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8518173106052416e-15,14,fedavg,secureagg_sim,0.1747737278635198,0.0,37
-secureagg_sim,0.0006092000039643608,1.0799994925037026e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.708405110769419e-15,15,fedavg,secureagg_sim,0.17205666052962404,0.0,37
-secureagg_sim,0.0006605999951716512,1.2399999832268804e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5128957114862729e-15,16,fedavg,secureagg_sim,0.16958029415690562,0.0,37
-secureagg_sim,0.0006745999999111518,1.309999788645655e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.680147770384167e-15,17,fedavg,secureagg_sim,0.1673141851247349,0.0,37
-secureagg_sim,0.0006739000018569641,1.460000203223899e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0497926273010947e-15,18,fedavg,secureagg_sim,0.1652330011495604,0.0,37
-secureagg_sim,0.0006318000014289282,1.3799995940644294e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2025970497209215e-15,19,fedavg,secureagg_sim,0.16331541572952715,0.0,37
-secureagg_sim,0.0006095999997342005,3.380000271135941e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.484774538902279e-15,20,fedavg,secureagg_sim,0.1615432997141441,0.0,37
-secureagg_sim,0.0006563999995705672,1.3899996702093631e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0079424234431542e-15,21,fedavg,secureagg_sim,0.1599011157529498,0.0,37
-secureagg_sim,0.0006248999998206273,1.3199998647905886e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.070175628143822e-15,22,fedavg,secureagg_sim,0.15837545498541847,0.0,37
-secureagg_sim,0.0006309000018518418,1.4299999747890979e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8602740875506285e-15,23,fedavg,secureagg_sim,0.15695467591507967,0.0,37
-secureagg_sim,0.0006291999961831607,1.2399999832268804e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0638872555434062e-15,24,fedavg,secureagg_sim,0.15562861834593808,0.0,37
-secureagg_sim,0.0006520000024465844,1.6400001186411828e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.7607443281164592e-15,25,fedavg,secureagg_sim,0.1543883735872592,0.0,37
-secureagg_sim,0.0006239999929675832,1.4299999747890979e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.1160777163565783e-15,26,fedavg,secureagg_sim,0.1532260976169961,0.0,37
-secureagg_sim,0.000643700004729908,1.5600002370774746e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.491062911502695e-15,27,fedavg,secureagg_sim,0.15213485758363382,0.0,37
-secureagg_sim,0.0006814000007580034,1.6999998479150236e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.348815586472597e-15,28,fedavg,secureagg_sim,0.15110850455937036,0.0,37
-secureagg_sim,0.0007078999988152646,1.460000203223899e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.457384560255015e-15,29,fedavg,secureagg_sim,0.15014156723091288,0.0,37
-secureagg_sim,0.0006635999961872585,1.5099998563528061e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.4563003580825296e-15,30,fedavg,secureagg_sim,0.1492291624788719,0.0,37
-quantized_transport_proxy,0.0001109000004362315,3.100000321865082e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,1,fedavg,quantized_transport_proxy,0.3396823239323372,0.0,37
-quantized_transport_proxy,0.00012209999840706587,3.0300005164463073e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,2,fedavg,quantized_transport_proxy,0.2797291770451694,0.0,37
-quantized_transport_proxy,0.00010289999772794545,3.120000474154949e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,3,fedavg,quantized_transport_proxy,0.25173973581696,0.0,37
-quantized_transport_proxy,0.00010000000474974513,2.989999484270811e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,4,fedavg,quantized_transport_proxy,0.23453548049269185,0.0,37
-quantized_transport_proxy,0.00010379999730503187,3.190000279573724e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,5,fedavg,quantized_transport_proxy,0.2223530786659828,0.0,37
-quantized_transport_proxy,0.00010260000271955505,4.659999831346795e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,6,fedavg,quantized_transport_proxy,0.21299093428166904,0.0,37
-quantized_transport_proxy,9.900000441120937e-05,2.8700000257231295e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,7,fedavg,quantized_transport_proxy,0.20541946010417333,0.0,37
-quantized_transport_proxy,9.679999493528157e-05,2.59000007645227e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,8,fedavg,quantized_transport_proxy,0.19908672185322476,0.0,37
-quantized_transport_proxy,0.0001016000023810193,2.9000002541579306e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,9,fedavg,quantized_transport_proxy,0.19366565575623093,0.0,37
-quantized_transport_proxy,0.00013329999637790024,3.4000004234258085e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,10,fedavg,quantized_transport_proxy,0.18894693891134628,0.0,37
-quantized_transport_proxy,0.0001024999946821481,2.9900002118665725e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,11,fedavg,quantized_transport_proxy,0.18478811425939254,0.0,37
-quantized_transport_proxy,0.00025070000265259296,6.669999856967479e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,12,fedavg,quantized_transport_proxy,0.18108727661529161,0.0,37
-quantized_transport_proxy,9.40000027185306e-05,5.60000044060871e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,13,fedavg,quantized_transport_proxy,0.1777685718853101,0.0,37
-quantized_transport_proxy,0.00013550000585382804,3.440000000409782e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,14,fedavg,quantized_transport_proxy,0.17477370428012667,0.0,37
-quantized_transport_proxy,0.00011110000195913017,3.260000084992498e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,15,fedavg,quantized_transport_proxy,0.17205662651738524,0.0,37
-quantized_transport_proxy,0.00010479999764356762,2.970000059576705e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,16,fedavg,quantized_transport_proxy,0.1695802648262989,0.0,37
-quantized_transport_proxy,0.0001097999993362464,3.319999814266339e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,17,fedavg,quantized_transport_proxy,0.16731416756681208,0.0,37
-quantized_transport_proxy,8.070000330917537e-05,2.5099994672928005e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,18,fedavg,quantized_transport_proxy,0.16523297329278852,0.0,37
-quantized_transport_proxy,0.00010610000026645139,3.199999628122896e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,19,fedavg,quantized_transport_proxy,0.16331539502194156,0.0,37
-quantized_transport_proxy,0.00010019999899668619,3.0000002880115062e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,20,fedavg,quantized_transport_proxy,0.1615432914582967,0.0,37
-quantized_transport_proxy,9.950000094249845e-05,2.7599999157246202e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,21,fedavg,quantized_transport_proxy,0.15990110829888537,0.0,37
-quantized_transport_proxy,0.0001618999958736822,6.399999983841553e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,22,fedavg,quantized_transport_proxy,0.15837544895552705,0.0,37
-quantized_transport_proxy,9.979999595088884e-05,2.9000002541579306e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,23,fedavg,quantized_transport_proxy,0.15695468118968392,0.0,37
-quantized_transport_proxy,9.870000212686136e-05,2.7599999157246202e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,24,fedavg,quantized_transport_proxy,0.15562862833141364,0.0,37
-quantized_transport_proxy,0.00023399999918183312,7.069999992381781e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,25,fedavg,quantized_transport_proxy,0.1543883986511841,0.0,37
-quantized_transport_proxy,9.770000178832561e-05,2.8099995688535273e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,26,fedavg,quantized_transport_proxy,0.15322612376537115,0.0,37
-quantized_transport_proxy,9.7999996796716e-05,2.9299997549969703e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,27,fedavg,quantized_transport_proxy,0.152134880139247,0.0,37
-quantized_transport_proxy,0.00010800000018207356,3.4000004234258085e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,28,fedavg,quantized_transport_proxy,0.1511085237998943,0.0,37
-quantized_transport_proxy,0.00023689999943599105,6.829999620094895e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,29,fedavg,quantized_transport_proxy,0.15014158637264863,0.0,37
-quantized_transport_proxy,0.00010469999688211828,2.630000381032005e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,30,fedavg,quantized_transport_proxy,0.14922918280092778,0.0,37
-plain,2.4999972083605826e-06,2.2300002456177026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavgft_base,plain,0.3396823239323372,0.0,37
-plain,2.0000006770715117e-06,1.9999999494757503e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavgft_base,plain,0.27972919240176664,0.0,37
-plain,2.0000006770715117e-06,3.759999526664615e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavgft_base,plain,0.251739729555005,0.0,37
-plain,2.7999994927085936e-06,2.6699999580159783e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavgft_base,plain,0.23453552295440097,0.0,37
-plain,3.0000010156072676e-06,2.7399997634347528e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavgft_base,plain,0.22235311691045437,0.0,37
-plain,2.5000044843181968e-06,2.8400005248840898e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavgft_base,plain,0.21299098551225307,0.0,37
-plain,2.3000029614195228e-06,2.4599998141638935e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavgft_base,plain,0.20541951168960665,0.0,37
-plain,2.3999964469112456e-06,2.6400004571769387e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavgft_base,plain,0.19908675826590758,0.0,37
-plain,2.4999972083605826e-06,2.6200003048870713e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavgft_base,plain,0.19366569770795017,0.0,37
-plain,2.2000021999701858e-06,2.649999805726111e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavgft_base,plain,0.18894699356874856,0.0,37
-plain,2.2000021999701858e-06,2.2299995180219412e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavgft_base,plain,0.1847881630918209,0.0,37
-plain,2.6000052457675338e-06,2.680000034160912e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavgft_base,plain,0.18108731342023382,0.0,37
-plain,2.7999994927085936e-06,2.7900001441594213e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavgft_base,plain,0.17776860451016718,0.0,37
-plain,2.2000021999701858e-06,2.5000001187436283e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavgft_base,plain,0.17477372786352036,0.0,37
-plain,2.5999979698099196e-06,2.7599999157246202e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavgft_base,plain,0.1720566605296246,0.0,37
-plain,2.7999994927085936e-06,2.5800000003073364e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavgft_base,plain,0.16958029415690612,0.0,37
-plain,2.4999972083605826e-06,2.4300003133248538e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavgft_base,plain,0.1673141851247354,0.0,37
-plain,2.4000037228688598e-06,2.6500005333218724e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavgft_base,plain,0.1652330011495609,0.0,37
-plain,2.2999956854619086e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavgft_base,plain,0.16331541572952765,0.0,37
-plain,2.5999979698099196e-06,2.540000423323363e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavgft_base,plain,0.16154329971414466,0.0,37
-plain,2.7999994927085936e-06,2.7399997634347528e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavgft_base,plain,0.15990111575295038,0.0,37
-plain,2.3000029614195228e-06,2.3200002033263445e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavgft_base,plain,0.15837545498541905,0.0,37
-plain,2.2000021999701858e-06,2.149999636458233e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavgft_base,plain,0.15695467591508028,0.0,37
-plain,2.3000029614195228e-06,2.1299994841683656e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavgft_base,plain,0.15562861834593872,0.0,37
-plain,2.1000014385208488e-06,2.0799998310394585e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavgft_base,plain,0.15438837358725976,0.0,37
-plain,2.2000021999701858e-06,2.0200001017656177e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavgft_base,plain,0.15322609761699668,0.0,37
-plain,2.2000021999701858e-06,1.939999492606148e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavgft_base,plain,0.15213485758363438,0.0,37
-plain,2.2000021999701858e-06,1.9599996448960155e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavgft_base,plain,0.15110850455937097,0.0,37
-plain,2.0000006770715117e-06,1.8200000340584666e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavgft_base,plain,0.1501415672309135,0.0,37
-plain,2.7999994927085936e-06,3.239999932702631e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavgft_base,plain,0.14922916247887255,0.0,37
-plain,3.1000017770566046e-06,2.5000001187436283e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavg,plain,0.33014700992012624,0.0,41
-plain,2.9000002541579306e-06,4.079999780515209e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavg,plain,0.2720005998752107,0.0,41
-plain,2.2999956854619086e-06,2.1899999410379678e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavg,plain,0.24539675353570892,0.0,41
-plain,2.6999987312592566e-06,2.4599998141638935e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavg,plain,0.2292090778297685,0.0,41
-plain,2.3999964469112456e-06,2.220000169472769e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavg,plain,0.21781146695977333,0.0,41
-plain,2.0000006770715117e-06,2.2599997464567423e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavg,plain,0.20907949291959263,0.0,41
-plain,2.7999994927085936e-06,2.849999873433262e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavg,plain,0.20202859094248216,0.0,41
-plain,2.9000002541579306e-06,2.649999805726111e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavg,plain,0.19613516079243623,0.0,41
-plain,2.4000037228688598e-06,2.1899999410379678e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavg,plain,0.19109114867690774,0.0,41
-plain,2.6999987312592566e-06,2.8100002964492887e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavg,plain,0.18670055226836763,0.0,41
-plain,2.6999987312592566e-06,2.5099994672928005e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavg,plain,0.18283061021342906,0.0,41
-plain,2.4000037228688598e-06,2.460000541759655e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavg,plain,0.17938671863111044,0.0,41
-plain,2.4999972083605826e-06,3.189999551977962e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavg,plain,0.17629862282074354,0.0,41
-plain,2.1000014385208488e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavg,plain,0.1735123688359152,0.0,41
-plain,2.7999994927085936e-06,2.0500003302004188e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavg,plain,0.170985377106536,0.0,41
-plain,2.6999987312592566e-06,2.4900000425986946e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavg,plain,0.16868329490262474,0.0,41
-plain,2.3000029614195228e-06,2.239999594166875e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavg,plain,0.16657790692450314,0.0,41
-plain,2.2000021999701858e-06,2.6599998818710446e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavg,plain,0.16464569970188397,0.0,41
-plain,2.5999979698099196e-06,2.5699999241624027e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavg,plain,0.16286684405231677,0.0,41
-plain,2.4999972083605826e-06,2.439999661874026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavg,plain,0.16122445336689525,0.0,41
-plain,2.3999964469112456e-06,2.5200002710334957e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavg,plain,0.15970402923494897,0.0,41
-plain,2.4999972083605826e-06,2.359999780310318e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavg,plain,0.15829303778380505,0.0,41
-plain,2.3999964469112456e-06,2.7199996111448854e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavg,plain,0.1569805795379625,0.0,41
-plain,2.3999964469112456e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavg,plain,0.15575712775391537,0.0,41
-plain,2.4000037228688598e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavg,plain,0.15461431796943786,0.0,41
-plain,2.3999964469112456e-06,2.3500004317611456e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavg,plain,0.1535447766025605,0.0,41
-plain,2.0000006770715117e-06,2.2599997464567423e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavg,plain,0.152541979844358,0.0,41
-plain,2.0000006770715117e-06,2.02999945031479e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavg,plain,0.151600136416765,0.0,41
-plain,2.3999964469112456e-06,2.6200003048870713e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavg,plain,0.15071408938684328,0.0,41
-plain,2.5999979698099196e-06,2.4499997380189598e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavg,plain,0.149879233378648,0.0,41
-plain,2.4999972083605826e-06,2.7499998395796865e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedprox,plain,0.3311257631165013,0.0,41
-plain,2.7999994927085936e-06,2.5200002710334957e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedprox,plain,0.27259465934124416,0.0,41
-plain,2.5000044843181968e-06,2.1899999410379678e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedprox,plain,0.24583030494440397,0.0,41
-plain,2.4999972083605826e-06,2.8700000257231295e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedprox,plain,0.2295589088070895,0.0,41
-plain,2.3999964469112456e-06,2.7900001441594213e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedprox,plain,0.21811137271578196,0.0,41
-plain,2.2000021999701858e-06,2.2899999748915434e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedprox,plain,0.20934671125165993,0.0,41
-plain,1.7999991541728377e-06,1.7899998056236655e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedprox,plain,0.20227281271995384,0.0,41
-plain,1.8999999156221747e-06,1.8200000340584666e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedprox,plain,0.19636222147006188,0.0,41
-plain,2.9999937396496534e-06,2.8599999495781958e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedprox,plain,0.19130475077798179,0.0,41
-plain,2.6000052457675338e-06,2.630000381032005e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedprox,plain,0.18690314850579792,0.0,41
-plain,2.9000002541579306e-06,2.469999890308827e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedprox,plain,0.1830238889684671,0.0,41
-plain,2.5999979698099196e-06,2.529999619582668e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedprox,plain,0.1795718851817846,0.0,41
-plain,2.4000037228688598e-06,2.1200001356191933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedprox,plain,0.17647656884244767,0.0,41
-plain,2.2000021999701858e-06,2.0799998310394585e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedprox,plain,0.17368377769657078,0.0,41
-plain,2.6000052457675338e-06,2.7000001864507794e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedprox,plain,0.1711507908117329,0.0,41
-plain,2.5999979698099196e-06,2.4400003894697875e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedprox,plain,0.16884315743289485,0.0,41
-plain,2.5000044843181968e-06,2.319999475730583e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedprox,plain,0.1667325926966572,0.0,41
-plain,2.7000060072168708e-06,2.680000034160912e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedprox,plain,0.16479553248774528,0.0,41
-plain,2.9000002541579306e-06,2.649999805726111e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedprox,plain,0.16301210969308952,0.0,41
-plain,2.1000014385208488e-06,2.5499997718725353e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedprox,plain,0.1613654084131182,0.0,41
-plain,2.2000021999701858e-06,2.2100000933278352e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedprox,plain,0.15984090689118982,0.0,41
-plain,3.0000010156072676e-06,2.950000634882599e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedprox,plain,0.15842605206092658,0.0,41
-plain,2.5999979698099196e-06,2.8800001018680632e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedprox,plain,0.15710992820857944,0.0,41
-plain,2.5999979698099196e-06,2.6299996534362435e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedprox,plain,0.1558829945059805,0.0,41
-plain,2.3000029614195228e-06,2.239999594166875e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedprox,plain,0.15473687402056038,0.0,41
-plain,2.4000037228688598e-06,2.3600005079060793e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedprox,plain,0.15366418194981668,0.0,41
-plain,3.2000025385059416e-06,2.8599999495781958e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedprox,plain,0.15265838426580577,0.0,41
-plain,2.7000060072168708e-06,2.5800000003073364e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedprox,plain,0.15171368030177906,0.0,41
-plain,2.3999964469112456e-06,2.1599997126031667e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedprox,plain,0.1508249044462871,0.0,41
-plain,2.6999987312592566e-06,2.6400004571769387e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedprox,plain,0.14998744326851304,0.0,41
-secureagg_sim,0.0006094999989727512,1.7899998056236655e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0816681711721685e-15,1,fedavg,secureagg_sim,0.33014700992012624,0.0,41
-secureagg_sim,0.0004303999958210625,1.0399999155197293e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8041124150158794e-15,2,fedavg,secureagg_sim,0.27200059987521064,0.0,41
-secureagg_sim,0.0003719000014825724,8.999995770864189e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.55351295663786e-15,3,fedavg,secureagg_sim,0.24539675353570878,0.0,41
-secureagg_sim,0.0005310999986249954,1.9899998733308166e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.4762496780562628e-15,4,fedavg,secureagg_sim,0.22920907782976835,0.0,41
-secureagg_sim,0.0004215000008116476,9.2999980552122e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6853519408120974e-15,5,fedavg,secureagg_sim,0.21781146695977308,0.0,41
-secureagg_sim,0.0007681999995838851,1.3699995179194957e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.024422296464934e-15,6,fedavg,secureagg_sim,0.2090794929195924,0.0,41
-secureagg_sim,0.0008179999931599014,2.2599997464567423e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2299189444675562e-15,7,fedavg,secureagg_sim,0.20202859094248188,0.0,41
-secureagg_sim,0.0006787999955122359,1.2700002116616815e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5178830414797062e-15,8,fedavg,secureagg_sim,0.19613516079243595,0.0,41
-secureagg_sim,0.0006789000035496429,1.6099998902063817e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.294103713078698e-15,9,fedavg,secureagg_sim,0.19109114867690746,0.0,41
-secureagg_sim,0.0006699000005028211,1.6699996194802225e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6315755130568164e-15,10,fedavg,secureagg_sim,0.18670055226836724,0.0,41
-secureagg_sim,0.000669599998218473,1.599999814061448e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8682971836270212e-15,11,fedavg,secureagg_sim,0.18283061021342867,0.0,41
-secureagg_sim,0.0006160000048112124,1.0400006431154907e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6583956430338276e-15,12,fedavg,secureagg_sim,0.1793867186311101,0.0,41
-secureagg_sim,0.0006047999995644204,1.0099996870849282e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.104219576359867e-15,13,fedavg,secureagg_sim,0.17629862282074316,0.0,41
-secureagg_sim,0.000717100003384985,1.5799996617715806e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5311103079840294e-15,14,fedavg,secureagg_sim,0.17351236883591487,0.0,41
-secureagg_sim,0.000654499999654945,1.3899996702093631e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.532628191025509e-15,15,fedavg,secureagg_sim,0.1709853771065357,0.0,41
-secureagg_sim,0.0007113000028766692,1.7400001524947584e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6107588313450947e-15,16,fedavg,secureagg_sim,0.16868329490262446,0.0,41
-secureagg_sim,0.0014490000030491501,2.769999991869554e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0602009681569555e-15,17,fedavg,secureagg_sim,0.16657790692450286,0.0,41
-secureagg_sim,0.0008471999972243793,2.269999822601676e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.961972251329769e-15,18,fedavg,secureagg_sim,0.16464569970188364,0.0,41
-secureagg_sim,0.00146159999712836,2.9199996788520366e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.053045233818551e-15,19,fedavg,secureagg_sim,0.1628668440523164,0.0,41
-secureagg_sim,0.0004183000055490993,9.400006092619151e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.005557178663686e-15,20,fedavg,secureagg_sim,0.1612244533668948,0.0,41
-secureagg_sim,0.0006250000005820766,1.5300000086426735e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.826663820203578e-15,21,fedavg,secureagg_sim,0.15970402923494853,0.0,41
-secureagg_sim,0.0004419999968376942,1.0000003385357559e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2225463696946548e-15,22,fedavg,secureagg_sim,0.1582930377838046,0.0,41
-secureagg_sim,0.0004202999989502132,9.999996109399945e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.119764003743029e-15,23,fedavg,secureagg_sim,0.15698057953796202,0.0,41
-secureagg_sim,0.0015867999973124824,3.0199997127056122e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5703584266280046e-15,24,fedavg,secureagg_sim,0.15575712775391493,0.0,41
-secureagg_sim,0.0006199000054039061,1.2500000593718141e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.409530908131785e-15,25,fedavg,secureagg_sim,0.15461431796943748,0.0,41
-secureagg_sim,0.0008674999990034848,2.439999661874026e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.5285763066706934e-15,26,fedavg,secureagg_sim,0.1535447766025601,0.0,41
-secureagg_sim,0.0006341000043903477,1.1799995263572782e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6016515330962164e-15,27,fedavg,secureagg_sim,0.15254197984435752,0.0,41
-secureagg_sim,0.0006396000026143156,3.0399998649954796e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.5196858488563123e-15,28,fedavg,secureagg_sim,0.15160013641676454,0.0,41
-secureagg_sim,0.0006343999993987381,1.2799995602108538e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.9741153156616065e-15,29,fedavg,secureagg_sim,0.15071408938684283,0.0,41
-secureagg_sim,0.0006605000016861595,1.1999996786471456e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.121783651554132e-15,30,fedavg,secureagg_sim,0.14987923337864756,0.0,41
-quantized_transport_proxy,0.00010830000246642157,3.220000508008525e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,1,fedavg,quantized_transport_proxy,0.33014700992012624,0.0,41
-quantized_transport_proxy,0.00010009999823523685,2.819999644998461e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,2,fedavg,quantized_transport_proxy,0.2720006252587408,0.0,41
-quantized_transport_proxy,0.00021130000095581636,3.650000144261867e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,3,fedavg,quantized_transport_proxy,0.24539683194322992,0.0,41
-quantized_transport_proxy,0.00010550000297371298,3.01000036415644e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,4,fedavg,quantized_transport_proxy,0.22920915315185478,0.0,41
-quantized_transport_proxy,9.73999995039776e-05,2.710000262595713e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,5,fedavg,quantized_transport_proxy,0.2178115243353333,0.0,41
-quantized_transport_proxy,0.00010349999502068385,2.9400005587376654e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,6,fedavg,quantized_transport_proxy,0.20907954321612152,0.0,41
-quantized_transport_proxy,7.74000000092201e-05,2.4499997380189598e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,7,fedavg,quantized_transport_proxy,0.20202863790241732,0.0,41
-quantized_transport_proxy,7.689999620197341e-05,2.460000541759655e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,8,fedavg,quantized_transport_proxy,0.1961352014979704,0.0,41
-quantized_transport_proxy,0.00011719999747583643,3.300000389572233e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,9,fedavg,quantized_transport_proxy,0.1910911800271209,0.0,41
-quantized_transport_proxy,9.900000441120937e-05,2.9100003303028643e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,10,fedavg,quantized_transport_proxy,0.18670057908429727,0.0,41
-quantized_transport_proxy,7.539999933214858e-05,2.3200002033263445e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,11,fedavg,quantized_transport_proxy,0.18283063049904158,0.0,41
-quantized_transport_proxy,0.00010599999950500205,3.029999788850546e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,12,fedavg,quantized_transport_proxy,0.17938673182060735,0.0,41
-quantized_transport_proxy,0.00011229999654460698,3.429999924264848e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,13,fedavg,quantized_transport_proxy,0.17629862982837516,0.0,41
-quantized_transport_proxy,0.0001036000030580908,2.8800001018680632e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,14,fedavg,quantized_transport_proxy,0.17351236666947256,0.0,41
-quantized_transport_proxy,0.00012830000196117908,3.290000313427299e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,15,fedavg,quantized_transport_proxy,0.17098537625674418,0.0,41
-quantized_transport_proxy,0.00010610000026645139,3.130000550299883e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,16,fedavg,quantized_transport_proxy,0.16868329142173694,0.0,41
-quantized_transport_proxy,8.229999366449192e-05,2.59000007645227e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,17,fedavg,quantized_transport_proxy,0.1665779001494775,0.0,41
-quantized_transport_proxy,7.519999780924991e-05,2.3200002033263445e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,18,fedavg,quantized_transport_proxy,0.1646456981466557,0.0,41
-quantized_transport_proxy,0.00013040000339969993,3.459999425103888e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,19,fedavg,quantized_transport_proxy,0.1628668245972647,0.0,41
-quantized_transport_proxy,7.709999772487208e-05,2.4299995857290924e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,20,fedavg,quantized_transport_proxy,0.16122443718344712,0.0,41
-quantized_transport_proxy,7.14999987394549e-05,3.640000068116933e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,21,fedavg,quantized_transport_proxy,0.1597040119003018,0.0,41
-quantized_transport_proxy,0.0001083999959519133,3.0800001695752144e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,22,fedavg,quantized_transport_proxy,0.1582930324160541,0.0,41
-quantized_transport_proxy,7.490000280085951e-05,2.3800006601959467e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,23,fedavg,quantized_transport_proxy,0.1569805760334771,0.0,41
-quantized_transport_proxy,6.690000009257346e-05,2.0799998310394585e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,24,fedavg,quantized_transport_proxy,0.15575712122633456,0.0,41
-quantized_transport_proxy,0.00010270000348100439,3.0199997127056122e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,25,fedavg,quantized_transport_proxy,0.1546143054256443,0.0,41
-quantized_transport_proxy,7.500000356230885e-05,2.300000051036477e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,26,fedavg,quantized_transport_proxy,0.15354476499836042,0.0,41
-quantized_transport_proxy,7.74000000092201e-05,2.3699998564552516e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,27,fedavg,quantized_transport_proxy,0.1525419572627733,0.0,41
-quantized_transport_proxy,0.00010340000153519213,2.970000059576705e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,28,fedavg,quantized_transport_proxy,0.151600113939114,0.0,41
-quantized_transport_proxy,7.550000009359792e-05,2.269999822601676e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,29,fedavg,quantized_transport_proxy,0.1507140702479521,0.0,41
-quantized_transport_proxy,7.330000516958535e-05,2.3099993995856494e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,30,fedavg,quantized_transport_proxy,0.14987921233429158,0.0,41
-plain,2.9000002541579306e-06,2.6900001103058457e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavgft_base,plain,0.33014700992012624,0.0,41
-plain,2.4999972083605826e-06,2.2599997464567423e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavgft_base,plain,0.2720005998752107,0.0,41
-plain,3.0000010156072676e-06,2.5499997718725353e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavgft_base,plain,0.24539675353570892,0.0,41
-plain,4.900000931229442e-06,4.9200003559235483e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavgft_base,plain,0.2292090778297685,0.0,41
-plain,2.5999979698099196e-06,2.5000001187436283e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavgft_base,plain,0.21781146695977333,0.0,41
-plain,2.5999979698099196e-06,2.409999433439225e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavgft_base,plain,0.20907949291959263,0.0,41
-plain,2.3999964469112456e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavgft_base,plain,0.20202859094248216,0.0,41
-plain,2.2000021999701858e-06,2.2700005501974374e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavgft_base,plain,0.19613516079243623,0.0,41
-plain,2.0999941625632346e-06,2.25000039790757e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavgft_base,plain,0.19109114867690774,0.0,41
-plain,1.9999934011138976e-06,2.1899999410379678e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavgft_base,plain,0.18670055226836763,0.0,41
-plain,1.7999991541728377e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavgft_base,plain,0.18283061021342906,0.0,41
-plain,1.7999991541728377e-06,1.6199999663513154e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavgft_base,plain,0.17938671863111044,0.0,41
-plain,1.4999968698248267e-06,1.5600002370774746e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavgft_base,plain,0.17629862282074354,0.0,41
-plain,1.400003384333104e-06,1.6400001186411828e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavgft_base,plain,0.1735123688359152,0.0,41
-plain,1.600004907231778e-06,1.5300000086426735e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavgft_base,plain,0.170985377106536,0.0,41
-plain,2.6999987312592566e-06,3.0199997127056122e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavgft_base,plain,0.16868329490262474,0.0,41
-plain,2.1000014385208488e-06,2.010000025620684e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavgft_base,plain,0.16657790692450314,0.0,41
-plain,2.5999979698099196e-06,2.469999890308827e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavgft_base,plain,0.16464569970188397,0.0,41
-plain,2.6999987312592566e-06,2.4599998141638935e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavgft_base,plain,0.16286684405231677,0.0,41
-plain,2.2000021999701858e-06,2.1400002879090607e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavgft_base,plain,0.16122445336689525,0.0,41
-plain,2.2000021999701858e-06,2.0699997548945248e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavgft_base,plain,0.15970402923494897,0.0,41
-plain,1.7999991541728377e-06,2.0399995264597237e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavgft_base,plain,0.15829303778380505,0.0,41
-plain,1.500004145782441e-06,1.649999467190355e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavgft_base,plain,0.1569805795379625,0.0,41
-plain,1.3999961083754897e-06,1.5600002370774746e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavgft_base,plain,0.15575712775391537,0.0,41
-plain,1.4999968698248267e-06,1.5899997379165143e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavgft_base,plain,0.15461431796943786,0.0,41
-plain,9.400006092619151e-06,2.4500004656147212e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavgft_base,plain,0.1535447766025605,0.0,41
-plain,2.4999972083605826e-06,6.160000339150429e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavgft_base,plain,0.152541979844358,0.0,41
-plain,2.0000006770715117e-06,2.1200001356191933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavgft_base,plain,0.151600136416765,0.0,41
-plain,2.1000014385208488e-06,1.9999999494757503e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavgft_base,plain,0.15071408938684328,0.0,41
-plain,1.6999983927235007e-06,1.8300001102034003e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavgft_base,plain,0.149879233378648,0.0,41
+plain,3.0000010156072676e-06,2.0499996026046574e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavg,plain,0.3349334958153815,0.0,31
+plain,3.4000040614046156e-06,0.0002724999940255657,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavg,plain,0.274061457036752,0.0,31
+plain,2.1999949240125716e-06,2.600000152597204e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavg,plain,0.24579328940787437,0.0,31
+plain,2.4000037228688598e-06,2.2199994418770075e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavg,plain,0.22838048688340057,0.0,31
+plain,3.0000010156072676e-06,3.199999628122896e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavg,plain,0.21602946229851785,0.0,31
+plain,2.5999979698099196e-06,2.4499997380189598e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavg,plain,0.20652437981744526,0.0,31
+plain,2.3999964469112456e-06,2.5699999241624027e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavg,plain,0.19882704935468046,0.0,31
+plain,2.4999972083605826e-06,2.4300003133248538e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavg,plain,0.19238018713284266,0.0,31
+plain,2.4000037228688598e-06,2.5800000003073364e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavg,plain,0.18685334435420814,0.0,31
+plain,2.6000052457675338e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavg,plain,0.18203494397343328,0.0,31
+plain,2.5000044843181968e-06,2.5800000003073364e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavg,plain,0.17778100410938513,0.0,31
+plain,3.0000010156072676e-06,2.8800001018680632e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavg,plain,0.1739886088389317,0.0,31
+plain,2.2999956854619086e-06,2.6100002287421376e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavg,plain,0.170581206988838,0.0,31
+plain,3.1999952625483274e-06,3.4500000765547156e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavg,plain,0.1674999871997854,0.0,31
+plain,2.4000037228688598e-06,2.489999315002933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavg,plain,0.16469856515221748,0.0,31
+plain,2.4000037228688598e-06,2.42000023717992e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavg,plain,0.1621395688211167,0.0,31
+plain,4.6000059228390455e-06,3.850000211969018e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavg,plain,0.15979235939130942,0.0,31
+plain,2.3000029614195228e-06,2.179999864893034e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavg,plain,0.15763145805659676,0.0,31
+plain,1.8999999156221747e-06,2.2300002456177026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavg,plain,0.15563542682666356,0.0,31
+plain,2.2999956854619086e-06,2.4300003133248538e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavg,plain,0.1537860505653673,0.0,31
+plain,2.2000021999701858e-06,2.2100000933278352e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavg,plain,0.15206772468170085,0.0,31
+plain,2.0000006770715117e-06,2.1100000594742596e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavg,plain,0.15046698696295513,0.0,31
+plain,2.1999949240125716e-06,2.0700004824902862e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavg,plain,0.14897215291393276,0.0,31
+plain,2.2999956854619086e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavg,plain,0.1475730270909186,0.0,31
+plain,2.6000052457675338e-06,2.3299995518755168e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavg,plain,0.1462606713711587,0.0,31
+plain,3.0000010156072676e-06,3.229999856557697e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavg,plain,0.14502721666485685,0.0,31
+plain,4.2000028770416975e-06,4.5700006012339145e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavg,plain,0.1438657083210918,0.0,31
+plain,3.0000010156072676e-06,3.360000118846074e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavg,plain,0.14276997804936814,0.0,31
+plain,4.0000013541430235e-06,3.789999755099416e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavg,plain,0.14173453697734847,0.0,31
+plain,2.7999994927085936e-06,3.0200004403013736e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavg,plain,0.14075448574772315,0.0,31
+plain,4.6000059228390455e-06,3.410000499570742e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedprox,plain,0.3359337877071613,0.0,31
+plain,2.4000037228688598e-06,3.0500006687361747e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedprox,plain,0.274689112222664,0.0,31
+plain,3.1999952625483274e-06,2.849999873433262e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedprox,plain,0.24625920328105305,0.0,31
+plain,2.6999987312592566e-06,2.5399996957276016e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedprox,plain,0.22876004452372067,0.0,31
+plain,2.6999987312592566e-06,3.429999924264848e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedprox,plain,0.21635638301190147,0.0,31
+plain,2.3000029614195228e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedprox,plain,0.2068161135599623,0.0,31
+plain,2.1000014385208488e-06,2.3499997041653842e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedprox,plain,0.19909355143661334,0.0,31
+plain,2.2000021999701858e-06,2.2999993234407157e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedprox,plain,0.19262755023635875,0.0,31
+plain,2.1000014385208488e-06,2.4500004656147212e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedprox,plain,0.18708550583664527,0.0,31
+plain,2.3999964469112456e-06,2.890000178012997e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedprox,plain,0.18225456624574402,0.0,31
+plain,2.4000037228688598e-06,2.370000584051013e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedprox,plain,0.17798996106321346,0.0,31
+plain,2.4999972083605826e-06,2.160000440198928e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedprox,plain,0.17418826908538673,0.0,31
+plain,3.0000010156072676e-06,2.6599998818710446e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedprox,plain,0.17077260559277577,0.0,31
+plain,2.7999994927085936e-06,2.4499997380189598e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedprox,plain,0.16768393315576993,0.0,31
+plain,2.1000014385208488e-06,2.2100000933278352e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedprox,plain,0.1648757103666318,0.0,31
+plain,2.2000021999701858e-06,2.3099993995856494e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedprox,plain,0.16231045331499022,0.0,31
+plain,2.6999987312592566e-06,3.0800001695752144e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedprox,plain,0.15995744145091498,0.0,31
+plain,2.2000021999701858e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedprox,plain,0.15779113466920178,0.0,31
+plain,2.5999979698099196e-06,3.199999628122896e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedprox,plain,0.1557900477478375,0.0,31
+plain,2.2000021999701858e-06,2.2199994418770075e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedprox,plain,0.1539359281581945,0.0,31
+plain,2.3000029614195228e-06,2.0499996026046574e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedprox,plain,0.1522131409187505,0.0,31
+plain,2.2000021999701858e-06,2.0899999071843922e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedprox,plain,0.15060819850620943,0.0,31
+plain,2.2999956854619086e-06,6.140000186860561e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedprox,plain,0.1491093948808391,0.0,31
+plain,2.1999949240125716e-06,2.2700005501974374e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedprox,plain,0.14770651591382955,0.0,31
+plain,2.2000021999701858e-06,2.0499996026046574e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedprox,plain,0.1463906070245627,0.0,31
+plain,2.1000014385208488e-06,2.409999433439225e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedprox,plain,0.1451537844462174,0.0,31
+plain,2.3999964469112456e-06,2.479999966453761e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedprox,plain,0.14398908031168606,0.0,31
+plain,2.4999972083605826e-06,2.1100000594742596e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedprox,plain,0.14289031434147606,0.0,31
+plain,2.0999941625632346e-06,2.0799998310394585e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedprox,plain,0.14185198672708285,0.0,31
+plain,2.1999949240125716e-06,2.130000211764127e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedprox,plain,0.14086918809446924,0.0,31
+secureagg_sim,0.00046519999887095764,1.1399999493733048e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.762479051592436e-15,1,fedavg,secureagg_sim,0.3349334958153815,0.0,31
+secureagg_sim,0.00043279999954393134,1.1199997970834374e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0192181260370035e-15,2,fedavg,secureagg_sim,0.27406145703675194,0.0,31
+secureagg_sim,0.000436399997852277,1.0000003385357559e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4702462297909733e-15,3,fedavg,secureagg_sim,0.2457932894078742,0.0,31
+secureagg_sim,0.00047310000081779435,1.2800002878066152e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.9671764217576992e-15,4,fedavg,secureagg_sim,0.22838048688340026,0.0,31
+secureagg_sim,0.0004422999991220422,9.800001862458885e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6930901125533637e-15,5,fedavg,secureagg_sim,0.21602946229851744,0.0,31
+secureagg_sim,0.00046129999827826396,1.219999830937013e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6393136847980827e-15,6,fedavg,secureagg_sim,0.20652437981744481,0.0,31
+secureagg_sim,0.0005722999994759448,1.750000228639692e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4424906541753444e-15,7,fedavg,secureagg_sim,0.19882704935467996,0.0,31
+secureagg_sim,0.0004360000020824373,1.049999991664663e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2568071583451967e-15,8,fedavg,secureagg_sim,0.19238018713284202,0.0,31
+secureagg_sim,0.00048580000293441117,1.1799995263572782e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6284716630732277e-15,9,fedavg,secureagg_sim,0.18685334435420747,0.0,31
+secureagg_sim,0.0004372000039438717,1.049999991664663e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.8891819492393722e-15,10,fedavg,secureagg_sim,0.18203494397343262,0.0,31
+secureagg_sim,0.0004611999975168146,1.1800002539530396e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5918256296432176e-15,11,fedavg,secureagg_sim,0.1777810041093844,0.0,31
+secureagg_sim,0.00046499999734805897,1.2899996363557875e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6001336500547367e-15,12,fedavg,secureagg_sim,0.17398860883893097,0.0,31
+secureagg_sim,0.0004552000027615577,1.1099997209385037e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.316140764764164e-15,13,fedavg,secureagg_sim,0.17058120698883728,0.0,31
+secureagg_sim,0.00042460000258870423,9.999996109399945e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.3166551182663966e-15,14,fedavg,secureagg_sim,0.1674999871997847,0.0,31
+secureagg_sim,0.00044319999869912863,1.080000220099464e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5118115093137874e-15,15,fedavg,secureagg_sim,0.16469856515221684,0.0,31
+secureagg_sim,0.0003916000059689395,8.800001523923129e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.203681251893407e-15,16,fedavg,secureagg_sim,0.16213956882111596,0.0,31
+secureagg_sim,0.00041259999852627516,9.60000033956021e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.1090581498194325e-15,17,fedavg,secureagg_sim,0.15979235939130873,0.0,31
+secureagg_sim,0.0004450999986147508,1.1999996786471456e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.2690183065776637e-15,18,fedavg,secureagg_sim,0.15763145805659612,0.0,31
+secureagg_sim,0.00044519999937620014,1.0099996870849282e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0018708912772354e-15,19,fedavg,secureagg_sim,0.15563542682666287,0.0,31
+secureagg_sim,0.0004361000028438866,1.1600001016631722e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4446590585203154e-15,20,fedavg,secureagg_sim,0.15378605056536662,0.0,31
+secureagg_sim,0.0004935000033583492,1.5499994333367795e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.1764274410474016e-15,21,fedavg,secureagg_sim,0.1520677246817002,0.0,31
+secureagg_sim,0.00045220000174595043,1.049999991664663e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.9012569296705806e-15,22,fedavg,secureagg_sim,0.1504669869629545,0.0,31
+secureagg_sim,0.00047959999938029796,1.0900002962443978e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6046192152785466e-15,23,fedavg,secureagg_sim,0.14897215291393212,0.0,31
+secureagg_sim,0.00044049999996786937,1.049999991664663e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0469737016526324e-15,24,fedavg,secureagg_sim,0.14757302709091794,0.0,31
+secureagg_sim,0.0004903000008198433,1.0600000678095967e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.3366044382401299e-15,25,fedavg,secureagg_sim,0.14626067137115806,0.0,31
+secureagg_sim,0.0004318999999668449,9.700001101009548e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6627324517237696e-15,26,fedavg,secureagg_sim,0.14502721666485624,0.0,31
+secureagg_sim,0.00044809999963035807,1.2999997125007212e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8257964584655895e-15,27,fedavg,secureagg_sim,0.14386570832109113,0.0,31
+secureagg_sim,0.0004349000009824522,1.0799994925037026e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5187504032176946e-15,28,fedavg,secureagg_sim,0.14276997804936747,0.0,31
+secureagg_sim,0.0004431000052136369,9.999996109399945e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.669739429528306e-15,29,fedavg,secureagg_sim,0.14173453697734784,0.0,31
+secureagg_sim,0.00041570000030333176,9.900002623908222e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0192181260370035e-15,30,fedavg,secureagg_sim,0.14075448574772256,0.0,31
+quantized_transport_proxy,9.600000339560211e-05,2.499999391147867e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,1,fedavg,quantized_transport_proxy,0.3349334958153815,0.0,31
+quantized_transport_proxy,8.289999823318794e-05,2.4499997380189598e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,2,fedavg,quantized_transport_proxy,0.2740614399944349,0.0,31
+quantized_transport_proxy,7.79999973019585e-05,2.300000051036477e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,3,fedavg,quantized_transport_proxy,0.24579328959265412,0.0,31
+quantized_transport_proxy,8.030000026337802e-05,5.650000093737617e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,4,fedavg,quantized_transport_proxy,0.2283804976655273,0.0,31
+quantized_transport_proxy,8.95000048330985e-05,2.78999941656366e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,5,fedavg,quantized_transport_proxy,0.2160294574827723,0.0,31
+quantized_transport_proxy,8.720000187167898e-05,2.7400004910305142e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,6,fedavg,quantized_transport_proxy,0.20652438510207702,0.0,31
+quantized_transport_proxy,0.00010220000694971532,2.7599999157246202e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,7,fedavg,quantized_transport_proxy,0.19882705118177407,0.0,31
+quantized_transport_proxy,9.539999882690609e-05,2.9499999072868377e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,8,fedavg,quantized_transport_proxy,0.19238018200881757,0.0,31
+quantized_transport_proxy,8.959999831859022e-05,2.7499998395796865e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,9,fedavg,quantized_transport_proxy,0.18685334630844924,0.0,31
+quantized_transport_proxy,8.440000237897038e-05,2.6399997295811772e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,10,fedavg,quantized_transport_proxy,0.1820349572324135,0.0,31
+quantized_transport_proxy,8.040000102482736e-05,2.5800000003073364e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,11,fedavg,quantized_transport_proxy,0.17778101710902394,0.0,31
+quantized_transport_proxy,8.779999916441739e-05,2.800000220304355e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,12,fedavg,quantized_transport_proxy,0.17398862177158742,0.0,31
+quantized_transport_proxy,8.430000161752105e-05,2.6100002287421376e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,13,fedavg,quantized_transport_proxy,0.17058123199002634,0.0,31
+quantized_transport_proxy,8.36000035633333e-05,2.6900001103058457e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,14,fedavg,quantized_transport_proxy,0.1675000197151914,0.0,31
+quantized_transport_proxy,0.00010699999984353781,3.100000321865082e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,15,fedavg,quantized_transport_proxy,0.1646985916831959,0.0,31
+quantized_transport_proxy,8.969999908003956e-05,5.1899995014537126e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,16,fedavg,quantized_transport_proxy,0.16213959441204195,0.0,31
+quantized_transport_proxy,8.609999349573627e-05,2.680000034160912e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,17,fedavg,quantized_transport_proxy,0.1597923751517704,0.0,31
+quantized_transport_proxy,0.00013649999891640618,3.4500000765547156e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,18,fedavg,quantized_transport_proxy,0.15763147691327306,0.0,31
+quantized_transport_proxy,8.820000221021473e-05,2.7900001441594213e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,19,fedavg,quantized_transport_proxy,0.15563544100803853,0.0,31
+quantized_transport_proxy,8.689999958733097e-05,2.5199995434377342e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,20,fedavg,quantized_transport_proxy,0.15378605906315512,0.0,31
+quantized_transport_proxy,8.449999586446211e-05,2.6699999580159783e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,21,fedavg,quantized_transport_proxy,0.15206773339075041,0.0,31
+quantized_transport_proxy,0.00013580000086221844,2.800000220304355e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,22,fedavg,quantized_transport_proxy,0.15046699003913272,0.0,31
+quantized_transport_proxy,8.930000331019983e-05,2.8099995688535273e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,23,fedavg,quantized_transport_proxy,0.1489721610215669,0.0,31
+quantized_transport_proxy,8.440000237897038e-05,2.5499997718725353e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,24,fedavg,quantized_transport_proxy,0.14757302180084356,0.0,31
+quantized_transport_proxy,8.420000085607171e-05,2.6699999580159783e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,25,fedavg,quantized_transport_proxy,0.14626065960827087,0.0,31
+quantized_transport_proxy,8.499999967170879e-05,2.6699999580159783e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,26,fedavg,quantized_transport_proxy,0.1450271959592218,0.0,31
+quantized_transport_proxy,8.86999987415038e-05,2.9000002541579306e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,27,fedavg,quantized_transport_proxy,0.1438656878651063,0.0,31
+quantized_transport_proxy,8.410000009462237e-05,2.680000034160912e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,28,fedavg,quantized_transport_proxy,0.14276995975337597,0.0,31
+quantized_transport_proxy,8.340000204043463e-05,2.5699999241624027e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,29,fedavg,quantized_transport_proxy,0.14173451024601813,0.0,31
+quantized_transport_proxy,0.00014209999790182337,3.190000279573724e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,30,fedavg,quantized_transport_proxy,0.1407544554553186,0.0,31
+plain,2.2000021999701858e-06,2.160000440198928e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavgft_base,plain,0.3349334958153815,0.0,31
+plain,2.2999956854619086e-06,2.3300002794712782e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavgft_base,plain,0.274061457036752,0.0,31
+plain,2.3000029614195228e-06,2.4900000425986946e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavgft_base,plain,0.24579328940787437,0.0,31
+plain,1.7999991541728377e-06,2.1500003640539944e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavgft_base,plain,0.22838048688340057,0.0,31
+plain,2.4000037228688598e-06,2.4000000848900527e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavgft_base,plain,0.21602946229851785,0.0,31
+plain,2.2000021999701858e-06,3.0999995942693204e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavgft_base,plain,0.20652437981744526,0.0,31
+plain,2.3000029614195228e-06,2.059999678749591e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavgft_base,plain,0.19882704935468046,0.0,31
+plain,2.1000014385208488e-06,2.469999890308827e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavgft_base,plain,0.19238018713284266,0.0,31
+plain,1.8999999156221747e-06,2.1200001356191933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavgft_base,plain,0.18685334435420814,0.0,31
+plain,2.2000021999701858e-06,2.529999619582668e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavgft_base,plain,0.18203494397343328,0.0,31
+plain,2.1000014385208488e-06,2.2299995180219412e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavgft_base,plain,0.17778100410938513,0.0,31
+plain,2.6999987312592566e-06,2.3200002033263445e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavgft_base,plain,0.1739886088389317,0.0,31
+plain,3.0000010156072676e-06,2.6500005333218724e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavgft_base,plain,0.170581206988838,0.0,31
+plain,2.1000014385208488e-06,2.5399996957276016e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavgft_base,plain,0.1674999871997854,0.0,31
+plain,2.4999972083605826e-06,2.1400002879090607e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavgft_base,plain,0.16469856515221748,0.0,31
+plain,2.5999979698099196e-06,1.9699997210409492e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavgft_base,plain,0.1621395688211167,0.0,31
+plain,1.7999991541728377e-06,1.9599996448960155e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavgft_base,plain,0.15979235939130942,0.0,31
+plain,2.5999979698099196e-06,2.2600004740525037e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavgft_base,plain,0.15763145805659676,0.0,31
+plain,2.6999987312592566e-06,1.8799997633323073e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavgft_base,plain,0.15563542682666356,0.0,31
+plain,2.3000029614195228e-06,1.9699997210409492e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavgft_base,plain,0.1537860505653673,0.0,31
+plain,2.3000029614195228e-06,2.099999983329326e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavgft_base,plain,0.15206772468170085,0.0,31
+plain,2.0999941625632346e-06,1.8999999156221747e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavgft_base,plain,0.15046698696295513,0.0,31
+plain,2.1000014385208488e-06,1.9099999917671084e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavgft_base,plain,0.14897215291393276,0.0,31
+plain,2.7999994927085936e-06,6.540000322274864e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavgft_base,plain,0.1475730270909186,0.0,31
+plain,2.2000021999701858e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavgft_base,plain,0.1462606713711587,0.0,31
+plain,1.6999983927235007e-06,2.0799998310394585e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavgft_base,plain,0.14502721666485685,0.0,31
+plain,1.7999991541728377e-06,2.0899999071843922e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavgft_base,plain,0.1438657083210918,0.0,31
+plain,2.4999972083605826e-06,2.42000023717992e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavgft_base,plain,0.14276997804936814,0.0,31
+plain,2.3000029614195228e-06,2.5200002710334957e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavgft_base,plain,0.14173453697734847,0.0,31
+plain,2.1000014385208488e-06,2.220000169472769e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavgft_base,plain,0.14075448574772315,0.0,31
+plain,2.5999979698099196e-06,2.5800000003073364e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavg,plain,0.3396823239323372,0.0,37
+plain,2.1999949240125716e-06,2.099999983329326e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavg,plain,0.27972919240176664,0.0,37
+plain,1.6999983927235007e-06,1.9899998733308166e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavg,plain,0.251739729555005,0.0,37
+plain,2.0000006770715117e-06,2.2499996703118086e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavg,plain,0.23453552295440097,0.0,37
+plain,2.2000021999701858e-06,2.0300001779105514e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavg,plain,0.22235311691045437,0.0,37
+plain,2.3000029614195228e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavg,plain,0.21299098551225307,0.0,37
+plain,2.5999979698099196e-06,2.25000039790757e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavg,plain,0.20541951168960665,0.0,37
+plain,2.0000006770715117e-06,2.0199993741698563e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavg,plain,0.19908675826590758,0.0,37
+plain,1.800006430130452e-06,1.930000144056976e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavg,plain,0.19366569770795017,0.0,37
+plain,2.2000021999701858e-06,2.1400002879090607e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavg,plain,0.18894699356874856,0.0,37
+plain,2.2000021999701858e-06,2.2199994418770075e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavg,plain,0.1847881630918209,0.0,37
+plain,2.0000006770715117e-06,2.220000169472769e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavg,plain,0.18108731342023382,0.0,37
+plain,1.4999968698248267e-06,1.7899998056236655e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavg,plain,0.17776860451016718,0.0,37
+plain,1.7999991541728377e-06,1.920000067912042e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavg,plain,0.17477372786352036,0.0,37
+plain,3.0000010156072676e-06,3.089999518124387e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavg,plain,0.1720566605296246,0.0,37
+plain,2.2000021999701858e-06,2.5999994250014424e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavg,plain,0.16958029415690612,0.0,37
+plain,2.0000006770715117e-06,2.4300003133248538e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavg,plain,0.1673141851247354,0.0,37
+plain,2.5000044843181968e-06,2.1900006686337292e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavg,plain,0.1652330011495609,0.0,37
+plain,2.0000006770715117e-06,2.1100000594742596e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavg,plain,0.16331541572952765,0.0,37
+plain,2.0999941625632346e-06,1.920000067912042e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavg,plain,0.16154329971414466,0.0,37
+plain,2.1000014385208488e-06,2.1399995603132993e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavg,plain,0.15990111575295038,0.0,37
+plain,2.0000006770715117e-06,2.3500004317611456e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavg,plain,0.15837545498541905,0.0,37
+plain,1.8999999156221747e-06,2.0300001779105514e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavg,plain,0.15695467591508028,0.0,37
+plain,2.1000014385208488e-06,2.0799998310394585e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavg,plain,0.15562861834593872,0.0,37
+plain,3.1000017770566046e-06,3.260000084992498e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavg,plain,0.15438837358725976,0.0,37
+plain,2.2000021999701858e-06,2.0700004824902862e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavg,plain,0.15322609761699668,0.0,37
+plain,2.2000021999701858e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavg,plain,0.15213485758363438,0.0,37
+plain,2.2000021999701858e-06,2.1599997126031667e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavg,plain,0.15110850455937097,0.0,37
+plain,2.2999956854619086e-06,1.9099999917671084e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavg,plain,0.1501415672309135,0.0,37
+plain,1.7999991541728377e-06,1.7899998056236655e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavg,plain,0.14922916247887255,0.0,37
+plain,2.5999979698099196e-06,2.340000355616212e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedprox,plain,0.3406622402444863,0.0,37
+plain,2.3000029614195228e-06,2.5800000003073364e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedprox,plain,0.2803435418964792,0.0,37
+plain,2.2000021999701858e-06,2.3800006601959467e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedprox,plain,0.2521946671364437,0.0,37
+plain,2.9000002541579306e-06,3.0000002880115062e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedprox,plain,0.2349052243361619,0.0,37
+plain,2.5000044843181968e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedprox,plain,0.22267091657473417,0.0,37
+plain,1.6999983927235007e-06,1.920000067912042e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedprox,plain,0.2132741376897626,0.0,37
+plain,1.6999983927235007e-06,1.8500002624932677e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedprox,plain,0.20567784976766007,0.0,37
+plain,2.0000006770715117e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedprox,plain,0.1993262909966294,0.0,37
+plain,2.2000021999701858e-06,2.359999780310318e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedprox,plain,0.19389030109750877,0.0,37
+plain,1.8999999156221747e-06,2.0399995264597237e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedprox,plain,0.1891592832107998,0.0,37
+plain,1.8999999156221747e-06,2.179999864893034e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedprox,plain,0.1849899759019423,0.0,37
+plain,2.2000021999701858e-06,2.2700005501974374e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedprox,plain,0.18127998795415196,0.0,37
+plain,2.2000021999701858e-06,2.0700004824902862e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedprox,plain,0.17795315080747923,0.0,37
+plain,2.1000014385208488e-06,2.3499997041653842e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedprox,plain,0.17495093366789288,0.0,37
+plain,2.1000014385208488e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedprox,plain,0.17222715942042816,0.0,37
+plain,2.1999949240125716e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedprox,plain,0.16974461016562717,0.0,37
+plain,2.0000006770715117e-06,2.4400003894697875e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedprox,plain,0.16747276247306578,0.0,37
+plain,1.8999999156221747e-06,2.179999864893034e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedprox,plain,0.165386224387748,0.0,37
+plain,1.8999999156221747e-06,2.390000008745119e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedprox,plain,0.16346362358262606,0.0,37
+plain,2.4999972083605826e-06,2.280000626342371e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedprox,plain,0.16168679475090758,0.0,37
+plain,2.4000037228688598e-06,2.3800006601959467e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedprox,plain,0.1600401712513493,0.0,37
+plain,1.8999999156221747e-06,1.9599996448960155e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedprox,plain,0.15851031989898223,0.0,37
+plain,1.400003384333104e-06,1.930000144056976e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedprox,plain,0.15708557854111121,0.0,37
+plain,2.0999941625632346e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedprox,plain,0.1557557690983645,0.0,37
+plain,2.0000006770715117e-06,2.2000000171829015e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedprox,plain,0.1545119671456897,0.0,37
+plain,1.7999991541728377e-06,2.239999594166875e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedprox,plain,0.15334631463607354,0.0,37
+plain,2.4999972083605826e-06,2.439999661874026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedprox,plain,0.1522518660880136,0.0,37
+plain,2.2000021999701858e-06,2.2600004740525037e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedprox,plain,0.15122246111003493,0.0,37
+plain,2.0000006770715117e-06,2.1899999410379678e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedprox,plain,0.15025261792170466,0.0,37
+plain,1.6999983927235007e-06,2.4499997380189598e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedprox,plain,0.14933744380393485,0.0,37
+secureagg_sim,0.0004115999981877394,9.999996109399945e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.4416913763379853e-15,1,fedavg,secureagg_sim,0.3396823239323372,0.0,37
+secureagg_sim,0.00042320000648032874,8.900002285372466e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.185751579730777e-15,2,fedavg,secureagg_sim,0.2797291924017664,0.0,37
+secureagg_sim,0.000567600000067614,1.870000414783135e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5092094240998222e-15,3,fedavg,secureagg_sim,0.2517397295550047,0.0,37
+secureagg_sim,0.00041730000521056354,9.60000033956021e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2437967322753707e-15,4,fedavg,secureagg_sim,0.23453552295440055,0.0,37
+secureagg_sim,0.000396399998862762,9.60000033956021e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.4623718902484484e-15,5,fedavg,secureagg_sim,0.22235311691045395,0.0,37
+secureagg_sim,0.00041629999759607017,9.499999578110874e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.7373255611907723e-15,6,fedavg,secureagg_sim,0.21299098551225268,0.0,37
+secureagg_sim,0.0005968999976175837,1.7300000763498247e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6930901125533637e-15,7,fedavg,secureagg_sim,0.20541951168960632,0.0,37
+secureagg_sim,0.0004532999955699779,1.1299998732283711e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.4494295480792516e-15,8,fedavg,secureagg_sim,0.1990867582659073,0.0,37
+secureagg_sim,0.0004989000008208677,1.5199999324977398e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.1874182193061245e-15,9,fedavg,secureagg_sim,0.19366569770794972,0.0,37
+secureagg_sim,0.00048010000318754464,1.3100005162414163e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8318679906315083e-15,10,fedavg,secureagg_sim,0.1889469935687481,0.0,37
+secureagg_sim,0.0005085000011604279,1.2500000593718141e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8769708010069053e-15,11,fedavg,secureagg_sim,0.18478816309182036,0.0,37
+secureagg_sim,0.00043870000081369653,1.0199997632298619e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0816681711721685e-15,12,fedavg,secureagg_sim,0.18108731342023332,0.0,37
+secureagg_sim,0.00046629999997094274,9.499999578110874e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.412851598549871e-15,13,fedavg,secureagg_sim,0.17776860451016663,0.0,37
+secureagg_sim,0.0004155999995418824,9.899995347950608e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8518173106052416e-15,14,fedavg,secureagg_sim,0.1747737278635198,0.0,37
+secureagg_sim,0.00048609999794280156,1.3000004400964826e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,3.708405110769419e-15,15,fedavg,secureagg_sim,0.17205666052962404,0.0,37
+secureagg_sim,0.00042359999497421086,1.0900002962443978e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5128957114862729e-15,16,fedavg,secureagg_sim,0.16958029415690562,0.0,37
+secureagg_sim,0.00042640000174287707,1.0199997632298619e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.680147770384167e-15,17,fedavg,secureagg_sim,0.1673141851247349,0.0,37
+secureagg_sim,0.00047790000098757446,1.1500000255182385e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0497926273010947e-15,18,fedavg,secureagg_sim,0.1652330011495604,0.0,37
+secureagg_sim,0.00042360000225016847,9.499999578110874e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2025970497209215e-15,19,fedavg,secureagg_sim,0.16331541572952715,0.0,37
+secureagg_sim,0.00041819999751169235,1.1800002539530396e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.484774538902279e-15,20,fedavg,secureagg_sim,0.1615432997141441,0.0,37
+secureagg_sim,0.0004215000008116476,9.499999578110874e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0079424234431542e-15,21,fedavg,secureagg_sim,0.1599011157529498,0.0,37
+secureagg_sim,0.00036980000004405156,8.199996955227107e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.070175628143822e-15,22,fedavg,secureagg_sim,0.15837545498541847,0.0,37
+secureagg_sim,0.00041870000131893903,9.099996532313526e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8602740875506285e-15,23,fedavg,secureagg_sim,0.15695467591507967,0.0,37
+secureagg_sim,0.0004292999947210774,9.000003046821803e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0638872555434062e-15,24,fedavg,secureagg_sim,0.15562861834593808,0.0,37
+secureagg_sim,0.0005251999973552302,2.42000023717992e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.7607443281164592e-15,25,fedavg,secureagg_sim,0.1543883735872592,0.0,37
+secureagg_sim,0.0004411999980220571,1.0100004146806896e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.1160777163565783e-15,26,fedavg,secureagg_sim,0.1532260976169961,0.0,37
+secureagg_sim,0.00040299999818671495,9.399998816661537e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.491062911502695e-15,27,fedavg,secureagg_sim,0.15213485758363382,0.0,37
+secureagg_sim,0.00042859999666688964,1.0900002962443978e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.348815586472597e-15,28,fedavg,secureagg_sim,0.15110850455937036,0.0,37
+secureagg_sim,0.000469600003270898,1.8300001102034003e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.457384560255015e-15,29,fedavg,secureagg_sim,0.15014156723091288,0.0,37
+secureagg_sim,0.0004059999992023222,8.600000001024455e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.4563003580825296e-15,30,fedavg,secureagg_sim,0.1492291624788719,0.0,37
+quantized_transport_proxy,8.179999713320285e-05,2.680000034160912e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,1,fedavg,quantized_transport_proxy,0.3396823239323372,0.0,37
+quantized_transport_proxy,9.700000373413786e-05,3.2800002372823656e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,2,fedavg,quantized_transport_proxy,0.2797291770451694,0.0,37
+quantized_transport_proxy,7.870000263210386e-05,2.559999848017469e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,3,fedavg,quantized_transport_proxy,0.25173973581696,0.0,37
+quantized_transport_proxy,7.570000161649659e-05,4.269999772077426e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,4,fedavg,quantized_transport_proxy,0.23453548049269185,0.0,37
+quantized_transport_proxy,7.859999459469691e-05,2.4900000425986946e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,5,fedavg,quantized_transport_proxy,0.2223530786659828,0.0,37
+quantized_transport_proxy,7.650000043213367e-05,2.4100001610349864e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,6,fedavg,quantized_transport_proxy,0.21299093428166904,0.0,37
+quantized_transport_proxy,8.570000500185415e-05,2.6699999580159783e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,7,fedavg,quantized_transport_proxy,0.20541946010417333,0.0,37
+quantized_transport_proxy,8.130000060191378e-05,2.6599998818710446e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,8,fedavg,quantized_transport_proxy,0.19908672185322476,0.0,37
+quantized_transport_proxy,8.170000364771113e-05,2.5499997718725353e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,9,fedavg,quantized_transport_proxy,0.19366565575623093,0.0,37
+quantized_transport_proxy,8.240000170189887e-05,2.680000034160912e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,10,fedavg,quantized_transport_proxy,0.18894693891134628,0.0,37
+quantized_transport_proxy,7.580000237794593e-05,2.5099994672928005e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,11,fedavg,quantized_transport_proxy,0.18478811425939254,0.0,37
+quantized_transport_proxy,7.040000491542742e-05,2.08000055863522e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,12,fedavg,quantized_transport_proxy,0.18108727661529161,0.0,37
+quantized_transport_proxy,0.00010230000043520704,2.7300004148855805e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,13,fedavg,quantized_transport_proxy,0.1777685718853101,0.0,37
+quantized_transport_proxy,8.649999654153362e-05,2.7499998395796865e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,14,fedavg,quantized_transport_proxy,0.17477370428012667,0.0,37
+quantized_transport_proxy,8.580000576330349e-05,2.8100002964492887e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,15,fedavg,quantized_transport_proxy,0.17205662651738524,0.0,37
+quantized_transport_proxy,8.359999628737569e-05,2.6200003048870713e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,16,fedavg,quantized_transport_proxy,0.1695802648262989,0.0,37
+quantized_transport_proxy,8.040000102482736e-05,2.5099994672928005e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,17,fedavg,quantized_transport_proxy,0.16731416756681208,0.0,37
+quantized_transport_proxy,9.049999789567664e-05,3.060000017285347e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,18,fedavg,quantized_transport_proxy,0.16523297329278852,0.0,37
+quantized_transport_proxy,7.829999958630651e-05,2.510000194888562e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,19,fedavg,quantized_transport_proxy,0.16331539502194156,0.0,37
+quantized_transport_proxy,7.750000077066943e-05,2.499999391147867e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,20,fedavg,quantized_transport_proxy,0.1615432914582967,0.0,37
+quantized_transport_proxy,7.419999747071415e-05,2.2799998987466097e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,21,fedavg,quantized_transport_proxy,0.15990110829888537,0.0,37
+quantized_transport_proxy,7.099999493220821e-05,2.2899999748915434e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,22,fedavg,quantized_transport_proxy,0.15837544895552705,0.0,37
+quantized_transport_proxy,9.069999941857532e-05,3.1299998227041215e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,23,fedavg,quantized_transport_proxy,0.15695468118968392,0.0,37
+quantized_transport_proxy,0.00013220000255387276,3.279999509686604e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,24,fedavg,quantized_transport_proxy,0.15562862833141364,0.0,37
+quantized_transport_proxy,7.819999882485718e-05,2.59000007645227e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,25,fedavg,quantized_transport_proxy,0.1543883986511841,0.0,37
+quantized_transport_proxy,7.819999882485718e-05,2.4900000425986946e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,26,fedavg,quantized_transport_proxy,0.15322612376537115,0.0,37
+quantized_transport_proxy,8.189999789465219e-05,2.4400003894697875e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,27,fedavg,quantized_transport_proxy,0.152134880139247,0.0,37
+quantized_transport_proxy,7.819999882485718e-05,2.479999966453761e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,28,fedavg,quantized_transport_proxy,0.1511085237998943,0.0,37
+quantized_transport_proxy,7.000000186963007e-05,3.77000033040531e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,29,fedavg,quantized_transport_proxy,0.15014158637264863,0.0,37
+quantized_transport_proxy,6.760000542271882e-05,2.08000055863522e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,30,fedavg,quantized_transport_proxy,0.14922918280092778,0.0,37
+plain,2.1000014385208488e-06,2.2000000171829015e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavgft_base,plain,0.3396823239323372,0.0,37
+plain,2.3000029614195228e-06,2.4199995095841587e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavgft_base,plain,0.27972919240176664,0.0,37
+plain,2.2000021999701858e-06,2.2100000933278352e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavgft_base,plain,0.251739729555005,0.0,37
+plain,1.8999999156221747e-06,2.1100000594742596e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavgft_base,plain,0.23453552295440097,0.0,37
+plain,1.7999991541728377e-06,2.2000000171829015e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavgft_base,plain,0.22235311691045437,0.0,37
+plain,1.8999999156221747e-06,2.1200001356191933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavgft_base,plain,0.21299098551225307,0.0,37
+plain,2.2999956854619086e-06,1.9700004486367106e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavgft_base,plain,0.20541951168960665,0.0,37
+plain,2.4000037228688598e-06,2.1299994841683656e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavgft_base,plain,0.19908675826590758,0.0,37
+plain,2.3999964469112456e-06,2.6100002287421376e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavgft_base,plain,0.19366569770795017,0.0,37
+plain,2.4999972083605826e-06,2.3299995518755168e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavgft_base,plain,0.18894699356874856,0.0,37
+plain,2.3000029614195228e-06,2.25000039790757e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavgft_base,plain,0.1847881630918209,0.0,37
+plain,4.399997123982757e-06,3.260000084992498e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavgft_base,plain,0.18108731342023382,0.0,37
+plain,2.7999994927085936e-06,2.5300003471784294e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavgft_base,plain,0.17776860451016718,0.0,37
+plain,2.3000029614195228e-06,1.9999999494757503e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavgft_base,plain,0.17477372786352036,0.0,37
+plain,1.8999999156221747e-06,2.160000440198928e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavgft_base,plain,0.1720566605296246,0.0,37
+plain,2.4999972083605826e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavgft_base,plain,0.16958029415690612,0.0,37
+plain,2.1000014385208488e-06,2.0600004063453525e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavgft_base,plain,0.1673141851247354,0.0,37
+plain,2.2000021999701858e-06,2.2300002456177026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavgft_base,plain,0.1652330011495609,0.0,37
+plain,2.1999949240125716e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavgft_base,plain,0.16331541572952765,0.0,37
+plain,1.5999976312741637e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavgft_base,plain,0.16154329971414466,0.0,37
+plain,2.0300001779105514e-05,2.5499997718725353e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavgft_base,plain,0.15990111575295038,0.0,37
+plain,2.2000021999701858e-06,2.390000008745119e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavgft_base,plain,0.15837545498541905,0.0,37
+plain,2.1999949240125716e-06,2.390000008745119e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavgft_base,plain,0.15695467591508028,0.0,37
+plain,2.1000014385208488e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavgft_base,plain,0.15562861834593872,0.0,37
+plain,2.2000021999701858e-06,2.0799998310394585e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavgft_base,plain,0.15438837358725976,0.0,37
+plain,1.8999999156221747e-06,2.2799998987466097e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavgft_base,plain,0.15322609761699668,0.0,37
+plain,2.1000014385208488e-06,1.9899998733308166e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavgft_base,plain,0.15213485758363438,0.0,37
+plain,2.3999964469112456e-06,2.2899999748915434e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavgft_base,plain,0.15110850455937097,0.0,37
+plain,1.8999999156221747e-06,1.990000600926578e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavgft_base,plain,0.1501415672309135,0.0,37
+plain,1.8999999156221747e-06,1.799999881768599e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavgft_base,plain,0.14922916247887255,0.0,37
+plain,2.7000060072168708e-06,2.2100000933278352e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavg,plain,0.33014700992012624,0.0,41
+plain,2.0000006770715117e-06,2.0300001779105514e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavg,plain,0.2720005998752107,0.0,41
+plain,1.7999991541728377e-06,3.6100005672778934e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavg,plain,0.24539675353570892,0.0,41
+plain,2.2000021999701858e-06,1.930000144056976e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavg,plain,0.2292090778297685,0.0,41
+plain,2.2000021999701858e-06,2.3999993572942913e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavg,plain,0.21781146695977333,0.0,41
+plain,2.2000021999701858e-06,2.4100001610349864e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavg,plain,0.20907949291959263,0.0,41
+plain,2.3000029614195228e-06,2.2600004740525037e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavg,plain,0.20202859094248216,0.0,41
+plain,2.2000021999701858e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavg,plain,0.19613516079243623,0.0,41
+plain,2.2999956854619086e-06,2.2000000171829015e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavg,plain,0.19109114867690774,0.0,41
+plain,2.1999949240125716e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavg,plain,0.18670055226836763,0.0,41
+plain,2.3000029614195228e-06,2.2299995180219412e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavg,plain,0.18283061021342906,0.0,41
+plain,2.2000021999701858e-06,2.3999993572942913e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavg,plain,0.17938671863111044,0.0,41
+plain,2.3000029614195228e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavg,plain,0.17629862282074354,0.0,41
+plain,2.2999956854619086e-06,2.1200001356191933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavg,plain,0.1735123688359152,0.0,41
+plain,2.4000037228688598e-06,2.02999945031479e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavg,plain,0.170985377106536,0.0,41
+plain,2.2999956854619086e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavg,plain,0.16868329490262474,0.0,41
+plain,2.2999956854619086e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavg,plain,0.16657790692450314,0.0,41
+plain,1.8999999156221747e-06,2.0200001017656177e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavg,plain,0.16464569970188397,0.0,41
+plain,2.1000014385208488e-06,1.930000144056976e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavg,plain,0.16286684405231677,0.0,41
+plain,2.9000002541579306e-06,2.830000448739156e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavg,plain,0.16122445336689525,0.0,41
+plain,2.7999994927085936e-06,3.0499999411404133e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavg,plain,0.15970402923494897,0.0,41
+plain,2.1999949240125716e-06,2.3600005079060793e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavg,plain,0.15829303778380505,0.0,41
+plain,2.2999956854619086e-06,2.4300003133248538e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavg,plain,0.1569805795379625,0.0,41
+plain,2.2000021999701858e-06,2.2299995180219412e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavg,plain,0.15575712775391537,0.0,41
+plain,1.8999999156221747e-06,2.2000000171829015e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavg,plain,0.15461431796943786,0.0,41
+plain,2.3000029614195228e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavg,plain,0.1535447766025605,0.0,41
+plain,2.2999956854619086e-06,2.3300002794712782e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavg,plain,0.152541979844358,0.0,41
+plain,2.1999949240125716e-06,2.1500003640539944e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavg,plain,0.151600136416765,0.0,41
+plain,2.2000021999701858e-06,2.0399995264597237e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavg,plain,0.15071408938684328,0.0,41
+plain,2.5999979698099196e-06,1.9999999494757503e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavg,plain,0.149879233378648,0.0,41
+plain,2.6999987312592566e-06,2.2000000171829015e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedprox,plain,0.3311257631165013,0.0,41
+plain,2.1000014385208488e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedprox,plain,0.27259465934124416,0.0,41
+plain,2.0000006770715117e-06,1.8699996871873736e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedprox,plain,0.24583030494440397,0.0,41
+plain,1.7999991541728377e-06,1.9499995687510818e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedprox,plain,0.2295589088070895,0.0,41
+plain,0.00018899999849963933,5.059999966761097e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedprox,plain,0.21811137271578196,0.0,41
+plain,2.3000029614195228e-06,2.2599997464567423e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedprox,plain,0.20934671125165993,0.0,41
+plain,2.2000021999701858e-06,2.1899999410379678e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedprox,plain,0.20227281271995384,0.0,41
+plain,2.2000021999701858e-06,2.340000355616212e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedprox,plain,0.19636222147006188,0.0,41
+plain,2.3000029614195228e-06,2.269999822601676e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedprox,plain,0.19130475077798179,0.0,41
+plain,2.0999941625632346e-06,2.4100001610349864e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedprox,plain,0.18690314850579792,0.0,41
+plain,2.0000006770715117e-06,2.4900000425986946e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedprox,plain,0.1830238889684671,0.0,41
+plain,2.1000014385208488e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedprox,plain,0.1795718851817846,0.0,41
+plain,2.1999949240125716e-06,2.2300002456177026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedprox,plain,0.17647656884244767,0.0,41
+plain,1.7999991541728377e-06,1.870000414783135e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedprox,plain,0.17368377769657078,0.0,41
+plain,2.3000029614195228e-06,2.439999661874026e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedprox,plain,0.1711507908117329,0.0,41
+plain,2.3000029614195228e-06,2.300000051036477e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedprox,plain,0.16884315743289485,0.0,41
+plain,1.8999999156221747e-06,2.040000254055485e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedprox,plain,0.1667325926966572,0.0,41
+plain,1.8999999156221747e-06,2.25000039790757e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedprox,plain,0.16479553248774528,0.0,41
+plain,2.2999956854619086e-06,2.2400003217626363e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedprox,plain,0.16301210969308952,0.0,41
+plain,1.7999991541728377e-06,2.2400003217626363e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedprox,plain,0.1613654084131182,0.0,41
+plain,1.8999999156221747e-06,2.4599998141638935e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedprox,plain,0.15984090689118982,0.0,41
+plain,2.2999956854619086e-06,2.5300003471784294e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedprox,plain,0.15842605206092658,0.0,41
+plain,2.3999964469112456e-06,2.469999890308827e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedprox,plain,0.15710992820857944,0.0,41
+plain,1.8999999156221747e-06,2.1200001356191933e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedprox,plain,0.1558829945059805,0.0,41
+plain,2.1000014385208488e-06,2.3100001271814108e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedprox,plain,0.15473687402056038,0.0,41
+plain,1.8999999156221747e-06,2.0799998310394585e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedprox,plain,0.15366418194981668,0.0,41
+plain,2.1000014385208488e-06,2.130000211764127e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedprox,plain,0.15265838426580577,0.0,41
+plain,2.7000060072168708e-06,2.130000211764127e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedprox,plain,0.15171368030177906,0.0,41
+plain,2.0000006770715117e-06,5.3699994168709964e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedprox,plain,0.1508249044462871,0.0,41
+plain,2.1000014385208488e-06,2.59000007645227e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedprox,plain,0.14998744326851304,0.0,41
+secureagg_sim,0.0004597000006469898,1.2999997125007212e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0816681711721685e-15,1,fedavg,secureagg_sim,0.33014700992012624,0.0,41
+secureagg_sim,0.0004388999950606376,1.0200004908256233e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8041124150158794e-15,2,fedavg,secureagg_sim,0.27200059987521064,0.0,41
+secureagg_sim,0.0004641999985324219,4.159999662078917e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.55351295663786e-15,3,fedavg,secureagg_sim,0.24539675353570878,0.0,41
+secureagg_sim,0.00041700000292621553,9.60000033956021e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.4762496780562628e-15,4,fedavg,secureagg_sim,0.22920907782976835,0.0,41
+secureagg_sim,0.00039120000292314216,8.999995770864189e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6853519408120974e-15,5,fedavg,secureagg_sim,0.21781146695977308,0.0,41
+secureagg_sim,0.0004512000014074147,1.0799994925037026e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.024422296464934e-15,6,fedavg,secureagg_sim,0.2090794929195924,0.0,41
+secureagg_sim,0.0005397999993874691,1.840000186348334e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2299189444675562e-15,7,fedavg,secureagg_sim,0.20202859094248188,0.0,41
+secureagg_sim,0.0006811999992351048,4.2400002712383866e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5178830414797062e-15,8,fedavg,secureagg_sim,0.19613516079243595,0.0,41
+secureagg_sim,0.000454699998954311,1.1299998732283711e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.294103713078698e-15,9,fedavg,secureagg_sim,0.19109114867690746,0.0,41
+secureagg_sim,0.00044350000098347664,1.0299998393747956e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6315755130568164e-15,10,fedavg,secureagg_sim,0.18670055226836724,0.0,41
+secureagg_sim,0.0004467999970074743,1.4199998986441642e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.8682971836270212e-15,11,fedavg,secureagg_sim,0.18283061021342867,0.0,41
+secureagg_sim,0.00040240000089397654,9.800001862458885e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.6583956430338276e-15,12,fedavg,secureagg_sim,0.1793867186311101,0.0,41
+secureagg_sim,0.000621599996520672,1.870000414783135e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.104219576359867e-15,13,fedavg,secureagg_sim,0.17629862282074316,0.0,41
+secureagg_sim,0.0004167000006418675,8.999995770864189e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5311103079840294e-15,14,fedavg,secureagg_sim,0.17351236883591487,0.0,41
+secureagg_sim,0.000403499994718004,9.2999980552122e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.532628191025509e-15,15,fedavg,secureagg_sim,0.1709853771065357,0.0,41
+secureagg_sim,0.0004474000015761703,1.290000363951549e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6107588313450947e-15,16,fedavg,secureagg_sim,0.16868329490262446,0.0,41
+secureagg_sim,0.0004332999960752204,1.0199997632298619e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.0602009681569555e-15,17,fedavg,secureagg_sim,0.16657790692450286,0.0,41
+secureagg_sim,0.00041990000318037346,9.900002623908222e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.961972251329769e-15,18,fedavg,secureagg_sim,0.16464569970188364,0.0,41
+secureagg_sim,0.0004572000034386292,1.049999991664663e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.053045233818551e-15,19,fedavg,secureagg_sim,0.1628668440523164,0.0,41
+secureagg_sim,0.00046799999836366624,1.1500000255182385e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.005557178663686e-15,20,fedavg,secureagg_sim,0.1612244533668948,0.0,41
+secureagg_sim,0.0004130000015720725,9.2999980552122e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.826663820203578e-15,21,fedavg,secureagg_sim,0.15970402923494853,0.0,41
+secureagg_sim,0.00041710000368766487,1.0000003385357559e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.2225463696946548e-15,22,fedavg,secureagg_sim,0.1582930377838046,0.0,41
+secureagg_sim,0.0004332999960752204,1.0900002962443978e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.119764003743029e-15,23,fedavg,secureagg_sim,0.15698057953796202,0.0,41
+secureagg_sim,0.0004541000016615726,1.219999830937013e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.5703584266280046e-15,24,fedavg,secureagg_sim,0.15575712775391493,0.0,41
+secureagg_sim,0.0004195000001345761,8.900002285372466e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.409530908131785e-15,25,fedavg,secureagg_sim,0.15461431796943748,0.0,41
+secureagg_sim,0.0003950000027543865,8.500006515532732e-06,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.5285763066706934e-15,26,fedavg,secureagg_sim,0.1535447766025601,0.0,41
+secureagg_sim,0.0004591000033542514,1.1500000255182385e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.6016515330962164e-15,27,fedavg,secureagg_sim,0.15254197984435752,0.0,41
+secureagg_sim,0.0004467999970074743,1.0399999155197293e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.5196858488563123e-15,28,fedavg,secureagg_sim,0.15160013641676454,0.0,41
+secureagg_sim,0.00045700000191573054,1.189999602502212e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,1.9741153156616065e-15,29,fedavg,secureagg_sim,0.15071408938684283,0.0,41
+secureagg_sim,0.0005051999978604726,1.7300000763498247e-05,1344,2688,2.0,pairwise-mask and dropout-reconstruction arithmetic simulation; no network or collusion proof,8,0,2.121783651554132e-15,30,fedavg,secureagg_sim,0.14987923337864756,0.0,41
+quantized_transport_proxy,0.00015310000162571669,4.1799998143687844e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,1,fedavg,quantized_transport_proxy,0.33014700992012624,0.0,41
+quantized_transport_proxy,0.00011969999468419701,3.4900003811344504e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,2,fedavg,quantized_transport_proxy,0.2720006252587408,0.0,41
+quantized_transport_proxy,9.590000263415277e-05,2.769999991869554e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,3,fedavg,quantized_transport_proxy,0.24539683194322992,0.0,41
+quantized_transport_proxy,8.800000068731606e-05,2.7800000680144876e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,4,fedavg,quantized_transport_proxy,0.22920915315185478,0.0,41
+quantized_transport_proxy,9.850000060396269e-05,2.6599998818710446e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,5,fedavg,quantized_transport_proxy,0.2178115243353333,0.0,41
+quantized_transport_proxy,7.809999806340784e-05,2.359999780310318e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,6,fedavg,quantized_transport_proxy,0.20907954321612152,0.0,41
+quantized_transport_proxy,8.229999366449192e-05,2.5300003471784294e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,7,fedavg,quantized_transport_proxy,0.20202863790241732,0.0,41
+quantized_transport_proxy,0.00013829999807057902,3.850000211969018e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,8,fedavg,quantized_transport_proxy,0.1961352014979704,0.0,41
+quantized_transport_proxy,0.0001246999963768758,4.189999890513718e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,9,fedavg,quantized_transport_proxy,0.1910911800271209,0.0,41
+quantized_transport_proxy,9.329999738838524e-05,2.9300004825927317e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,10,fedavg,quantized_transport_proxy,0.18670057908429727,0.0,41
+quantized_transport_proxy,8.630000229459256e-05,2.7300004148855805e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,11,fedavg,quantized_transport_proxy,0.18283063049904158,0.0,41
+quantized_transport_proxy,8.550000347895548e-05,5.220000457484275e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,12,fedavg,quantized_transport_proxy,0.17938673182060735,0.0,41
+quantized_transport_proxy,9.249999857274815e-05,7.850000110920519e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,13,fedavg,quantized_transport_proxy,0.17629862982837516,0.0,41
+quantized_transport_proxy,8.510000043315813e-05,2.61999957729131e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,14,fedavg,quantized_transport_proxy,0.17351236666947256,0.0,41
+quantized_transport_proxy,8.22000001790002e-05,2.510000194888562e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,15,fedavg,quantized_transport_proxy,0.17098537625674418,0.0,41
+quantized_transport_proxy,0.00010630000178935006,2.8700000257231295e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,16,fedavg,quantized_transport_proxy,0.16868329142173694,0.0,41
+quantized_transport_proxy,8.290000550914556e-05,2.5800000003073364e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,17,fedavg,quantized_transport_proxy,0.1665779001494775,0.0,41
+quantized_transport_proxy,8.269999671028927e-05,2.6400004571769387e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,18,fedavg,quantized_transport_proxy,0.1646456981466557,0.0,41
+quantized_transport_proxy,0.000127500003145542,3.719999949680641e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,19,fedavg,quantized_transport_proxy,0.1628668245972647,0.0,41
+quantized_transport_proxy,9.960000170394778e-05,2.8700000257231295e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,20,fedavg,quantized_transport_proxy,0.16122443718344712,0.0,41
+quantized_transport_proxy,8.880000677891076e-05,2.630000381032005e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,21,fedavg,quantized_transport_proxy,0.1597040119003018,0.0,41
+quantized_transport_proxy,8.36000035633333e-05,2.7499998395796865e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,22,fedavg,quantized_transport_proxy,0.1582930324160541,0.0,41
+quantized_transport_proxy,7.959999493323267e-05,2.4500004656147212e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,23,fedavg,quantized_transport_proxy,0.1569805760334771,0.0,41
+quantized_transport_proxy,8.940000407164916e-05,2.510000194888562e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,24,fedavg,quantized_transport_proxy,0.15575712122633456,0.0,41
+quantized_transport_proxy,8.53000019560568e-05,4.600000102072954e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,25,fedavg,quantized_transport_proxy,0.1546143054256443,0.0,41
+quantized_transport_proxy,0.00011339999764459208,6.299999949987978e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,26,fedavg,quantized_transport_proxy,0.15354476499836042,0.0,41
+quantized_transport_proxy,8.860000525601208e-05,2.8700000257231295e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,27,fedavg,quantized_transport_proxy,0.1525419572627733,0.0,41
+quantized_transport_proxy,9.539999882690609e-05,2.3399996280204505e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,28,fedavg,quantized_transport_proxy,0.151600113939114,0.0,41
+quantized_transport_proxy,8.630000229459256e-05,2.680000034160912e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,29,fedavg,quantized_transport_proxy,0.1507140702479521,0.0,41
+quantized_transport_proxy,8.299999899463728e-05,2.600000152597204e-05,1344,21504,16.0,quantized transport accounting proxy; not homomorphic encryption,8,0,0.0,30,fedavg,quantized_transport_proxy,0.14987921233429158,0.0,41
+plain,3.3999967854470015e-06,2.7499998395796865e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,1,fedavgft_base,plain,0.33014700992012624,0.0,41
+plain,2.3999964469112456e-06,2.3300002794712782e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,2,fedavgft_base,plain,0.2720005998752107,0.0,41
+plain,1.6999983927235007e-06,1.8600003386382014e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,3,fedavgft_base,plain,0.24539675353570892,0.0,41
+plain,2.0000006770715117e-06,2.149999636458233e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,4,fedavgft_base,plain,0.2292090778297685,0.0,41
+plain,2.0000006770715117e-06,2.0399995264597237e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,5,fedavgft_base,plain,0.21781146695977333,0.0,41
+plain,1.8999999156221747e-06,1.9999999494757503e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,6,fedavgft_base,plain,0.20907949291959263,0.0,41
+plain,2.9000002541579306e-06,2.3200002033263445e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,7,fedavgft_base,plain,0.20202859094248216,0.0,41
+plain,2.3000029614195228e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,8,fedavgft_base,plain,0.19613516079243623,0.0,41
+plain,2.4999972083605826e-06,2.3399996280204505e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,9,fedavgft_base,plain,0.19109114867690774,0.0,41
+plain,2.3999964469112456e-06,2.3799999326001853e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,10,fedavgft_base,plain,0.18670055226836763,0.0,41
+plain,2.5000044843181968e-06,2.729999687289819e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,11,fedavgft_base,plain,0.18283061021342906,0.0,41
+plain,2.3000029614195228e-06,2.149999636458233e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,12,fedavgft_base,plain,0.17938671863111044,0.0,41
+plain,2.1999949240125716e-06,1.9899998733308166e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,13,fedavgft_base,plain,0.17629862282074354,0.0,41
+plain,2.2000021999701858e-06,1.9999999494757503e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,14,fedavgft_base,plain,0.1735123688359152,0.0,41
+plain,2.2000021999701858e-06,2.1699997887481004e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,15,fedavgft_base,plain,0.170985377106536,0.0,41
+plain,2.2999956854619086e-06,2.359999780310318e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,16,fedavgft_base,plain,0.16868329490262474,0.0,41
+plain,2.3999964469112456e-06,2.359999780310318e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,17,fedavgft_base,plain,0.16657790692450314,0.0,41
+plain,2.5999979698099196e-06,2.42000023717992e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,18,fedavgft_base,plain,0.16464569970188397,0.0,41
+plain,2.1999949240125716e-06,2.3200002033263445e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,19,fedavgft_base,plain,0.16286684405231677,0.0,41
+plain,2.2999956854619086e-06,2.1400002879090607e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,20,fedavgft_base,plain,0.16122445336689525,0.0,41
+plain,3.0000010156072676e-06,3.0399998649954796e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,21,fedavgft_base,plain,0.15970402923494897,0.0,41
+plain,3.1999952625483274e-06,3.4199998481199145e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,22,fedavgft_base,plain,0.15829303778380505,0.0,41
+plain,3.7000063457526267e-06,3.360000118846074e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,23,fedavgft_base,plain,0.1569805795379625,0.0,41
+plain,2.6999987312592566e-06,2.9800001357216388e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,24,fedavgft_base,plain,0.15575712775391537,0.0,41
+plain,6.599999323952943e-06,5.110000347485766e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,25,fedavgft_base,plain,0.15461431796943786,0.0,41
+plain,1.939999492606148e-05,5.070000042906031e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,26,fedavgft_base,plain,0.1535447766025605,0.0,41
+plain,2.3999964469112456e-06,3.1100003980100155e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,27,fedavgft_base,plain,0.152541979844358,0.0,41
+plain,3.4000040614046156e-06,3.650000144261867e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,28,fedavgft_base,plain,0.151600136416765,0.0,41
+plain,2.6000052457675338e-06,2.6400004571769387e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,29,fedavgft_base,plain,0.15071408938684328,0.0,41
+plain,2.5000044843181968e-06,2.6900001103058457e-05,1344,1344,1.0,plain weighted averaging,8,0,0.0,30,fedavgft_base,plain,0.149879233378648,0.0,41
