@@ -38,7 +38,7 @@ jobs:
         if: matrix.python-version == '3.12'
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended poppler-utils
+          sudo apt-get install -y --no-install-recommends texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-publishers poppler-utils
       - name: Compile and validate submission PDFs
         if: matrix.python-version == '3.12'
         working-directory: paper
