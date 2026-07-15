@@ -12,7 +12,7 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import average_precision_score, balanced_accuracy_score, roc_auc_score
+from sklearn.metrics import average_precision_score, roc_auc_score
 from sklearn.preprocessing import StandardScaler
 
 ROOT = Path(__file__).resolve().parent
@@ -28,7 +28,7 @@ sys.path.insert(0, str(ROOT))
 from fedtwin.data import generate_vcsl_public_benchmark  # noqa: E402
 from fedtwin.features import standardize_train_test  # noqa: E402
 from fedtwin.ledger import make_receipts  # noqa: E402
-from fedtwin.metrics import detection_metrics  # noqa: E402
+from fedtwin.metrics import detection_metrics, present_class_balanced_accuracy  # noqa: E402
 from fedtwin.models import LogisticHead, train_logistic  # noqa: E402
 from fedtwin.statistics import holm_adjust  # noqa: E402
 from run_benchmark import expand_feature_map, minmax_score, modality_indices  # noqa: E402
@@ -448,7 +448,7 @@ def run_vcsl_strengthening() -> dict[str, pd.DataFrame]:
                     "seed": seed,
                     "attack": "client_identity_balanced_accuracy",
                     "setting": label,
-                    "value": balanced_accuracy_score(data.client_test, pred),
+                    "value": present_class_balanced_accuracy(data.client_test, pred),
                 }
             )
 

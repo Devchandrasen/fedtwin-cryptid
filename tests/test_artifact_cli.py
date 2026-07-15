@@ -75,6 +75,16 @@ def test_cli_verify_regenerate_and_smoke(tmp_path: Path) -> None:
     assert payload["outputs"]
     for csv_path in (tmp_path / "runs" / "smoke").rglob("*.csv"):
         assert b"\r\n" not in csv_path.read_bytes()
+    for json_path in (tmp_path / "runs" / "smoke").rglob("*.json"):
+        assert b"\r\n" not in json_path.read_bytes()
+    localization = pd.read_csv(tmp_path / "runs" / "smoke" / "metrics_localization.csv")
+    assert list(localization.columns) == [
+        "seed",
+        "method",
+        "segment_f1_proxy",
+        "segment_precision_proxy",
+        "partial_segment_n",
+    ]
 
 
 def test_artifact_rejects_unresolved_replacement_claim(tmp_path: Path) -> None:

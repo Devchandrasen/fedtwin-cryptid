@@ -501,7 +501,10 @@ def run_benchmark(args: argparse.Namespace) -> Path:
     pd.DataFrame(all_federated).to_csv(output_root / "metrics_federated.csv", index=False, lineterminator="\n")
     pd.DataFrame(all_privacy).to_csv(output_root / "metrics_privacy.csv", index=False, lineterminator="\n")
     pd.DataFrame(all_ledger).to_csv(output_root / "metrics_ledger.csv", index=False, lineterminator="\n")
-    pd.DataFrame(all_localization).to_csv(output_root / "metrics_localization.csv", index=False, lineterminator="\n")
+    pd.DataFrame(
+        all_localization,
+        columns=["seed", "method", "segment_f1_proxy", "segment_precision_proxy", "partial_segment_n"],
+    ).to_csv(output_root / "metrics_localization.csv", index=False, lineterminator="\n")
     pd.DataFrame(all_runtime).to_csv(output_root / "runtime_profile.csv", index=False, lineterminator="\n")
     if all_scenario:
         pd.concat(all_scenario, ignore_index=True).to_csv(

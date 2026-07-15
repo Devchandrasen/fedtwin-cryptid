@@ -79,6 +79,18 @@ def expected_precision_at_prevalence(*, prevalence: float, recall: float, fpr: f
     return float(numerator / max(numerator + (1.0 - prevalence) * fpr, 1e-15))
 
 
+def present_class_balanced_accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Mean recall over classes present in the evaluated truth labels."""
+
+    truth = np.asarray(y_true)
+    predicted = np.asarray(y_pred)
+    if truth.ndim != 1 or predicted.ndim != 1 or len(truth) != len(predicted) or len(truth) == 0:
+        raise ValueError("y_true and y_pred must be non-empty one-dimensional arrays of equal length")
+    classes = np.unique(truth)
+    recalls = [float(np.mean(predicted[truth == label] == label)) for label in classes]
+    return float(np.mean(recalls))
+
+
 def review_workload_at_budget(y: np.ndarray, score: np.ndarray, *, budget: int) -> dict[str, float | int]:
     y, score = _validated_binary_inputs(y, score)
     if budget <= 0:

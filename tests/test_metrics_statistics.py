@@ -9,6 +9,7 @@ from fedtwin.metrics import (
     detection_metrics,
     expected_calibration_error,
     expected_precision_at_prevalence,
+    present_class_balanced_accuracy,
     review_workload_at_budget,
 )
 from fedtwin.statistics import holm_adjust, paired_bootstrap_delta, paired_permutation_delta
@@ -28,6 +29,8 @@ def test_detection_calibration_and_workload_metrics() -> None:
     assert workload["recall_at_budget"] == 1.0
     assert workload["reviews_per_true_positive"] == 1.0
     assert expected_precision_at_prevalence(prevalence=0.01, recall=0.95, fpr=0.05) < 0.2
+    assert present_class_balanced_accuracy(np.array([0, 0, 1]), np.array([0, 1, 1])) == pytest.approx(0.75)
+    assert present_class_balanced_accuracy(np.array([0, 0]), np.array([0, 2])) == pytest.approx(0.5)
 
 
 def test_metric_input_validation() -> None:
@@ -39,6 +42,8 @@ def test_metric_input_validation() -> None:
         expected_precision_at_prevalence(prevalence=0, recall=0.9, fpr=0.1)
     with pytest.raises(ValueError, match="budget"):
         review_workload_at_budget(np.array([0, 1]), np.array([0.2, 0.8]), budget=0)
+    with pytest.raises(ValueError, match="non-empty"):
+        present_class_balanced_accuracy(np.array([]), np.array([]))
 
 
 def test_clustered_paired_statistics_and_holm_correction() -> None:

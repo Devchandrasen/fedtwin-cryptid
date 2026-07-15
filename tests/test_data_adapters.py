@@ -24,6 +24,16 @@ from fedtwin.data import (
 from fedtwin.data_adapters import FMAAudioAdapter, SyntheticAdapter, VCSLDescriptorAdapter, VCSLMetadataAdapter
 
 
+def _write_fma_tracks_fixture(path: Path, track_ids: range | list[int]) -> None:
+    lines = [
+        ",set,track,track",
+        ",subset,genre_top,license",
+        "track_id,,,",
+    ]
+    lines.extend(f"{track_id},small,Rock,CC BY" for track_id in track_ids)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def test_synthetic_and_vcsl_metadata_adapters(vcsl_metadata_dir: Path) -> None:
     synthetic = SyntheticAdapter()
     assert synthetic.validate().root == "generated-in-memory"
@@ -85,11 +95,14 @@ def test_fma_adapter_validation_and_feature_pipeline(tmp_path: Path, monkeypatch
     cache_dir = tmp_path / "cache"
     audio_dir.mkdir()
     metadata_dir.mkdir()
-    (metadata_dir / "tracks.csv").write_text("track_id,genre\n1,Rock\n", encoding="utf-8")
+    _write_fma_tracks_fixture(metadata_dir / "tracks.csv", range(1, 7))
     for track_id in range(1, 7):
         (audio_dir / f"{track_id:06d}.mp3").write_bytes(b"fixture")
     report = FMAAudioAdapter(audio_dir, metadata_dir, cache_dir).validate()
     assert report.tier == "fma_audio"
+    assert len(report.files) == 7
+    assert report.warnings == ()
+    assert all((Path(report.root) / str(record["path"])).is_file() for record in report.files)
 
     rng = np.random.default_rng(12)
     descriptors = rng.normal(size=(6, len(FMA_AUDIO_TRANSFORMS) + 1, 10)).astype(np.float32)
@@ -184,6 +197,17 @@ def test_fma_cache_is_pickle_free_hashed_and_schema_validated(
         seed=31,
     )
     assert reloaded["input_records"] == generated["input_records"]
+    (audio / "000001.mp3").write_bytes(b"changed")
+    with pytest.raises(ValueError, match="input (size|hash) changed"):
+        _prepare_fma_audio_cache(
+            audio_dir=audio,
+            metadata_dir=metadata,
+            cache_dir=cache,
+            max_tracks=3,
+            sample_rate=8000,
+            max_seconds=1.0,
+            seed=31,
+        )
 
 
 def test_fma_decode_failures_are_recorded_and_thresholded(
@@ -235,7 +259,7 @@ def test_adapter_missing_source_errors(tmp_path: Path) -> None:
     audio = tmp_path / "audio"
     metadata.mkdir()
     audio.mkdir()
-    (metadata / "tracks.csv").write_text("track_id,genre\n", encoding="utf-8")
+    _write_fma_tracks_fixture(metadata / "tracks.csv", [1])
     with pytest.raises(FileNotFoundError, match="no FMA"):
         FMAAudioAdapter(audio, metadata, tmp_path / "cache").validate()
 

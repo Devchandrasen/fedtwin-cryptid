@@ -12,7 +12,13 @@
   "source": "VCSL public GitHub metadata and labels",
   "split_policy": "positive-connected-component asset-disjoint",
   "test_assets": 2171,
+  "test_negative_rows": 900,
+  "test_positive_rows": 900,
+  "test_query_count": 594,
   "test_rows": 1800,
   "train_assets": 3020,
+  "train_negative_rows": 2500,
+  "train_positive_rows": 2500,
+  "train_query_count": 1251,
   "train_rows": 5000
 }

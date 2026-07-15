@@ -1,4 +1,4 @@
 ledger_type,schema_version,receipts,verification_success,signature_verification_success,tamper_detection_success,mean_receipt_latency_sec,ledger_bytes,seed,method
-hashchain,fedtwin-cryptid-receipt-v2,250,True,True,True,9.718400106066838e-06,359896,31,fedavg_secureagg_sim
-hashchain,fedtwin-cryptid-receipt-v2,250,True,True,True,9.284399944590405e-06,359868,37,fedavg_secureagg_sim
-hashchain,fedtwin-cryptid-receipt-v2,250,True,True,True,1.1905200008186512e-05,359840,41,fedavg_secureagg_sim
+hashchain,fedtwin-cryptid-receipt-v2,250,True,True,True,9.490800061030314e-06,359896,31,fedavg_secureagg_sim
+hashchain,fedtwin-cryptid-receipt-v2,250,True,True,True,1.7154399887658657e-05,359868,37,fedavg_secureagg_sim
+hashchain,fedtwin-cryptid-receipt-v2,250,True,True,True,1.9068799942033364e-05,359840,41,fedavg_secureagg_sim

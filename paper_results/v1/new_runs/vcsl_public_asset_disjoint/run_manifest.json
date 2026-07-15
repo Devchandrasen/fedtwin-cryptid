@@ -28,6 +28,11 @@
       "secureagg_sim",
       "quantized_transport_proxy"
     ],
+    "fma_max_decode_failure_fraction": 0.05,
+    "fma_max_seconds": 25.0,
+    "fma_max_tracks": 1200,
+    "fma_sample_rate": 8000,
+    "isc_max_frames": 160,
     "ledger_modes": [
       "hashchain"
     ],
@@ -52,13 +57,19 @@
     ],
     "tier": "vcsl_public"
   },
-  "config_sha256": "48046e47a7a63b37a60c1bafb30c70334315cd8dc9f8095b05a3eebd438e3bea",
+  "config_sha256": "8922d13c085b6082f12c1ec2e6ce11606e2d29d7043ef1929d2c66013c2be7c0",
   "counts": {
     "clients": 11,
     "seeds": 3,
     "test_assets": 2063,
+    "test_negative_rows_per_seed": 900,
+    "test_positive_rows_per_seed": 900,
+    "test_queries_per_seed": 584,
     "test_rows_per_seed": 1800,
     "train_assets": 3128,
+    "train_negative_rows_per_seed": 2500,
+    "train_positive_rows_per_seed": 2500,
+    "train_queries_per_seed": 1270,
     "train_rows_per_seed": 5000
   },
   "data_source": {
@@ -254,8 +265,8 @@
   ],
   "git": {
     "branch": "agent/tmm-ready-revision",
-    "commit": "9dc49bf408b34f9a29e18cc6e583bdec92ed2d64",
-    "dirty": true
+    "commit": "b37644b4dd6d8cf7671410109e12bf6d1c159fa5",
+    "dirty": false
   },
   "hardware": {
     "logical_cpu_count": 20,
@@ -301,54 +312,54 @@
       "sha256": "51f53ff80b097e001ac7f9cb370bacea7c01a74e6e4e0c9b1e8a4be10fc0c66d"
     },
     {
-      "bytes": 613,
+      "bytes": 795,
       "path": "dataset_manifest.json",
-      "sha256": "ff240a8371f1d6f7a7f4c7ec95c72e9155cf1c02c029dee772db4e4ac5f2de84"
+      "sha256": "f632f511f9d69af37946de7be204743630241f851d7c6ace04a415261723528e"
     },
     {
-      "bytes": 20865,
+      "bytes": 20760,
       "path": "metrics_client.csv",
-      "sha256": "aa008c217b0f15710aeeebaf525af212d337286b40d6491673cbc05e7fd0c60f"
+      "sha256": "1960f2e531e69cd16a36c6b4dc3f5922e11170de516b43191f70080ce6ad8b8b"
     },
     {
-      "bytes": 7258,
+      "bytes": 7221,
       "path": "metrics_detection.csv",
-      "sha256": "f124513fd1b89870ce01e2296ad24feb547f3340c9188e5cc44e77f9eef8e8c1"
+      "sha256": "6786f4fd8dcd0d3117f44bcafb14fb727154eb351140e9efbfc5285dddfdac2a"
     },
     {
-      "bytes": 45496,
+      "bytes": 45220,
       "path": "metrics_federated.csv",
-      "sha256": "622c10e0d61e8abb7994e531e86576192e2cad499e992f772b262c557541fbba"
+      "sha256": "93bc6780bd028157d313e482ee796aa09b0e7ec15868c456704325d7ee3f77bb"
     },
     {
-      "bytes": 495,
+      "bytes": 492,
       "path": "metrics_ledger.csv",
-      "sha256": "91e6f5a0937f62266e1559b8c988399de1725a47a29b5cb2515af4674467bc19"
+      "sha256": "0d646485d21835e35322c0e3220baab0b12c9d5170fe0462fd2edb7c3a56ed7a"
     },
     {
-      "bytes": 2,
+      "bytes": 1,
       "path": "metrics_localization.csv",
-      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
     },
     {
-      "bytes": 1227,
+      "bytes": 1215,
       "path": "metrics_privacy.csv",
-      "sha256": "063290251e95ec4e7a39ec41109e660aac91d67b34226995a7f0f66cf1da74cb"
+      "sha256": "bf5444599200ec4bad893e1474d43bf16483d48941edca338f617fb61b97d6b7"
     },
     {
-      "bytes": 14055,
+      "bytes": 13958,
       "path": "metrics_scenario.csv",
-      "sha256": "adec541a5618f4e30e5f1be438c1bf2b6df7aece503bb13b9686a0cbc4962915"
+      "sha256": "fd7b8be30481daf7d6610196536f5e26efa4a1ddbd81c891fcb6a6b4bc69bed7"
     },
     {
-      "bytes": 1218,
+      "bytes": 1276,
       "path": "run_config.json",
-      "sha256": "97aef36f39482c614e9c1e0225f80896c373d4c13f5bff024b89523a6c51bdf1"
+      "sha256": "1993cc4df675d988b5ac7201e8eb9b4f3e9a6db7890b34513fd8c3758b2a069e"
     },
     {
-      "bytes": 2163,
+      "bytes": 2139,
       "path": "runtime_profile.csv",
-      "sha256": "142034e1bb92d187eeac8bbb74c66898f4dee9114e1c7374c99b44ca776b72b2"
+      "sha256": "604a8ffc0f77a2d108fea79ba8febd59c09c0bad600ae7be2c50b578a6a78b02"
     },
     {
       "bytes": 60,
@@ -356,9 +367,9 @@
       "sha256": "656bda2b0b4a3ebfa0e4c7a268e74e9dddf343935235e522a5c6fca9792d4831"
     },
     {
-      "bytes": 612,
+      "bytes": 794,
       "path": "seed_31/dataset_manifest.json",
-      "sha256": "20387ae985e579ca657fc60d99c94c53707daa84f753536064a12c28cb256362"
+      "sha256": "beb7ceb7332a52bcdf6ed565d8ca1a68453845e6b3e361de041fcbda647ca1d0"
     },
     {
       "bytes": 6196,
@@ -371,9 +382,9 @@
       "sha256": "7979bb7d97fcb61d2576434ac971ccdfe5573c17de2f7ab2a8a6780b3d4e4abd"
     },
     {
-      "bytes": 613,
+      "bytes": 795,
       "path": "seed_37/dataset_manifest.json",
-      "sha256": "d2759aedf698e1322db12e2b51b23f88d9f42dd3f34bb4db22bcc1315cfd4841"
+      "sha256": "da21ee18b06f8b30ae995bebc4a82d4898d4a655f4de0a72c1d08d30cc615d3f"
     },
     {
       "bytes": 6196,
@@ -386,9 +397,9 @@
       "sha256": "c895536702854d7fd765f31e5995753451cc1eef8cef0e088f6b4fe0db53f932"
     },
     {
-      "bytes": 613,
+      "bytes": 795,
       "path": "seed_41/dataset_manifest.json",
-      "sha256": "ff240a8371f1d6f7a7f4c7ec95c72e9155cf1c02c029dee772db4e4ac5f2de84"
+      "sha256": "f632f511f9d69af37946de7be204743630241f851d7c6ace04a415261723528e"
     },
     {
       "bytes": 6196,
@@ -398,7 +409,7 @@
     {
       "bytes": 1210,
       "path": "summary.json",
-      "sha256": "09b5400b10f602489d5e3b680c9694698139fae9eb9160030bcfee7d793dc9e1"
+      "sha256": "bc0d2df2f8cafc8f96b31036b9d08fbf2e6fee40d7741aabef79cc4d8317d91c"
     },
     {
       "bytes": 6068,
@@ -409,13 +420,13 @@
   "runtime": {
     "dependencies": {
       "PyYAML": "6.0.3",
-      "cryptography": "48.0.0",
+      "cryptography": "49.0.0",
       "matplotlib": "3.11.0",
-      "numpy": "2.3.5",
-      "pandas": "2.3.3",
-      "scikit-learn": "1.8.0",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scikit-learn": "1.9.0",
       "seaborn": "0.13.2",
-      "tqdm": "4.68.3"
+      "tqdm": "4.68.4"
     },
     "executable": "python.exe",
     "machine": "AMD64",
@@ -425,6 +436,6 @@
   },
   "schema_version": "1.0",
   "timing_sec": {
-    "total_runtime": 8.956960200001049
+    "total_runtime": 7.830838499998208
   }
 }

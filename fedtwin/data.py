@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -913,25 +915,76 @@ def generate_vcsl_isc_benchmark(
 
 
 FMA_AUDIO_TRANSFORMS = ["crop", "noise", "lowpass", "dropout", "speed"]
-FMA_CACHE_SCHEMA_VERSION = "2.0"
+FMA_CACHE_SCHEMA_VERSION = "3.0"
 
 
 def _resolve_fma_tracks_path(metadata_dir: str | Path) -> Path | None:
-    base = Path(metadata_dir)
+    base = Path(metadata_dir).resolve()
     candidates = [base / "tracks.csv", base / "fma_metadata" / "tracks.csv"]
-    return next((path for path in candidates if path.exists()), None)
+    return next((path.resolve() for path in candidates if path.is_file()), None)
 
 
-def _load_fma_tracks(metadata_dir: str | Path) -> dict[int, str]:
+def _load_fma_metadata_fields(metadata_dir: str | Path) -> dict[int, dict[str, str]]:
+    """Read only the three FMA fields needed by this study."""
+
     tracks_path = _resolve_fma_tracks_path(metadata_dir)
     if tracks_path is None:
         return {}
-    tracks = pd.read_csv(tracks_path, header=[0, 1], index_col=0)
-    genre_col = ("track", "genre_top")
-    if genre_col not in tracks.columns:
-        return {}
-    genres = tracks[genre_col].fillna("unknown").astype(str)
-    return {int(track_id): genre for track_id, genre in genres.items()}
+    required = {
+        ("set", "subset"): "subset",
+        ("track", "genre_top"): "genre_top",
+        ("track", "license"): "license",
+    }
+    with tracks_path.open("r", encoding="utf-8", newline="") as handle:
+        reader = csv.reader(handle)
+        try:
+            level_zero = next(reader)
+            level_one = next(reader)
+            index_row = next(reader)
+        except StopIteration as exc:
+            raise ValueError(f"FMA tracks.csv is missing its three-row header: {tracks_path}") from exc
+        if len(level_zero) != len(level_one) or len(index_row) != len(level_zero):
+            raise ValueError(f"FMA tracks.csv has inconsistent header widths: {tracks_path}")
+        if not index_row or index_row[0].strip() != "track_id":
+            raise ValueError(f"FMA tracks.csv index header must be 'track_id': {tracks_path}")
+        column_indices = {
+            output_name: next(
+                (index for index, pair in enumerate(zip(level_zero, level_one, strict=True)) if pair == source_pair),
+                None,
+            )
+            for source_pair, output_name in required.items()
+        }
+        missing = sorted(name for name, index in column_indices.items() if index is None)
+        if missing:
+            raise ValueError(f"FMA tracks.csv is missing required columns: {', '.join(missing)}")
+
+        fields: dict[int, dict[str, str]] = {}
+        for row_number, row in enumerate(reader, start=4):
+            if not row or not any(cell.strip() for cell in row):
+                continue
+            if len(row) != len(level_zero):
+                raise ValueError(f"FMA tracks.csv row {row_number} has {len(row)} fields; expected {len(level_zero)}")
+            try:
+                track_id = int(row[0])
+            except ValueError as exc:
+                raise ValueError(f"FMA tracks.csv row {row_number} has an invalid track_id: {row[0]!r}") from exc
+            if track_id in fields:
+                raise ValueError(f"FMA tracks.csv contains duplicate track_id {track_id}")
+            fields[track_id] = {
+                name: row[int(index)].strip()
+                for name, index in column_indices.items()
+                if index is not None
+            }
+    if not fields:
+        raise ValueError(f"FMA tracks.csv contains no track records: {tracks_path}")
+    return fields
+
+
+def _load_fma_tracks(metadata_dir: str | Path) -> dict[int, str]:
+    return {
+        track_id: values["genre_top"] or "unknown"
+        for track_id, values in _load_fma_metadata_fields(metadata_dir).items()
+    }
 
 
 def _discover_fma_audio_files(audio_dir: str | Path) -> dict[int, Path]:
@@ -1077,7 +1130,7 @@ def _audio_descriptor(y: np.ndarray, sample_rate: int) -> np.ndarray:
     return l2_normalize(desc[None, :])[0].astype(np.float32)
 
 
-def _load_validated_fma_cache(cache_path: Path) -> dict:
+def _load_validated_fma_cache(cache_path: Path, *, source_root: Path | None = None) -> dict:
     manifest_path = cache_path.with_suffix(".manifest.json")
     if not manifest_path.is_file():
         raise ValueError(
@@ -1095,6 +1148,33 @@ def _load_validated_fma_cache(cache_path: Path) -> dict:
         raise ValueError("FMA cache size does not match its provenance manifest")
     if str(cache_record.get("sha256", "")) != sha256_file(cache_path):
         raise ValueError("FMA cache hash does not match its provenance manifest")
+    if source_root is not None:
+        root = source_root.resolve()
+        inputs = manifest.get("inputs")
+        if not isinstance(inputs, list) or not inputs:
+            raise ValueError("FMA cache provenance manifest has no source inputs")
+        seen_paths: set[str] = set()
+        for record in inputs:
+            if not isinstance(record, dict):
+                raise ValueError("FMA cache provenance input records must be objects")
+            relative = Path(str(record.get("path", "")))
+            if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+                raise ValueError(f"unsafe FMA cache input path: {relative}")
+            portable = relative.as_posix()
+            if portable in seen_paths:
+                raise ValueError(f"duplicate FMA cache input path: {portable}")
+            seen_paths.add(portable)
+            source = (root / relative).resolve()
+            try:
+                source.relative_to(root)
+            except ValueError as exc:
+                raise ValueError(f"FMA cache input escapes source root: {relative}") from exc
+            if not source.is_file():
+                raise ValueError(f"FMA cache input is missing: {relative}")
+            if source.stat().st_size != int(record.get("bytes", -1)):
+                raise ValueError(f"FMA cache input size changed: {relative}")
+            if sha256_file(source) != str(record.get("sha256", "")):
+                raise ValueError(f"FMA cache input hash changed: {relative}")
 
     required = {"track_ids", "genres", "clients", "descriptors", "transforms"}
     try:
@@ -1159,11 +1239,14 @@ def _prepare_fma_audio_cache(
 ) -> dict:
     if not 0.0 <= max_decode_failure_fraction < 1.0:
         raise ValueError("max_decode_failure_fraction must lie in [0, 1)")
+    audio_root = Path(audio_dir).resolve()
+    metadata_root = Path(metadata_dir).resolve()
+    common_root = Path(os.path.commonpath((audio_root, metadata_root))).resolve()
     cache_base = Path(cache_dir)
     cache_base.mkdir(parents=True, exist_ok=True)
     cache_path = cache_base / f"fma_audio_sr{sample_rate}_sec{int(max_seconds)}_tracks{max_tracks}.npz"
     if cache_path.exists():
-        return _load_validated_fma_cache(cache_path)
+        return _load_validated_fma_cache(cache_path, source_root=common_root)
 
     genres_by_id = _load_fma_tracks(metadata_dir)
     audio_files = _discover_fma_audio_files(audio_dir)
@@ -1195,7 +1278,6 @@ def _prepare_fma_audio_cache(
     kept_genres = []
     kept_clients = []
     failures: list[dict[str, object]] = []
-    audio_root = Path(audio_dir).resolve()
     for track_id in selected:
         try:
             y = _decode_mp3(audio_files[track_id], sample_rate=sample_rate, max_seconds=max_seconds)
@@ -1252,7 +1334,7 @@ def _prepare_fma_audio_cache(
         raise FileNotFoundError(f"missing FMA tracks.csv under {metadata_dir}")
     input_records = [
         {
-            "path": "metadata/" + tracks_path.name,
+            "path": tracks_path.resolve().relative_to(common_root).as_posix(),
             "bytes": tracks_path.stat().st_size,
             "sha256": sha256_file(tracks_path),
         }
@@ -1261,7 +1343,7 @@ def _prepare_fma_audio_cache(
         path = audio_files[track_id]
         input_records.append(
             {
-                "path": "audio/" + path.resolve().relative_to(audio_root).as_posix(),
+                "path": path.resolve().relative_to(common_root).as_posix(),
                 "bytes": path.stat().st_size,
                 "sha256": sha256_file(path),
             }
@@ -1280,7 +1362,7 @@ def _prepare_fma_audio_cache(
             "sample_rate": sample_rate,
             "max_seconds": max_seconds,
             "max_tracks": max_tracks,
-            "selection_seed": seed,
+            "selection_policy": "sorted round-robin by top-level genre and track identifier",
             "descriptor_transform_seed": 0,
             "decoded_tracks": len(kept_ids),
             "decode_failures": len(failures),

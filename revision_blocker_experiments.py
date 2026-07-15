@@ -17,13 +17,7 @@ from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    average_precision_score,
-    balanced_accuracy_score,
-    brier_score_loss,
-    ndcg_score,
-    roc_auc_score,
-)
+from sklearn.metrics import average_precision_score, brier_score_loss, ndcg_score, roc_auc_score
 
 ROOT = Path(__file__).resolve().parent
 MANUSCRIPT = ROOT / "paper"
@@ -32,6 +26,7 @@ FIGURES = MANUSCRIPT / "figures"
 RESULTS = ROOT / "outputs" / "review_blocker_experiments"
 PUBLIC_META = ROOT / "public_data" / "vcsl_metadata"
 PULL = ROOT / "archived_results"
+CONFIRMATORY = ROOT / "paper_results" / "v1" / "new_runs"
 
 sys.path.insert(0, str(ROOT))
 
@@ -46,7 +41,7 @@ from fedtwin.data import (  # noqa: E402
 from fedtwin.features import standardize_train_test  # noqa: E402
 from fedtwin.federated import train_federated, train_local_models, train_personalized_models  # noqa: E402
 from fedtwin.ledger import HashChainLedger, canonical_hash, sha256_text  # noqa: E402
-from fedtwin.metrics import detection_metrics, safe_ap, safe_auc  # noqa: E402
+from fedtwin.metrics import detection_metrics, present_class_balanced_accuracy, safe_ap, safe_auc  # noqa: E402
 from fedtwin.models import LogisticHead, train_logistic  # noqa: E402
 from fedtwin.pairs import construct_asset_disjoint_pairs  # noqa: E402
 from fedtwin.statistics import holm_adjust, paired_bootstrap_delta, paired_permutation_delta  # noqa: E402
@@ -71,13 +66,14 @@ PALETTE = {
 def configure_paths(args: argparse.Namespace) -> None:
     """Bind every input/output path from explicit CLI arguments."""
 
-    global MANUSCRIPT, TABLES, FIGURES, RESULTS, PUBLIC_META, PULL
+    global MANUSCRIPT, TABLES, FIGURES, RESULTS, PUBLIC_META, PULL, CONFIRMATORY
     MANUSCRIPT = Path(args.manuscript_dir).resolve()
     TABLES = MANUSCRIPT / "tables"
     FIGURES = MANUSCRIPT / "figures"
     RESULTS = Path(args.output_dir).resolve()
     PUBLIC_META = Path(args.vcsl_metadata_dir).resolve()
     PULL = Path(args.archived_results_dir).resolve()
+    CONFIRMATORY = Path(args.confirmatory_results_dir).resolve()
 
 
 def ensure_dirs() -> None:
@@ -727,9 +723,34 @@ def run_personalization(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.Data
         per_client["tier"] = "VCSL public-label audit"
         client_frames.append(per_client)
 
-    # Preserve the reviewer-critical VCSL ISC fact from the descriptor HPC summary.
-    isc_path = PULL / "hpc_vcsl_isc_feature_run_fedavgft" / "summary_artifacts" / "detection_summary.csv"
-    if isc_path.exists():
+    isc_run = CONFIRMATORY / "vcsl_isc_confirmatory"
+    isc_path = isc_run / "metrics_detection.csv"
+    isc_client_path = isc_run / "metrics_client.csv"
+    if isc_path.is_file() and isc_client_path.is_file():
+        isc = pd.read_csv(isc_path)
+        selected = {
+            "centralized_multimodal",
+            "local_multimodal",
+            "fedavg_plain",
+            "fedprox_plain",
+            "fedavg_secureagg_sim",
+            "fedavg_quantized_transport_proxy",
+            "fedavgft_plain",
+        }
+        for row in isc[isc["method"].isin(selected)].to_dict(orient="records"):
+            row["tier"] = "VCSL ISC visual descriptor confirmatory"
+            rows.append(row)
+        isc_clients = pd.read_csv(isc_client_path)
+        isc_clients = isc_clients[isc_clients["method"].isin(selected)].copy()
+        isc_clients["tier"] = "VCSL ISC visual descriptor confirmatory"
+        client_frames.append(isc_clients)
+    else:
+        # Retain the archived summary only when the checksum-verifiable replacement is unavailable.
+        isc_path = PULL / "hpc_vcsl_isc_feature_run_fedavgft" / "summary_artifacts" / "detection_summary.csv"
+        if not isc_path.exists():
+            raise FileNotFoundError(
+                "neither confirmatory VCSL ISC metrics nor the archived fallback summary is available"
+            )
         isc = pd.read_csv(isc_path)
         for _, row in isc.iterrows():
             if row["method"] in {"centralized_multimodal", "local_multimodal", "fedavg_plain", "fedprox_plain", "fedavgft_plain"}:
@@ -1069,7 +1090,7 @@ def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
                     "attack": "client_identity_inference",
                     "setting": setting,
                     "seed": seed,
-                    "value": float(balanced_accuracy_score(ds["client_test"], pred)),
+                    "value": present_class_balanced_accuracy(ds["client_test"], pred),
                     "metric": "balanced_accuracy",
                 }
             )
@@ -1089,7 +1110,7 @@ def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
                         "attack": "query_category_inference",
                         "setting": setting,
                         "seed": seed,
-                        "value": float(balanced_accuracy_score(test_cat[test_mask], pred)),
+                        "value": present_class_balanced_accuracy(test_cat[test_mask], pred),
                         "metric": "balanced_accuracy",
                     }
                 )
@@ -1128,7 +1149,7 @@ def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
                         "attack": "update_property_inference",
                         "setting": "compact_update_summary_leave_one_client_out",
                         "seed": seed,
-                        "value": float(balanced_accuracy_score(truth, preds)),
+                        "value": present_class_balanced_accuracy(truth, preds),
                         "metric": "balanced_accuracy",
                         "note": "Predicts above-median client positive-rate property from compact local-update summary statistics.",
                     }
@@ -1434,7 +1455,7 @@ def plot_outputs(
         plt.plot(pivot.index, pivot[method], marker="o", linewidth=1.2, label=method)
     plt.xlabel("Client id")
     plt.ylabel("Per-client PR-AUC")
-    plt.title("Client variability under global, local, and clustered calibration", loc="left", fontweight="bold")
+    plt.title("VCSL public-label client variability", loc="left", fontweight="bold")
     plt.grid(color="#D8DEE9", alpha=0.7)
     plt.legend(frameon=False)
     savefig("vcsl_isc_client_variability")
@@ -1549,6 +1570,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-test-pairs", type=int, default=900)
     parser.add_argument("--vcsl-metadata-dir", default=str(ROOT / "public_data" / "vcsl_metadata"))
     parser.add_argument("--archived-results-dir", default=str(ROOT / "archived_results"))
+    parser.add_argument(
+        "--confirmatory-results-dir",
+        default=str(ROOT / "paper_results" / "v1" / "new_runs"),
+    )
     parser.add_argument("--manuscript-dir", default=str(ROOT / "paper"))
     parser.add_argument("--output-dir", default=str(ROOT / "outputs" / "review_blocker_experiments"))
     parser.add_argument("--min-open-set-queries", type=int, default=100)
@@ -1643,8 +1668,14 @@ def main() -> None:
             "synthetic_av_stress_tier_added": True,
             "real_paillier_compact_update_aggregation_added": True,
             "paillier_key_bits": int(paillier["key_bits"].iloc[0]) if not paillier.empty else None,
-            "vcsl_isc_new_pair_level_methods_run": False,
-            "vcsl_isc_reason": "released ISC descriptor archive is not staged locally and pulled HPC artifact lacks pair-level descriptor CSVs",
+            "vcsl_isc_new_pair_level_methods_run": bool(
+                (CONFIRMATORY / "vcsl_isc_confirmatory" / "metrics_detection.csv").is_file()
+            ),
+            "vcsl_isc_reason": (
+                "checksum-verifiable released-descriptor metrics were included"
+                if (CONFIRMATORY / "vcsl_isc_confirmatory" / "metrics_detection.csv").is_file()
+                else "confirmatory descriptor metrics were unavailable; archived summary fallback was used"
+            ),
         }
     )
     print(f"wrote reviewer-blocker tables to {TABLES}")

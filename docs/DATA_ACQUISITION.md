@@ -92,7 +92,34 @@ Extract to:
 <DATA_ROOT>/data/fma/fma_small/
 ```
 
-The first run creates a non-executable, schema-validated descriptor cache and sidecar provenance manifest. Every selected track is hashed. Decode failures are written to a deterministic JSON ledger, and the paper configuration fails if more than 5% of selected tracks cannot be decoded.
+### Pinned mirror route used by the confirmatory rerun
+
+The official audio host may be unavailable. The confirmatory rerun therefore uses the
+FMA-small-compatible redistribution pack
+benjamin-paine/free-music-archive-small at immutable revision
+d291bdb4c842bd5f007c60f9d3d6ba73199cd1c0. The pack maintainer reports that six
+unreadable tracks and 78 tracks with unclear redistribution terms were removed. This
+route is disclosed as a curated mirror, not as a byte-identical copy of
+fma_small.zip.
+
+Download the first three configured Parquet shards into a directory outside the Git
+checkout. Their exact sizes and SHA-256 hashes are frozen in
+configs/fma_hf_extraction.json. The following command verifies each shard before
+extracting 1,584 MP3 payloads and records a hash for every output:
+
+~~~powershell
+uv run --with pyarrow==25.0.0 python tools\extract_hf_fma_small.py --config configs\fma_hf_extraction.json --shard-dir (Join-Path $DataRoot "_downloads\hf_fma_small") --output-dir (Join-Path $DataRoot "data\fma\fma_small") --manifest (Join-Path $DataRoot "data\fma\fma_small_extraction_manifest.json")
+~~~
+
+The paper configuration deterministically selects 1,200 tracks in sorted round-robin
+order over the official top-level genre field. The adapter checks that every staged
+track is in the official small subset, has a top-level genre and non-empty
+per-track license, rejects duplicate identifiers, and hashes all staged audio.
+
+The first experiment run creates a non-executable, schema-validated descriptor cache
+and sidecar provenance manifest. Cache reuse revalidates every selected source input.
+Decode failures are written to a deterministic JSON ledger, and the paper
+configuration fails if more than 5% of selected tracks cannot be decoded.
 
 ## Reproduction
 

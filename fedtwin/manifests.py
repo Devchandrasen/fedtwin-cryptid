@@ -17,7 +17,11 @@ from typing import Any
 def write_json(path: str | Path, payload: dict[str, Any]) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(payload, indent=2, sort_keys=True, allow_nan=False), encoding="utf-8")
+    target.write_text(
+        json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 def sha256_file(path: str | Path) -> str:

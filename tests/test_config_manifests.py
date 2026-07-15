@@ -84,6 +84,7 @@ def test_run_manifest_and_strict_json_writer(tmp_path: Path) -> None:
     assert manifest["runtime"]["python"]
     target = tmp_path / "nested" / "manifest.json"
     write_json(target, manifest)
+    assert b"\r\n" not in target.read_bytes()
     assert json.loads(target.read_text(encoding="utf-8"))["counts"]["rows"] == 1
     with pytest.raises(ValueError):
         write_json(tmp_path / "bad.json", {"value": float("nan")})
