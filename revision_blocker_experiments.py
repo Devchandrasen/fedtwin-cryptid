@@ -41,7 +41,8 @@ from fedtwin.data import (  # noqa: E402
 from fedtwin.features import standardize_train_test  # noqa: E402
 from fedtwin.federated import train_federated, train_local_models, train_personalized_models  # noqa: E402
 from fedtwin.ledger import HashChainLedger, canonical_hash, sha256_text  # noqa: E402
-from fedtwin.metrics import detection_metrics, present_class_balanced_accuracy, safe_ap, safe_auc  # noqa: E402
+from fedtwin.manifests import write_json  # noqa: E402
+from fedtwin.metrics import detection_metrics, present_class_balanced_accuracy  # noqa: E402
 from fedtwin.models import LogisticHead, train_logistic  # noqa: E402
 from fedtwin.pairs import construct_asset_disjoint_pairs  # noqa: E402
 from fedtwin.statistics import holm_adjust, paired_bootstrap_delta, paired_permutation_delta  # noqa: E402
@@ -128,13 +129,18 @@ def full_metrics(y: np.ndarray, score: np.ndarray, *, method: str, tier: str, se
         {
             "tier": tier,
             "seed": seed,
-            "brier": float(brier_score_loss(y, np.clip(score, 1e-7, 1 - 1e-7))) if len(np.unique(y)) == 2 else float("nan"),
+            "brier": float(brier_score_loss(y, np.clip(score, 1e-7, 1 - 1e-7))),
             "ece": ece_score(y, score),
         }
     )
-    for prevalence in PREVALENCES:
-        base[f"expected_precision_prev_{prevalence:g}"] = expected_precision(prevalence, base["recall"], base["fpr_at_95_recall"])
-        base[f"reviews_per_true_positive_prev_{prevalence:g}"] = 1.0 / max(base[f"expected_precision_prev_{prevalence:g}"], 1e-15)
+    if np.isfinite(base["fpr_at_95_recall"]):
+        for prevalence in PREVALENCES:
+            base[f"expected_precision_prev_{prevalence:g}"] = expected_precision(
+                prevalence, base["recall"], base["fpr_at_95_recall"]
+            )
+            base[f"reviews_per_true_positive_prev_{prevalence:g}"] = 1.0 / max(
+                base[f"expected_precision_prev_{prevalence:g}"], 1e-15
+            )
     return base
 
 
@@ -469,14 +475,16 @@ def _reliability_bins(y: np.ndarray, score: np.ndarray, *, bins: int = 10) -> li
     rows = []
     for idx, (lo, hi) in enumerate(zip(edges[:-1], edges[1:], strict=True)):
         mask = (score >= lo) & (score < hi if hi < 1.0 else score <= hi)
+        if not np.any(mask):
+            continue
         rows.append(
             {
                 "bin": idx,
                 "bin_lower": float(lo),
                 "bin_upper": float(hi),
                 "count": int(mask.sum()),
-                "mean_confidence": float(score[mask].mean()) if np.any(mask) else np.nan,
-                "empirical_positive_rate": float(y[mask].mean()) if np.any(mask) else np.nan,
+                "mean_confidence": float(score[mask].mean()),
+                "empirical_positive_rate": float(y[mask].mean()),
             }
         )
     return rows
@@ -690,15 +698,14 @@ def train_clustered_scores(ds: dict) -> tuple[dict[str, np.ndarray], pd.DataFram
     for client_id in sorted(map(int, np.unique(clients_test))):
         mask = clients_test == client_id
         for method in ["local_calibration", "fedavg_plain", "personalized_fedavg", "client_clustered_invariant_gate"]:
-            per_client_rows.append(
-                {
-                    "client_id": client_id,
-                    "method": method,
-                    "pr_auc": safe_ap(ds["y_test"][mask], scores[method][mask]),
-                    "roc_auc": safe_auc(ds["y_test"][mask], scores[method][mask]),
-                    "n": int(mask.sum()),
-                }
+            row = detection_metrics(
+                ds["y_test"][mask],
+                scores[method][mask],
+                method=method,
+                modality="multimodal",
             )
+            row["client_id"] = client_id
+            per_client_rows.append(row)
     return scores, pd.DataFrame(per_client_rows)
 
 
@@ -739,43 +746,25 @@ def run_personalization(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.Data
         }
         for row in isc[isc["method"].isin(selected)].to_dict(orient="records"):
             row["tier"] = "VCSL ISC visual descriptor confirmatory"
+            row["ece"] = row["ece_15"]
+            for prevalence in PREVALENCES:
+                row[f"expected_precision_prev_{prevalence:g}"] = expected_precision(
+                    prevalence, row["recall"], row["fpr_at_95_recall"]
+                )
+                row[f"reviews_per_true_positive_prev_{prevalence:g}"] = 1.0 / max(
+                    row[f"expected_precision_prev_{prevalence:g}"], 1e-15
+                )
             rows.append(row)
         isc_clients = pd.read_csv(isc_client_path)
         isc_clients = isc_clients[isc_clients["method"].isin(selected)].copy()
         isc_clients["tier"] = "VCSL ISC visual descriptor confirmatory"
         client_frames.append(isc_clients)
     else:
-        # Retain the archived summary only when the checksum-verifiable replacement is unavailable.
-        isc_path = PULL / "hpc_vcsl_isc_feature_run_fedavgft" / "summary_artifacts" / "detection_summary.csv"
-        if not isc_path.exists():
-            raise FileNotFoundError(
-                "neither confirmatory VCSL ISC metrics nor the archived fallback summary is available"
-            )
-        isc = pd.read_csv(isc_path)
-        for _, row in isc.iterrows():
-            if row["method"] in {"centralized_multimodal", "local_multimodal", "fedavg_plain", "fedprox_plain", "fedavgft_plain"}:
-                rows.append(
-                    {
-                        "tier": "VCSL ISC visual descriptor (HPC summary only)",
-                        "method": row["method"],
-                        "seed": -1,
-                        "privacy_mode": row.get("privacy_mode", ""),
-                        "roc_auc": row.get("roc_auc_mean", np.nan),
-                        "pr_auc": row.get("pr_auc_mean", np.nan),
-                        "fpr_at_95_recall": row.get("fpr_at_95_recall_mean", np.nan),
-                        "accuracy": row.get("accuracy_mean", np.nan),
-                        "precision": row.get("precision_mean", np.nan),
-                        "recall": row.get("recall_mean", np.nan),
-                        "brier": np.nan,
-                        "ece": np.nan,
-                        "isc_pair_features_available_locally": False,
-                        "not_run_reason": "HPC ISC artifact contains summary metrics/manifests but not pair-level descriptor CSVs; local descriptor archive is not staged.",
-                    }
-                )
+        raise FileNotFoundError(
+            "confirmatory VCSL ISC metrics are required; archived summaries cannot satisfy the submission evidence gate"
+        )
     detail = pd.DataFrame(rows)
-    summary = summarize(detail[detail["seed"].ge(0)], ["tier", "method"])
-    if any(detail["seed"].lt(0)):
-        summary = pd.concat([summary, detail[detail["seed"].lt(0)]], ignore_index=True, sort=False)
+    summary = summarize(detail, ["tier", "method"])
     summary.to_csv(TABLES / "personalization_strengthening.csv", index=False, lineterminator="\n")
     per_client_summary = summarize(pd.concat(client_frames, ignore_index=True), ["tier", "method", "client_id"])
     per_client_summary.to_csv(TABLES / "per_client_metrics.csv", index=False, lineterminator="\n")
@@ -898,6 +887,13 @@ def run_synthetic_av(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFra
                     scenario_rows.append(metric)
     metrics = summarize(pd.DataFrame(rows), ["tier", "method"])
     scenarios = summarize(pd.DataFrame(scenario_rows), ["tier", "method", "scenario"])
+    scenarios = scenarios.drop(
+        columns=[
+            column
+            for column in scenarios.columns
+            if column.startswith(("roc_auc_", "pr_auc_", "fpr_at_95_recall_", "expected_precision_", "reviews_per_"))
+        ]
+    )
     metrics["tier_label"] = "Synthetic A/V stress tier; not a natural synchronized corpus"
     scenarios["tier_label"] = "Synthetic A/V stress tier; scenario-level modality agreement/conflict stress"
     metrics.to_csv(TABLES / "av_sync_tier_metrics.csv", index=False, lineterminator="\n")
@@ -995,6 +991,7 @@ def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame
                 "quantization_scale": 1e6,
                 "ciphertext_expansion": 16.0,
                 "numeric_error_tested": True,
+                "max_abs_error_vs_plain": proxy_err,
                 "full_encrypted_inference": False,
                 "notes": "Quantized compact-update accounting only; not homomorphic encryption and not extrapolated to media embeddings.",
             },
@@ -1559,7 +1556,18 @@ def artifact_checksums() -> pd.DataFrame:
 
 
 def write_summary(payload: dict) -> None:
-    (RESULTS / "review_blocker_experiment_summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    write_json(RESULTS / "review_blocker_experiment_summary.json", payload)
+
+
+def validate_finite_frame(frame: pd.DataFrame, *, name: str) -> None:
+    numeric = frame.select_dtypes(include="number")
+    if numeric.size and not np.isfinite(numeric.to_numpy(dtype=float)).all():
+        bad = [
+            column
+            for column in numeric.columns
+            if not np.isfinite(numeric[column].to_numpy(dtype=float)).all()
+        ]
+        raise ValueError(f"{name} contains non-finite numeric columns: {', '.join(bad)}")
 
 
 def parse_args() -> argparse.Namespace:
@@ -1610,6 +1618,25 @@ def main() -> None:
     privacy = run_privacy_attacks(args)
     robustness = run_robustness_stress(args)
     scaling, vector = receipt_scaling(args)
+    for name, frame in {
+        "query ranking": ranking,
+        "open-set prevalence": open_set,
+        "review workload": workload,
+        "calibration reliability": reliability,
+        "threshold stability": threshold,
+        "paired statistics": stat_tests,
+        "personalization": personalization,
+        "per-client metrics": per_client,
+        "synthetic A/V metrics": av_metrics,
+        "synthetic A/V scenarios": av_scenarios,
+        "SecureAgg simulation": secureagg,
+        "quantized/Paillier status": quantized_proxy,
+        "Paillier accounting": paillier,
+        "privacy attacks": privacy,
+        "robustness": robustness,
+        "receipt scaling": scaling,
+    }.items():
+        validate_finite_frame(frame, name=name)
     plot_outputs(
         av_metrics,
         av_scenarios,

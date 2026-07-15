@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
 import pytest
 from sklearn.metrics import average_precision_score
 
@@ -13,6 +14,7 @@ from fedtwin.metrics import (
     review_workload_at_budget,
 )
 from fedtwin.statistics import holm_adjust, paired_bootstrap_delta, paired_permutation_delta
+from revision_blocker_experiments import full_metrics, validate_finite_frame
 from strengthen_for_tmm import paired_bootstrap_table
 
 
@@ -44,6 +46,22 @@ def test_metric_input_validation() -> None:
         review_workload_at_budget(np.array([0, 1]), np.array([0.2, 0.8]), budget=0)
     with pytest.raises(ValueError, match="non-empty"):
         present_class_balanced_accuracy(np.array([]), np.array([]))
+
+
+def test_reviewer_tables_keep_single_class_metrics_honest_and_finite() -> None:
+    row = full_metrics(
+        np.ones(4, dtype=int),
+        np.array([0.6, 0.7, 0.8, 0.9]),
+        method="fixture",
+        tier="fixture",
+        seed=31,
+    )
+    assert np.isnan(row["roc_auc"])
+    assert np.isfinite(row["brier"])
+    assert not any(key.startswith("expected_precision_") for key in row)
+    validate_finite_frame(pd.DataFrame({"value": [0.0, 1.0]}), name="fixture")
+    with pytest.raises(ValueError, match="non-finite"):
+        validate_finite_frame(pd.DataFrame({"value": [np.nan]}), name="fixture")
 
 
 def test_clustered_paired_statistics_and_holm_correction() -> None:
