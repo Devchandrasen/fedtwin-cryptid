@@ -43,12 +43,12 @@ jobs:
         if: matrix.python-version == '3.12'
         working-directory: paper
         run: |
-          pdflatex -interaction=nonstopmode -halt-on-error main.tex >/dev/null
-          bibtex main >/dev/null
-          pdflatex -interaction=nonstopmode -halt-on-error main.tex >/dev/null
-          pdflatex -interaction=nonstopmode -halt-on-error main.tex >/dev/null
-          pdflatex -interaction=nonstopmode -halt-on-error supplement.tex >/dev/null
-          pdflatex -interaction=nonstopmode -halt-on-error supplement.tex >/dev/null
+          pdflatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+          bibtex main
+          pdflatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+          pdflatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+          pdflatex -interaction=nonstopmode -halt-on-error -file-line-error supplement.tex
+          pdflatex -interaction=nonstopmode -halt-on-error -file-line-error supplement.tex
           test "$(pdfinfo main.pdf | awk '/^Pages:/ {print $2}')" -le 10
           test "$(pdfinfo supplement.pdf | awk '/^Pages:/ {print $2}')" -le 4
           ! grep -Eq 'Overfull|undefined citations|undefined references|There were undefined references' main.log supplement.log
