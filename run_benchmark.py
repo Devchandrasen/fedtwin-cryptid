@@ -293,12 +293,13 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             client_idx = data.client_test == client_id
             score[client_idx] = model_map[client_id].predict_proba(x_test_std[client_idx][:, feature_idx])
         digest = model_digest(np.mean([m.weights for m in model_map.values()], axis=0))
-        trained_models["local_multimodal"] = (score, digest)
+        local_method_name = "local_audio_evidence" if args.tier == "fma_audio" else "local_multimodal"
+        trained_models[local_method_name] = (score, digest)
         reported_modality = "audio" if args.tier == "fma_audio" else "multimodal"
-        row = detection_metrics(y_test, score, method="local_multimodal", modality=reported_modality)
+        row = detection_metrics(y_test, score, method=local_method_name, modality=reported_modality)
         row["seed"] = seed
         detection_rows.append(row)
-        summary.update({"seed": seed, "method": "local_multimodal", "privacy_mode": "local"})
+        summary.update({"seed": seed, "method": local_method_name, "privacy_mode": "local"})
         runtime_rows.append(summary)
 
     fed_specs = []

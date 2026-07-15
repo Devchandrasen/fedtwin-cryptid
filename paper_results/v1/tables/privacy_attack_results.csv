@@ -1,6 +1,6 @@
 attack,setting,metric,value_mean,value_std,seeds
 client_identity_inference,all_fields,balanced_accuracy,1.0,0.0,"31,37,41"
-client_identity_inference,context_removed,balanced_accuracy,0.08631646541226039,0.03330503901378934,"31,37,41"
+client_identity_inference,context_removed,balanced_accuracy,0.08567789580817353,0.03352016943347043,"31,37,41"
 client_identity_inference,default_invariant,balanced_accuracy,0.09152876698626523,0.01311666805116728,"31,37,41"
 membership_inference,calibrated_score,attack_auc,0.5339647777777777,0.02867659743491973,"31,37,41"
 membership_inference,confidence,attack_auc,0.5407822592592592,0.015541178818411522,"31,37,41"

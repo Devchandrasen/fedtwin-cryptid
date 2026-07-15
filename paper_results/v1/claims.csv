@@ -1,9 +1,9 @@
 claim_id,manuscript_location,evidence_file,status,scope_note
 C1,Primary VCSL public-label result,tables/vcsl_asset_disjoint_detection_summary.csv,verified,"New CLI rerun; seeds 31/37/41; 5000 train and 1800 test rows per seed; connected-component asset-disjoint split"
-C2,Main results - VCSL ISC,archived_runs/hpc_vcsl_isc_feature_run/metrics_detection.csv,exploratory-archived,"Released ISC visual descriptors; configuration/output hashes retained, but source descriptor hashes are unavailable for this revision"
-C3,Personalization - VCSL ISC,archived_runs/hpc_vcsl_isc_feature_run_fedavgft/metrics_detection.csv,exploratory-archived,"Recorded personalized compact-head run; not newly rerun on the asset-disjoint adapter"
-C4,Main results - FMA 20 s,archived_runs/hpc_fma_audio_feature_run/metrics_detection.csv,exploratory-archived,"Separate audio tier; configuration/output hashes retained, but source media hashes are unavailable"
-C5,Main results - FMA 5 s,archived_runs/hpc_fma_audio_shortclip_stress/metrics_detection.csv,exploratory-archived,"Separate short-clip audio tier; not synchronized with VCSL video and not newly rerun"
+C2,Main results - VCSL ISC,new_runs/vcsl_isc_confirmatory/metrics_detection.csv,verified,"Released ISC visual descriptors; seeds 31/37/41; 6000 train and 3000 test rows per seed; 3128/2063 train/test assets with zero overlap; complete descriptor and metadata hashes"
+C3,Personalization - VCSL ISC,tables/personalization_strengthening.csv,verified,"Seed-level centralized, local, FedAvg, FedProx, SecureAgg-simulation, quantized-proxy, and personalized compact-head results regenerated from released descriptors"
+C4,Main results - FMA 20 s,new_runs/fma_audio_20s_confirmatory/metrics_detection.csv,verified,"Separate audio-only tier; seeds 31/37/41; 12000 train and 6000 test rows per seed; 840/360 train/test tracks with zero overlap; 1200 decoded tracks and zero decode failures"
+C5,Main results - FMA 5 s,new_runs/fma_audio_5s_confirmatory/metrics_detection.csv,verified,"Separate short-clip audio-only tier from the pinned FMA-small-compatible mirror; not synchronized with VCSL video; complete selected-input hashes"
 C6,Fixed-evidence baseline policy,tables/fixed_evidence_baselines.csv,exploratory-archived,"Score-only baseline retained from the recorded audit; rerun required before treating its delta as confirmatory"
 C7,Feature ablation,tables/feature_ablation.csv,exploratory-archived,"Finite archived three-seed means; regenerated figure contains no non-finite labels"
 C8,Paired uncertainty and multiple comparisons,tables/paired_permutation_tests.csv,verified,"Query-clustered paired bootstrap plus paired permutation across four alternatives with Holm correction"
