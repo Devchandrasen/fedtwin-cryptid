@@ -1,0 +1,13 @@
+seed,method,privacy_mode,raw_media_shared,raw_embeddings_on_ledger,mean_encryption_time_sec,mean_aggregation_time_sec,ciphertext_expansion
+31,fedavg_plain,plain,0,0,1.7966670081174621e-06,1.8356667472592864e-05,1.0
+31,fedprox_plain,plain,0,0,1.6933328879531472e-06,2.106333340634592e-05,1.0
+31,fedavg_secureagg_sim,secureagg_sim,0,0,0.0004249900004651863,9.340000542579218e-06,2.0
+31,fedavg_quantized_transport_proxy,quantized_transport_proxy,0,0,7.345333360717632e-05,2.197333281704535e-05,16.0
+37,fedavg_plain,plain,0,0,1.4166667824611069e-06,1.670666703527483e-05,1.0
+37,fedprox_plain,plain,0,0,1.3366656882377961e-06,1.558666651059563e-05,1.0
+37,fedavg_secureagg_sim,secureagg_sim,0,0,0.0003396266663912684,8.316665965442856e-06,2.0
+37,fedavg_quantized_transport_proxy,quantized_transport_proxy,0,0,6.560666612737502e-05,2.057333452588258e-05,16.0
+41,fedavg_plain,plain,0,0,2.076667199920242e-06,2.2343333209088694e-05,1.0
+41,fedprox_plain,plain,0,0,2.5566662467705706e-06,2.0636665916147952e-05,1.0
+41,fedavg_secureagg_sim,secureagg_sim,0,0,0.0003712799996719696,8.496666850987822e-06,2.0
+41,fedavg_quantized_transport_proxy,quantized_transport_proxy,0,0,5.8556666772346944e-05,1.8976666372812662e-05,16.0

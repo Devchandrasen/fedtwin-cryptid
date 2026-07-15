@@ -1,0 +1,52 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.9586666666666667,
+    "brier": 0.03615940962058459,
+    "ece_15": 0.05811569913178776,
+    "fn": 28,
+    "fp": 220,
+    "fpr_at_95_recall": 0.025333333333333333,
+    "method": "fedavgft_plain",
+    "modality": "audio",
+    "n": 6000,
+    "pr_auc": 0.9953385927858835,
+    "precision": 0.931077694235589,
+    "privacy_mode": "plain",
+    "recall": 0.9906666666666667,
+    "roc_auc": 0.9951005555555555,
+    "seed": 37,
+    "tn": 2780,
+    "tp": 2972
+  },
+  "output_tag": "fma_audio_20s_paper",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.9938550161408359,
+      "runtime_sec": 3.222496099995624,
+      "seed": 31,
+      "test_rows": 6000,
+      "train_rows": 12000
+    },
+    {
+      "best_pr_auc": 0.9953385927858835,
+      "runtime_sec": 2.900552699997206,
+      "seed": 37,
+      "test_rows": 6000,
+      "train_rows": 12000
+    },
+    {
+      "best_pr_auc": 0.9944267788207082,
+      "runtime_sec": 3.154825699995854,
+      "seed": 41,
+      "test_rows": 6000,
+      "train_rows": 12000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "fma_audio",
+  "total_runtime_sec": 9.309749799998826
+}
