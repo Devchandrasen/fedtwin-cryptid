@@ -229,8 +229,8 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
     if args.write_pair_csv:
         train_df = dataframe_from_split(x_train_raw, data.y_train, data.client_train, data.scenario_train, feature_names)
         test_df = dataframe_from_split(x_test_raw, data.y_test, data.client_test, data.scenario_test, feature_names)
-        train_df.to_csv(seed_dir / "train_pairs.csv", index=False)
-        test_df.to_csv(seed_dir / "test_pairs.csv", index=False)
+        train_df.to_csv(seed_dir / "train_pairs.csv", index=False, lineterminator="\n")
+        test_df.to_csv(seed_dir / "test_pairs.csv", index=False, lineterminator="\n")
 
     detection_rows: list[dict] = []
     federated_rows: list[dict] = []
@@ -497,16 +497,20 @@ def run_benchmark(args: argparse.Namespace) -> Path:
         manifest = result["manifest"]
         feature_schema = result["feature_names"]
 
-    pd.DataFrame(all_detection).to_csv(output_root / "metrics_detection.csv", index=False)
-    pd.DataFrame(all_federated).to_csv(output_root / "metrics_federated.csv", index=False)
-    pd.DataFrame(all_privacy).to_csv(output_root / "metrics_privacy.csv", index=False)
-    pd.DataFrame(all_ledger).to_csv(output_root / "metrics_ledger.csv", index=False)
-    pd.DataFrame(all_localization).to_csv(output_root / "metrics_localization.csv", index=False)
-    pd.DataFrame(all_runtime).to_csv(output_root / "runtime_profile.csv", index=False)
+    pd.DataFrame(all_detection).to_csv(output_root / "metrics_detection.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_federated).to_csv(output_root / "metrics_federated.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_privacy).to_csv(output_root / "metrics_privacy.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_ledger).to_csv(output_root / "metrics_ledger.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_localization).to_csv(output_root / "metrics_localization.csv", index=False, lineterminator="\n")
+    pd.DataFrame(all_runtime).to_csv(output_root / "runtime_profile.csv", index=False, lineterminator="\n")
     if all_scenario:
-        pd.concat(all_scenario, ignore_index=True).to_csv(output_root / "metrics_scenario.csv", index=False)
+        pd.concat(all_scenario, ignore_index=True).to_csv(
+            output_root / "metrics_scenario.csv", index=False, lineterminator="\n"
+        )
     if all_client:
-        pd.concat(all_client, ignore_index=True).to_csv(output_root / "metrics_client.csv", index=False)
+        pd.concat(all_client, ignore_index=True).to_csv(
+            output_root / "metrics_client.csv", index=False, lineterminator="\n"
+        )
     if manifest is not None:
         write_json(output_root / "dataset_manifest.json", manifest)
         write_json(output_root / "client_split_manifest.json", {"clients": args.clients, "noniid_alpha": args.noniid_alpha, "seeds": args.seeds})

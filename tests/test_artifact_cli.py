@@ -73,6 +73,8 @@ def test_cli_verify_regenerate_and_smoke(tmp_path: Path) -> None:
     payload = json.loads(run_manifest.read_text(encoding="utf-8"))
     assert payload["config"]["tier"] == "tier0"
     assert payload["outputs"]
+    for csv_path in (tmp_path / "runs" / "smoke").rglob("*.csv"):
+        assert b"\r\n" not in csv_path.read_bytes()
 
 
 def test_artifact_rejects_unresolved_replacement_claim(tmp_path: Path) -> None:

@@ -462,9 +462,9 @@ def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.D
     ranking = summarize(pd.DataFrame(ranking_rows), ["tier", "method", "candidate_negative_ratio", "split_note", "segment_overlap_metric"])
     open_set = summarize(pd.DataFrame(open_rows), ["tier", "method", "candidate_negative_ratio"])
     workload = summarize(pd.DataFrame(workload_rows), ["tier", "method", "candidate_negative_ratio", "prevalence"])
-    ranking.to_csv(TABLES / "query_ranking_metrics.csv", index=False)
-    open_set.to_csv(TABLES / "open_set_prevalence_metrics.csv", index=False)
-    workload.to_csv(TABLES / "prevalence_workload_metrics.csv", index=False)
+    ranking.to_csv(TABLES / "query_ranking_metrics.csv", index=False, lineterminator="\n")
+    open_set.to_csv(TABLES / "open_set_prevalence_metrics.csv", index=False, lineterminator="\n")
+    workload.to_csv(TABLES / "prevalence_workload_metrics.csv", index=False, lineterminator="\n")
     return ranking, open_set, workload
 
 
@@ -607,9 +607,11 @@ def run_calibration_and_stat_tests(args: argparse.Namespace) -> tuple[pd.DataFra
     reliability = pd.DataFrame(reliability_rows)
     threshold = pd.DataFrame(threshold_rows)
     stats = pd.DataFrame(stat_rows)
-    reliability.to_csv(TABLES / "calibration_reliability_curves.csv", index=False)
-    summarize(threshold, ["tier", "method", "client_id"]).to_csv(TABLES / "threshold_stability_by_client.csv", index=False)
-    stats.to_csv(TABLES / "paired_permutation_tests.csv", index=False)
+    reliability.to_csv(TABLES / "calibration_reliability_curves.csv", index=False, lineterminator="\n")
+    summarize(threshold, ["tier", "method", "client_id"]).to_csv(
+        TABLES / "threshold_stability_by_client.csv", index=False, lineterminator="\n"
+    )
+    stats.to_csv(TABLES / "paired_permutation_tests.csv", index=False, lineterminator="\n")
     return reliability, threshold, stats
 
 
@@ -753,9 +755,9 @@ def run_personalization(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.Data
     summary = summarize(detail[detail["seed"].ge(0)], ["tier", "method"])
     if any(detail["seed"].lt(0)):
         summary = pd.concat([summary, detail[detail["seed"].lt(0)]], ignore_index=True, sort=False)
-    summary.to_csv(TABLES / "personalization_strengthening.csv", index=False)
+    summary.to_csv(TABLES / "personalization_strengthening.csv", index=False, lineterminator="\n")
     per_client_summary = summarize(pd.concat(client_frames, ignore_index=True), ["tier", "method", "client_id"])
-    per_client_summary.to_csv(TABLES / "per_client_metrics.csv", index=False)
+    per_client_summary.to_csv(TABLES / "per_client_metrics.csv", index=False, lineterminator="\n")
     return summary, per_client_summary
 
 
@@ -877,8 +879,8 @@ def run_synthetic_av(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFra
     scenarios = summarize(pd.DataFrame(scenario_rows), ["tier", "method", "scenario"])
     metrics["tier_label"] = "Synthetic A/V stress tier; not a natural synchronized corpus"
     scenarios["tier_label"] = "Synthetic A/V stress tier; scenario-level modality agreement/conflict stress"
-    metrics.to_csv(TABLES / "av_sync_tier_metrics.csv", index=False)
-    scenarios.to_csv(TABLES / "av_sync_operating_points.csv", index=False)
+    metrics.to_csv(TABLES / "av_sync_tier_metrics.csv", index=False, lineterminator="\n")
+    scenarios.to_csv(TABLES / "av_sync_operating_points.csv", index=False, lineterminator="\n")
     return metrics, scenarios
 
 
@@ -1005,10 +1007,10 @@ def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame
             }
         ]
     )
-    status.to_csv(TABLES / "protected_aggregation_status.csv", index=False)
-    secureagg.to_csv(TABLES / "secureagg_dropout_or_proxy.csv", index=False)
-    quantized_proxy.to_csv(TABLES / "quantized_transport_proxy.csv", index=False)
-    paillier.to_csv(TABLES / "paillier_update_aggregation.csv", index=False)
+    status.to_csv(TABLES / "protected_aggregation_status.csv", index=False, lineterminator="\n")
+    secureagg.to_csv(TABLES / "secureagg_dropout_or_proxy.csv", index=False, lineterminator="\n")
+    quantized_proxy.to_csv(TABLES / "quantized_transport_proxy.csv", index=False, lineterminator="\n")
+    paillier.to_csv(TABLES / "paillier_update_aggregation.csv", index=False, lineterminator="\n")
     return status, secureagg, quantized_proxy, paillier
 
 
@@ -1132,7 +1134,7 @@ def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
                     }
                 )
     out = summarize(pd.DataFrame(rows), ["attack", "setting", "metric"])
-    out.to_csv(TABLES / "privacy_attack_results.csv", index=False)
+    out.to_csv(TABLES / "privacy_attack_results.csv", index=False, lineterminator="\n")
     return out
 
 
@@ -1237,12 +1239,12 @@ def run_robustness_stress(args: argparse.Namespace) -> pd.DataFrame:
                 )
                 rows.append(metric)
     detail = pd.DataFrame(rows)
-    detail.to_csv(RESULTS / "robustness_stress_raw.csv", index=False)
+    detail.to_csv(RESULTS / "robustness_stress_raw.csv", index=False, lineterminator="\n")
     out = summarize(
         detail,
         ["tier", "attack_scenario", "attacker_fraction", "method", "communication_rounds", "local_epochs", "robustness_scope"],
     )
-    out.to_csv(TABLES / "robustness_stress.csv", index=False)
+    out.to_csv(TABLES / "robustness_stress.csv", index=False, lineterminator="\n")
     return out
 
 
@@ -1320,7 +1322,7 @@ def receipt_scaling(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFram
             }
         )
     scaling = pd.DataFrame(rows)
-    scaling.to_csv(TABLES / "receipt_scaling.csv", index=False)
+    scaling.to_csv(TABLES / "receipt_scaling.csv", index=False, lineterminator="\n")
 
     payload = receipt_payload(0, "0" * 64, "deterministic-test-public-key-placeholder")
     receipt_hash = canonical_hash(payload)
@@ -1337,7 +1339,7 @@ def receipt_scaling(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFram
             }
         ]
     )
-    vector.to_csv(TABLES / "receipt_test_vector.csv", index=False)
+    vector.to_csv(TABLES / "receipt_test_vector.csv", index=False, lineterminator="\n")
     return scaling, vector
 
 
@@ -1531,7 +1533,7 @@ def artifact_checksums() -> pd.DataFrame:
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             rows.append({"path": str(path.relative_to(MANUSCRIPT)).replace("\\", "/"), "sha256": digest, "bytes": path.stat().st_size})
     out = pd.DataFrame(rows)
-    out.to_csv(MANUSCRIPT / "artifact_checksums.csv", index=False)
+    out.to_csv(MANUSCRIPT / "artifact_checksums.csv", index=False, lineterminator="\n")
     return out
 
 

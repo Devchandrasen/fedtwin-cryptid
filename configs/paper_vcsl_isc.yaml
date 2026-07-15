@@ -1,0 +1,32 @@
+tier: vcsl_isc
+seeds: [31, 37, 41]
+clients: 11
+assets: 1000
+queries: 1000
+dim: 32
+rounds: 40
+local_epochs: 8
+noniid_alpha: 0.3
+difficulty: 1.0
+max_train_pairs: 3000
+max_test_pairs: 1500
+negative_ratio: 1.0
+isc_max_frames: 140
+feature_map: poly2
+feature_policy: invariant
+federated_methods:
+  - centralized
+  - local
+  - fedavg
+  - fedprox
+  - secureagg_sim
+  - quantized_transport_proxy
+  - fedavgft
+modalities: [video, multimodal]
+ledger_modes: [hashchain]
+attacker_fractions: [0.0, 0.1, 0.2]
+attacks: [label_flip, sign_flip]
+dropout_rates: [0.0, 0.1, 0.2]
+fma_max_decode_failure_fraction: 0.05
+paillier_key_bits: 2048
+output_tag: vcsl_isc_paper

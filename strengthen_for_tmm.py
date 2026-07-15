@@ -293,7 +293,7 @@ def build_feature_schema() -> pd.DataFrame:
         ("poly2 interactions", "feature map", "squares and pairwise products among selected evidence roots", "variable", "yes if roots allowed", "inherits source feature leakage"),
     ]
     df = pd.DataFrame(rows, columns=["feature_or_family", "group", "definition", "dimension", "online_available", "leakage_note"])
-    df.to_csv(TABLES / "feature_schema.csv", index=False)
+    df.to_csv(TABLES / "feature_schema.csv", index=False, lineterminator="\n")
     return df
 
 
@@ -316,7 +316,7 @@ def build_hyperparameter_table() -> pd.DataFrame:
         ("decision threshold", "value", "0.5 for default precision/recall; FPR@95R by threshold sweep"),
     ]
     df = pd.DataFrame(rows, columns=["item", "field", "value"])
-    df.to_csv(TABLES / "model_hyperparameters.csv", index=False)
+    df.to_csv(TABLES / "model_hyperparameters.csv", index=False, lineterminator="\n")
     return df
 
 
@@ -474,12 +474,12 @@ def run_vcsl_strengthening() -> dict[str, pd.DataFrame]:
     paired = paired_bootstrap_table(paired_cases)
     dimensionality = pd.DataFrame(dimensionality_rows)
 
-    baseline.to_csv(OUT / "fixed_evidence_baselines_raw.csv", index=False)
-    ablation.to_csv(OUT / "feature_ablation_raw.csv", index=False)
-    leakage.to_csv(OUT / "privacy_leakage_raw.csv", index=False)
-    receipts.to_csv(OUT / "receipt_v2_raw.csv", index=False)
-    paired.to_csv(OUT / "paired_bootstrap_raw.csv", index=False)
-    dimensionality.to_csv(TABLES / "model_dimensionality.csv", index=False)
+    baseline.to_csv(OUT / "fixed_evidence_baselines_raw.csv", index=False, lineterminator="\n")
+    ablation.to_csv(OUT / "feature_ablation_raw.csv", index=False, lineterminator="\n")
+    leakage.to_csv(OUT / "privacy_leakage_raw.csv", index=False, lineterminator="\n")
+    receipts.to_csv(OUT / "receipt_v2_raw.csv", index=False, lineterminator="\n")
+    paired.to_csv(OUT / "paired_bootstrap_raw.csv", index=False, lineterminator="\n")
+    dimensionality.to_csv(TABLES / "model_dimensionality.csv", index=False, lineterminator="\n")
 
     return {
         "baseline": baseline,
@@ -502,12 +502,12 @@ def summarize_strengthening(raw: dict[str, pd.DataFrame]) -> dict[str, pd.DataFr
         summary = df.groupby(group_cols, dropna=False)[numeric_cols].agg(["mean", "std"]).reset_index()
         summary.columns = ["_".join([x for x in col if x]).rstrip("_") if isinstance(col, tuple) else col for col in summary.columns]
         out[key] = summary
-    out["baseline"].to_csv(TABLES / "fixed_evidence_baselines.csv", index=False)
-    out["ablation"].to_csv(TABLES / "feature_ablation.csv", index=False)
-    out["leakage"].to_csv(TABLES / "privacy_leakage.csv", index=False)
-    out["receipts"].to_csv(TABLES / "receipt_v2_summary.csv", index=False)
-    out["paired"].to_csv(TABLES / "paired_bootstrap_tests.csv", index=False)
-    out["dimensionality"].to_csv(TABLES / "model_dimensionality.csv", index=False)
+    out["baseline"].to_csv(TABLES / "fixed_evidence_baselines.csv", index=False, lineterminator="\n")
+    out["ablation"].to_csv(TABLES / "feature_ablation.csv", index=False, lineterminator="\n")
+    out["leakage"].to_csv(TABLES / "privacy_leakage.csv", index=False, lineterminator="\n")
+    out["receipts"].to_csv(TABLES / "receipt_v2_summary.csv", index=False, lineterminator="\n")
+    out["paired"].to_csv(TABLES / "paired_bootstrap_tests.csv", index=False, lineterminator="\n")
+    out["dimensionality"].to_csv(TABLES / "model_dimensionality.csv", index=False, lineterminator="\n")
     return out
 
 
@@ -536,7 +536,7 @@ def build_prevalence_table() -> pd.DataFrame:
                     }
                 )
     df = pd.DataFrame(rows)
-    df.to_csv(TABLES / "realistic_prevalence_precision.csv", index=False)
+    df.to_csv(TABLES / "realistic_prevalence_precision.csv", index=False, lineterminator="\n")
     return df
 
 

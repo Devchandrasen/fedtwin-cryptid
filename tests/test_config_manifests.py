@@ -31,6 +31,10 @@ def test_config_loads_yaml_json_and_rejects_unsafe_claim_settings(tmp_path: Path
         ExperimentConfig(paillier_key_bits=1024)
     with pytest.raises(ValueError, match="dropout_rates"):
         ExperimentConfig(dropout_rates=(1.0,))
+    with pytest.raises(ValueError, match="fma_max_seconds"):
+        ExperimentConfig(fma_max_seconds=0.0)
+    with pytest.raises(ValueError, match="fma_sample_rate"):
+        ExperimentConfig(fma_sample_rate=0)
 
 
 def test_manifest_hashing_records_and_detects_tampering(tmp_path: Path) -> None:

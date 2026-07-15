@@ -43,6 +43,10 @@ class ExperimentConfig:
     attacker_fractions: tuple[float, ...] = (0.0, 0.1, 0.2)
     attacks: tuple[str, ...] = ("label_flip", "sign_flip")
     dropout_rates: tuple[float, ...] = (0.0, 0.1, 0.2)
+    isc_max_frames: int = 160
+    fma_max_tracks: int = 1200
+    fma_sample_rate: int = 8000
+    fma_max_seconds: float = 25.0
     fma_max_decode_failure_fraction: float = 0.05
     paillier_key_bits: int = 2048
     output_tag: str = "paper"
@@ -52,9 +56,21 @@ class ExperimentConfig:
             raise ValueError(f"unknown tier {self.tier!r}; expected one of {sorted(TIERS)}")
         if not self.seeds or any(seed < 0 for seed in self.seeds):
             raise ValueError("seeds must contain nonnegative integers")
-        for name in ("clients", "assets", "queries", "dim", "rounds", "local_epochs"):
+        for name in (
+            "clients",
+            "assets",
+            "queries",
+            "dim",
+            "rounds",
+            "local_epochs",
+            "isc_max_frames",
+            "fma_max_tracks",
+            "fma_sample_rate",
+        ):
             if int(getattr(self, name)) <= 0:
                 raise ValueError(f"{name} must be positive")
+        if self.fma_max_seconds <= 0:
+            raise ValueError("fma_max_seconds must be positive")
         if self.max_train_pairs <= 0 or self.max_test_pairs <= 0:
             raise ValueError("pair caps must be positive")
         if self.negative_ratio < 0:
