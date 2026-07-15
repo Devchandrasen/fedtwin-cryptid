@@ -1,0 +1,2 @@
+method,ledger_type,receipts_mean,verification_success_mean,mean_receipt_latency_sec_mean,ledger_bytes_mean,receipts_std,verification_success_std,mean_receipt_latency_sec_std,ledger_bytes_std
+fedavg_secureagg,hashchain,250.0,1.0,9.551557401816051e-06,246634.0,0.0,0.0,1.024860436608342e-06,20.784609690826528

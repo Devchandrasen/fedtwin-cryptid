@@ -25,7 +25,7 @@ python run_benchmark.py \
   --clients 10 \
   --difficulty 1.6 \
   --seeds 31 37 41 \
-  --federated-methods centralized local fedavg fedprox secureagg heagg \
+  --federated-methods centralized local fedavg fedprox secureagg_sim quantized_transport_proxy \
   --modalities video audio multimodal \
   --ledger-modes none hashchain \
   --output-tag tier1_full

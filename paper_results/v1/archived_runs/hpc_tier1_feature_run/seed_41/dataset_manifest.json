@@ -1,0 +1,24 @@
+{
+  "assets": 15000,
+  "clients": 20,
+  "difficulty": 3.0,
+  "embedding_dim": 32,
+  "generator": "synthetic_feature_piracy",
+  "noniid_alpha": 0.3,
+  "positive_rate": 0.5,
+  "queries": 20000,
+  "seed": 41,
+  "test_fraction": 0.25,
+  "transformations": [
+    "clean_copy",
+    "reencode",
+    "crop_overlay",
+    "speed_change",
+    "cam_recording",
+    "pitch_shift",
+    "audio_noise",
+    "audio_replaced",
+    "partial_segment",
+    "hard_negative_same_topic"
+  ]
+}

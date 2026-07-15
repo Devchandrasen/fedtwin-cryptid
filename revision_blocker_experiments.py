@@ -11,8 +11,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from sklearn.cluster import KMeans
-from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -22,36 +24,34 @@ from sklearn.metrics import (
     ndcg_score,
     roc_auc_score,
 )
-from sklearn.preprocessing import StandardScaler
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 ROOT = Path(__file__).resolve().parent
-PROJECT = ROOT.parent
-MANUSCRIPT = PROJECT / "phase_5_manuscript"
+MANUSCRIPT = ROOT / "paper"
 TABLES = MANUSCRIPT / "tables"
 FIGURES = MANUSCRIPT / "figures"
-RESULTS = ROOT / "outputs_strengthened" / "review_blocker_experiments"
+RESULTS = ROOT / "outputs" / "review_blocker_experiments"
 PUBLIC_META = ROOT / "public_data" / "vcsl_metadata"
-PULL = ROOT / "outputs_hpc_pull"
+PULL = ROOT / "archived_results"
 
 sys.path.insert(0, str(ROOT))
 
+from fedtwin.crypto import aggregate_updates, paillier_aggregate_updates, secureagg_simulate  # noqa: E402
 from fedtwin.data import (  # noqa: E402
     _build_vcsl_groups,
+    _clean_vcsl_positive_pairs,
     _load_vcsl_metadata,
     _sample_vcsl_pairs,
     _vcsl_pair_to_features,
 )
-from fedtwin.crypto import aggregate_updates, paillier_aggregate_updates  # noqa: E402
 from fedtwin.features import standardize_train_test  # noqa: E402
 from fedtwin.federated import train_federated, train_local_models, train_personalized_models  # noqa: E402
-from fedtwin.ledger import HashChainLedger, canonical_hash, make_receipts, sha256_text  # noqa: E402
-from fedtwin.metrics import detection_metrics, fpr_at_recall, safe_ap, safe_auc  # noqa: E402
+from fedtwin.ledger import HashChainLedger, canonical_hash, sha256_text  # noqa: E402
+from fedtwin.metrics import detection_metrics, safe_ap, safe_auc  # noqa: E402
 from fedtwin.models import LogisticHead, train_logistic  # noqa: E402
-from run_benchmark import expand_feature_map, minmax_score, modality_indices  # noqa: E402
+from fedtwin.pairs import construct_asset_disjoint_pairs  # noqa: E402
+from fedtwin.statistics import holm_adjust, paired_bootstrap_delta, paired_permutation_delta  # noqa: E402
+from run_benchmark import expand_feature_map, minmax_score  # noqa: E402
 from strengthen_for_tmm import select_indices, train_fedopt  # noqa: E402
-
 
 SEEDS = [31, 37, 41]
 PREVALENCES = [1e-2, 1e-3, 1e-5]
@@ -66,6 +66,18 @@ PALETTE = {
     "dark": "#2F3A45",
     "gray": "#8E9AAF",
 }
+
+
+def configure_paths(args: argparse.Namespace) -> None:
+    """Bind every input/output path from explicit CLI arguments."""
+
+    global MANUSCRIPT, TABLES, FIGURES, RESULTS, PUBLIC_META, PULL
+    MANUSCRIPT = Path(args.manuscript_dir).resolve()
+    TABLES = MANUSCRIPT / "tables"
+    FIGURES = MANUSCRIPT / "figures"
+    RESULTS = Path(args.output_dir).resolve()
+    PUBLIC_META = Path(args.vcsl_metadata_dir).resolve()
+    PULL = Path(args.archived_results_dir).resolve()
 
 
 def ensure_dirs() -> None:
@@ -106,7 +118,7 @@ def ece_score(y: np.ndarray, score: np.ndarray, bins: int = 15) -> float:
     edges = np.linspace(0.0, 1.0, bins + 1)
     total = len(y)
     out = 0.0
-    for lo, hi in zip(edges[:-1], edges[1:]):
+    for lo, hi in zip(edges[:-1], edges[1:], strict=True):
         mask = (score >= lo) & (score < hi if hi < 1.0 else score <= hi)
         if not np.any(mask):
             continue
@@ -136,7 +148,7 @@ def summarize(df: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
     for group_values, group in df.groupby(keys, dropna=False):
         if not isinstance(group_values, tuple):
             group_values = (group_values,)
-        row = dict(zip(keys, group_values))
+        row = dict(zip(keys, group_values, strict=True))
         for col in metric_cols:
             row[f"{col}_mean"] = float(group[col].mean())
             row[f"{col}_std"] = float(group[col].std(ddof=1)) if len(group) > 1 else 0.0
@@ -152,16 +164,27 @@ def load_public_pair_dataset(
     max_test_pairs: int,
     negative_ratio: float,
     train_negative_ratio: float | None = None,
+    min_test_queries: int = 0,
     clients: int = 11,
     dim: int = 64,
 ) -> dict:
     train, val, test, category_by_uuid, frame_count = _load_vcsl_metadata(PUBLIC_META)
-    uf = _build_vcsl_groups(train, val, test)
+    all_positive_pairs = _clean_vcsl_positive_pairs(train, val, test)
+    uf = _build_vcsl_groups(all_positive_pairs)
     all_ids = sorted(set(frame_count) | set(category_by_uuid))
+    split_pairs = construct_asset_disjoint_pairs(
+        all_positive_pairs,
+        asset_ids=all_ids,
+        negative_ratio=0.0,
+        test_fraction=0.2,
+        seed=seed,
+    )
+    train_assets = sorted(set(split_pairs.train["query_id"]) | set(split_pairs.train["reference_id"]))
+    test_assets = sorted(set(split_pairs.test["query_id"]) | set(split_pairs.test["reference_id"]))
     rng = np.random.default_rng(seed)
     train_pairs = _sample_vcsl_pairs(
-        pd.concat([train, val], ignore_index=True),
-        all_ids,
+        split_pairs.train,
+        train_assets,
         category_by_uuid,
         uf,
         rng,
@@ -169,13 +192,14 @@ def load_public_pair_dataset(
         negative_ratio=negative_ratio if train_negative_ratio is None else train_negative_ratio,
     )
     test_pairs = _sample_vcsl_pairs(
-        test,
-        all_ids,
+        split_pairs.test,
+        test_assets,
         category_by_uuid,
         uf,
         rng,
         max_positive_pairs=max_test_pairs,
         negative_ratio=negative_ratio,
+        min_positive_queries=min_test_queries,
     )
     x_train, y_train, client_train, scenario_train, feature_names = _vcsl_pair_to_features(
         train_pairs, category_by_uuid, frame_count, uf, clients=clients, dim=dim, seed=seed
@@ -273,6 +297,18 @@ def fit_predict_methods(ds: dict, *, include_federated: bool = True) -> dict[str
     return scores
 
 
+def _clustered_mean_interval(values: list[float], *, seed: int, resamples: int = 1000) -> tuple[float, float]:
+    array = np.asarray(values, dtype=float)
+    array = array[np.isfinite(array)]
+    if not len(array):
+        return float("nan"), float("nan")
+    rng = np.random.default_rng(seed)
+    means = np.empty(resamples, dtype=float)
+    for index in range(resamples):
+        means[index] = float(array[rng.integers(0, len(array), size=len(array))].mean())
+    return float(np.quantile(means, 0.025)), float(np.quantile(means, 0.975))
+
+
 def query_metrics(pair_df: pd.DataFrame, y: np.ndarray, score: np.ndarray, *, method: str, tier: str, seed: int, candidate_ratio: int) -> dict:
     frame = pair_df[["query_id", "reference_id"]].copy()
     frame["label"] = y.astype(int)
@@ -299,13 +335,16 @@ def query_metrics(pair_df: pd.DataFrame, y: np.ndarray, score: np.ndarray, *, me
             ndcg_values.append(float(ndcg_score(labels.reshape(1, -1), scores.reshape(1, -1), k=min(10, len(labels)))))
         except Exception:
             ndcg_values.append(float("nan"))
-    return {
+    result = {
         "tier": tier,
         "method": method,
         "seed": seed,
         "candidate_negative_ratio": candidate_ratio,
         "query_count": queries,
         "candidate_pairs": int(len(frame)),
+        "positive_candidates": int(np.sum(y)),
+        "negative_candidates": int(len(y) - np.sum(y)),
+        "unique_query_reference_pairs": int(frame.drop_duplicates(["query_id", "reference_id"]).shape[0]),
         "recall_at_1": float(np.mean(recalls[1])) if recalls[1] else float("nan"),
         "recall_at_5": float(np.mean(recalls[5])) if recalls[5] else float("nan"),
         "recall_at_10": float(np.mean(recalls[10])) if recalls[10] else float("nan"),
@@ -317,9 +356,29 @@ def query_metrics(pair_df: pd.DataFrame, y: np.ndarray, score: np.ndarray, *, me
         "precision_at_100": float(np.mean(precisions[100])) if precisions[100] else float("nan"),
         "query_map": float(np.nanmean(ap_values)) if ap_values else float("nan"),
         "ndcg_at_10": float(np.nanmean(ndcg_values)) if ndcg_values else float("nan"),
-        "split_note": "pair-disjoint VCSL public split; query/reference identities can repeat across pair files",
+        "split_note": "positive-connected-component asset-disjoint split; zero query/reference identity overlap",
         "segment_overlap_metric": "not_available_from_public_label_topology_features",
     }
+    interval_inputs = {
+        "recall_at_1": recalls[1],
+        "recall_at_5": recalls[5],
+        "recall_at_10": recalls[10],
+        "recall_at_100": recalls[100],
+        "precision_at_1": precisions[1],
+        "precision_at_5": precisions[5],
+        "precision_at_10": precisions[10],
+        "precision_at_50": precisions[50],
+        "precision_at_100": precisions[100],
+        "query_map": ap_values,
+        "ndcg_at_10": ndcg_values,
+    }
+    digest = hashlib.sha256(f"{method}:{candidate_ratio}:{seed}".encode()).digest()
+    base_seed = int.from_bytes(digest[:4], "big")
+    for offset, (name, values) in enumerate(interval_inputs.items()):
+        low, high = _clustered_mean_interval(values, seed=base_seed + offset)
+        result[f"{name}_query_bootstrap_ci95_low"] = low
+        result[f"{name}_query_bootstrap_ci95_high"] = high
+    return result
 
 
 def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -331,8 +390,8 @@ def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.D
         1: args.max_test_pairs,
         10: min(args.max_test_pairs, 650),
         100: min(args.max_test_pairs, 220),
-        1000: min(args.max_test_pairs, 20),
-        10000: min(args.max_test_pairs, 4),
+        1000: max(args.min_open_set_queries, min(args.max_test_pairs, 100)),
+        10000: max(args.min_open_set_queries, min(args.max_test_pairs, 100)),
     }
     for seed in args.seeds:
         train_ds = prepare_features(
@@ -356,9 +415,18 @@ def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.D
                         max_test_pairs=test_caps[ratio],
                         negative_ratio=float(ratio),
                         train_negative_ratio=1.0,
+                        min_test_queries=args.min_open_set_queries if ratio >= 1000 else 0,
                     )
                 )
                 scores = fit_predict_methods(test_ds, include_federated=False)
+            eligible_queries = int(
+                test_ds["test_pairs"].loc[test_ds["test_pairs"]["label"].eq(1), "query_id"].astype(str).nunique()
+            )
+            if ratio == 10000 and eligible_queries < args.min_open_set_queries:
+                raise RuntimeError(
+                    f"1:10,000 evaluation has {eligible_queries} positive-bearing queries; "
+                    f"required at least {args.min_open_set_queries}"
+                )
             for method, score in scores.items():
                 if method not in {"score_only_logistic", "invariant_logistic_poly2", "platt_calibrated_score", "isotonic_calibrated_score", "mean_score_fusion"}:
                     continue
@@ -403,7 +471,7 @@ def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.D
 def _reliability_bins(y: np.ndarray, score: np.ndarray, *, bins: int = 10) -> list[dict]:
     edges = np.linspace(0.0, 1.0, bins + 1)
     rows = []
-    for idx, (lo, hi) in enumerate(zip(edges[:-1], edges[1:])):
+    for idx, (lo, hi) in enumerate(zip(edges[:-1], edges[1:], strict=True)):
         mask = (score >= lo) & (score < hi if hi < 1.0 else score <= hi)
         rows.append(
             {
@@ -438,37 +506,39 @@ def _bootstrap_and_permutation_delta(
     *,
     metric_name: str,
     seed: int,
-    n_iter: int = 300,
+    groups: np.ndarray,
+    n_iter: int = 1000,
+    comparison: str,
 ) -> dict:
-    rng = np.random.default_rng(seed)
     metric = average_precision_score if metric_name == "pr_auc" else roc_auc_score
-    observed = float(metric(y, score_a) - metric(y, score_b))
-    boot = []
-    n = len(y)
-    for _ in range(n_iter):
-        idx = rng.integers(0, n, size=n)
-        if len(np.unique(y[idx])) < 2:
-            continue
-        boot.append(float(metric(y[idx], score_a[idx]) - metric(y[idx], score_b[idx])))
-    perm = []
-    for _ in range(n_iter):
-        swap = rng.random(n) < 0.5
-        a = score_a.copy()
-        b = score_b.copy()
-        a[swap], b[swap] = b[swap], a[swap]
-        perm.append(float(metric(y, a) - metric(y, b)))
-    perm = np.asarray(perm, dtype=float)
-    p_value = float((np.sum(np.abs(perm) >= abs(observed)) + 1) / (len(perm) + 1))
+    bootstrap = paired_bootstrap_delta(
+        y,
+        score_a,
+        score_b,
+        metric=metric,
+        groups=groups,
+        resamples=n_iter,
+        seed=seed,
+    )
+    permutation = paired_permutation_delta(
+        y,
+        score_a,
+        score_b,
+        metric=metric,
+        permutations=n_iter,
+        seed=seed + 1009,
+    )
     return {
-        "comparison": "score_only_logistic_minus_invariant_logistic_poly2",
+        "comparison": comparison,
         "metric": metric_name,
         "seed": seed,
-        "observed_delta": observed,
-        "bootstrap_ci_low": float(np.percentile(boot, 2.5)) if boot else np.nan,
-        "bootstrap_ci_high": float(np.percentile(boot, 97.5)) if boot else np.nan,
-        "paired_permutation_p_value": p_value,
-        "n_bootstrap": len(boot),
-        "n_permutations": len(perm),
+        "observed_delta": bootstrap["delta"],
+        "bootstrap_ci_low": bootstrap["ci_low"],
+        "bootstrap_ci_high": bootstrap["ci_high"],
+        "bootstrap_clusters": bootstrap["clusters"],
+        "paired_permutation_p_value": permutation["p_two_sided"],
+        "n_bootstrap": bootstrap["resamples"],
+        "n_permutations": permutation["permutations"],
     }
 
 
@@ -508,17 +578,32 @@ def run_calibration_and_stat_tests(args: argparse.Namespace) -> tuple[pd.DataFra
                         "ece": ece_score(ds["y_test"][mask], score[mask]) if np.any(mask) else np.nan,
                     }
                 )
+        query_groups = ds["test_pairs"]["query_id"].astype(str).to_numpy()
+        seed_rows = []
+        alternatives = [
+            "invariant_logistic_poly2",
+            "mean_score_fusion",
+            "platt_calibrated_score",
+            "isotonic_calibrated_score",
+        ]
         for metric in ["pr_auc", "roc_auc"]:
-            stat_rows.append(
-                _bootstrap_and_permutation_delta(
-                    ds["y_test"],
-                    scores["score_only_logistic"],
-                    scores["invariant_logistic_poly2"],
-                    metric_name=metric,
-                    seed=seed,
-                    n_iter=120 if args.mode == "smoke" else 400,
+            for alternative in alternatives:
+                seed_rows.append(
+                    _bootstrap_and_permutation_delta(
+                        ds["y_test"],
+                        scores["score_only_logistic"],
+                        scores[alternative],
+                        metric_name=metric,
+                        seed=seed,
+                        groups=query_groups,
+                        n_iter=200 if args.mode == "smoke" else 1000,
+                        comparison=f"score_only_logistic_minus_{alternative}",
+                    )
                 )
-            )
+        adjusted = holm_adjust([row["paired_permutation_p_value"] for row in seed_rows])
+        for row, adjusted_p in zip(seed_rows, adjusted, strict=True):
+            row["holm_adjusted_p_value"] = float(adjusted_p)
+        stat_rows.extend(seed_rows)
     reliability = pd.DataFrame(reliability_rows)
     threshold = pd.DataFrame(threshold_rows)
     stats = pd.DataFrame(stat_rows)
@@ -565,7 +650,7 @@ def train_clustered_scores(ds: dict) -> tuple[dict[str, np.ndarray], pd.DataFram
     client_means = np.vstack([x_train[clients_train == cid].mean(axis=0) for cid in client_ids])
     k = min(3, len(client_ids))
     client_kmeans = KMeans(n_clusters=k, random_state=20260529, n_init=10).fit(client_means)
-    client_to_cluster = {cid: int(lbl) for cid, lbl in zip(client_ids, client_kmeans.labels_)}
+    client_to_cluster = {cid: int(lbl) for cid, lbl in zip(client_ids, client_kmeans.labels_, strict=True)}
     cluster_models: dict[int, LogisticHead] = {}
     cluster_centroids = []
     for cluster in range(k):
@@ -799,7 +884,7 @@ def run_synthetic_av(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFra
 
 def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     rng = np.random.default_rng(20260529)
-    paillier_key_bits = 1024 if args.mode == "smoke" else 2048
+    paillier_key_bits = int(args.paillier_key_bits)
     updates = [rng.normal(0.0, 0.015, size=24).astype(np.float64) for _ in range(8)]
     weights = [120, 96, 88, 132, 75, 141, 106, 119]
     plain_agg, plain_report = aggregate_updates(updates, weights, mode="plain")
@@ -822,21 +907,21 @@ def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame
             },
             {
                 "mode": "SecureAgg-style simulation",
-                "implementation_status": "aggregate-only visibility and byte accounting",
-                "claim_label": "SecureAgg-style simulation",
+                "implementation_status": "deterministic pairwise-mask arithmetic with post-mask dropout reconstruction",
+                "claim_label": "SecureAgg pairwise-mask simulation",
                 "production_crypto": False,
-                "dropout_handling": False,
+                "dropout_handling": "post-mask residual reconstruction simulation at 0/10/20 percent",
                 "collusion_resistance": False,
-                "notes": "No key agreement, pairwise mask protocol, dropout recovery, or collusion theorem is implemented.",
+                "notes": "Pairwise masks and reconstructed dropout residuals cancel numerically; no network key agreement or collusion theorem is implemented.",
             },
             {
-                "mode": "HE packed-update proxy",
-                "implementation_status": "quantized packed-update proxy with 16x byte expansion",
-                "claim_label": "HE packed-update proxy",
+                "mode": "Quantized transport proxy",
+                "implementation_status": "quantized compact-update transport accounting with 16x byte expansion",
+                "claim_label": "quantized transport proxy",
                 "production_crypto": False,
                 "dropout_handling": False,
                 "collusion_resistance": False,
-                "notes": "No CKKS, BFV, or Paillier parameter set or security level is claimed.",
+                "notes": "This row is not homomorphic encryption; no CKKS or BFV security level is claimed.",
             },
             {
                 "mode": "Paillier compact-update aggregation",
@@ -849,45 +934,46 @@ def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame
             },
         ]
     )
-    secureagg = pd.DataFrame(
-        [
+    secureagg_rows = []
+    for dropout_rate in (0.0, 0.1, 0.2):
+        keep = max(1, int(round(len(updates) * (1.0 - dropout_rate))))
+        secure_agg, secure_report, details = secureagg_simulate(
+            updates,
+            weights,
+            active_clients=list(range(keep)),
+            mask_seed=20260529,
+            dropout_stage="after_mask_setup",
+        )
+        active_plain, _ = aggregate_updates(updates[:keep], weights[:keep], mode="plain")
+        secureagg_rows.append(
             {
-                "test": "aggregate_equivalence",
+                "test": "pairwise_mask_cancellation",
+                "dropout_rate": dropout_rate,
+                "dropout_stage": details["dropout_stage"],
+                "active_clients": keep,
+                "dropped_clients": len(updates) - keep,
                 "implemented": True,
-                "result": "plain and aggregate-only simulated updates are numerically identical for compact-head aggregation",
-                "byte_expansion": 2.0,
-            },
-            {
-                "test": "pairwise_mask_key_agreement",
-                "implemented": False,
-                "result": "not implemented; simulation only",
-                "byte_expansion": np.nan,
-            },
-            {
-                "test": "dropout_recovery",
-                "implemented": False,
-                "result": "not implemented; no failure reconstruction protocol",
-                "byte_expansion": np.nan,
-            },
-            {
-                "test": "collusion_analysis",
-                "implemented": False,
-                "result": "not implemented; no formal collusion bound",
-                "byte_expansion": np.nan,
-            },
-        ]
-    )
-    he = pd.DataFrame(
+                "max_abs_error_vs_active_plain": float(np.max(np.abs(secure_agg - active_plain))),
+                "masks_cancel": details["masks_cancel"],
+                "pre_recovery_residual_norm": details["pre_recovery_residual_norm"],
+                "reconstructed_mask_norm": details["reconstructed_mask_norm"],
+                "recovery_applied": details["recovery_applied"],
+                "byte_expansion": secure_report.ciphertext_expansion,
+                "claim_scope": secure_report.protocol_scope,
+            }
+        )
+    secureagg = pd.DataFrame(secureagg_rows)
+    quantized_proxy = pd.DataFrame(
         [
             {
-                "mode": "HE packed-update proxy",
+                "mode": "Quantized transport proxy",
                 "scheme": "none",
                 "security_level_bits": "not claimed",
                 "quantization_scale": 1e6,
                 "ciphertext_expansion": 16.0,
                 "numeric_error_tested": True,
                 "full_encrypted_inference": False,
-                "notes": "Compact update accounting only; not extrapolated to high-dimensional media embeddings.",
+                "notes": "Quantized compact-update accounting only; not homomorphic encryption and not extrapolated to media embeddings.",
             },
             {
                 "mode": "Paillier compact-update aggregation",
@@ -921,9 +1007,9 @@ def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame
     )
     status.to_csv(TABLES / "protected_aggregation_status.csv", index=False)
     secureagg.to_csv(TABLES / "secureagg_dropout_or_proxy.csv", index=False)
-    he.to_csv(TABLES / "he_proxy_or_real_he.csv", index=False)
+    quantized_proxy.to_csv(TABLES / "quantized_transport_proxy.csv", index=False)
     paillier.to_csv(TABLES / "paillier_update_aggregation.csv", index=False)
-    return status, secureagg, he, paillier
+    return status, secureagg, quantized_proxy, paillier
 
 
 def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
@@ -1076,8 +1162,14 @@ def _aggregate_update_matrix(updates: np.ndarray, weights: np.ndarray, *, method
 
 
 def run_robustness_stress(args: argparse.Namespace) -> pd.DataFrame:
+    """Run multi-round compact-head poisoning diagnostics.
+
+    This remains a controlled robustness stress test, not a Byzantine-security
+    proof.  Attack membership is fixed per seed and attack fraction, while the
+    global model evolves for the configured number of communication rounds.
+    """
+
     rows = []
-    attack_scenarios = ["clean", "label_flip_clients", "poisoned_pair_evidence", "malicious_high_confidence_updates"]
     aggregators = ["fedavg_mean", "coordinate_median", "trimmed_mean", "krum"]
     for seed in args.seeds:
         ds = prepare_features(
@@ -1095,42 +1187,61 @@ def run_robustness_stress(args: argparse.Namespace) -> pd.DataFrame:
         y_train = ds["y_train"]
         clients = ds["client_train"]
         client_ids = sorted(map(int, np.unique(clients)))
-        rng = np.random.default_rng(seed + 404)
-        attack_clients = set(client_ids[: max(1, len(client_ids) // 5)])
-        for scenario in attack_scenarios:
-            updates = []
-            weights = []
-            for client_id in client_ids:
-                mask = clients == client_id
-                x_local = x_train[mask].copy()
-                y_local = y_train[mask].copy()
-                if client_id in attack_clients and scenario == "label_flip_clients":
-                    y_local = 1 - y_local
-                if client_id in attack_clients and scenario == "poisoned_pair_evidence":
-                    x_local = -x_local + rng.normal(0, 0.15, size=x_local.shape)
-                local = train_logistic(x_local, y_local, epochs=45)
-                update = local.weights.copy()
-                if client_id in attack_clients and scenario == "malicious_high_confidence_updates":
-                    update = -8.0 * np.sign(update + 1e-6) * (np.abs(update) + 0.25)
-                updates.append(update)
-                weights.append(float(mask.sum()))
-            update_matrix = np.vstack(updates)
-            weights_arr = np.asarray(weights, dtype=float)
+        settings = [(0.0, "clean")]
+        settings.extend((fraction, attack) for fraction in args.attacker_fractions if fraction > 0 for attack in args.attacks)
+        for attack_fraction, attack in settings:
+            attacked_count = int(math.ceil(len(client_ids) * attack_fraction)) if attack_fraction > 0 else 0
+            attack_clients = set(client_ids[:attacked_count])
             for aggregator in aggregators:
-                aggregate = _aggregate_update_matrix(update_matrix, weights_arr, method=aggregator, byzantine_count=len(attack_clients))
-                model = LogisticHead(aggregate)
+                model = LogisticHead.zeros(x_train.shape[1])
+                for _round_id in range(args.robust_rounds):
+                    updates = []
+                    weights = []
+                    base_weights = model.weights.copy()
+                    for client_id in client_ids:
+                        mask = clients == client_id
+                        x_local = x_train[mask]
+                        y_local = y_train[mask].copy()
+                        if client_id in attack_clients and attack == "label_flip":
+                            y_local = 1 - y_local
+                        local = train_logistic(
+                            x_local,
+                            y_local,
+                            initial=base_weights,
+                            epochs=args.robust_local_epochs,
+                            lr=0.08,
+                        )
+                        update = local.weights - base_weights
+                        if client_id in attack_clients and attack == "sign_flip":
+                            update = -5.0 * update
+                        updates.append(update)
+                        weights.append(float(mask.sum()))
+                    aggregate = _aggregate_update_matrix(
+                        np.vstack(updates),
+                        np.asarray(weights, dtype=float),
+                        method=aggregator,
+                        byzantine_count=max(1, attacked_count),
+                    )
+                    model.weights = base_weights + aggregate
                 score = model.predict_proba(x_test)
                 metric = full_metrics(ds["y_test"], score, method=aggregator, tier="VCSL public-label audit", seed=seed)
                 metric.update(
                     {
-                        "attack_scenario": scenario,
+                        "attack_scenario": attack,
+                        "attacker_fraction": float(attack_fraction),
                         "attacked_clients": ",".join(map(str, sorted(attack_clients))),
-                        "robustness_scope": "one-round compact-head update stress; not a full Byzantine FL proof",
+                        "communication_rounds": int(args.robust_rounds),
+                        "local_epochs": int(args.robust_local_epochs),
+                        "robustness_scope": "multi-round compact-head poisoning stress; not a Byzantine FL proof",
                     }
                 )
                 rows.append(metric)
     detail = pd.DataFrame(rows)
-    out = summarize(detail, ["tier", "attack_scenario", "method", "robustness_scope"])
+    detail.to_csv(RESULTS / "robustness_stress_raw.csv", index=False)
+    out = summarize(
+        detail,
+        ["tier", "attack_scenario", "attacker_fraction", "method", "communication_rounds", "local_epochs", "robustness_scope"],
+    )
     out.to_csv(TABLES / "robustness_stress.csv", index=False)
     return out
 
@@ -1211,7 +1322,7 @@ def receipt_scaling(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFram
     scaling = pd.DataFrame(rows)
     scaling.to_csv(TABLES / "receipt_scaling.csv", index=False)
 
-    payload = receipt_payload(0, "0" * 64, "anonymous-review-public-key-placeholder")
+    payload = receipt_payload(0, "0" * 64, "deterministic-test-public-key-placeholder")
     receipt_hash = canonical_hash(payload)
     chain_hash = sha256_text(payload["previous_chain_hash"] + receipt_hash)
     vector = pd.DataFrame(
@@ -1268,7 +1379,7 @@ def plot_outputs(
     x = np.arange(len(metric_names))
     width = 0.24
     plt.figure(figsize=(6.2, 3.0))
-    for offset, (_, row) in zip([-width, 0, width], rank_plot.iterrows()):
+    for offset, (_, row) in zip([-width, 0, width], rank_plot.iterrows(), strict=False):
         plt.bar(x + offset, [row[m] for m in metric_names], width, label=row["method"])
     plt.xticks(x, ["R@1", "R@5", "R@10", "R@100"])
     plt.ylim(0, 1.02)
@@ -1434,11 +1545,30 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seeds", type=int, nargs="+", default=SEEDS)
     parser.add_argument("--max-train-pairs", type=int, default=2200)
     parser.add_argument("--max-test-pairs", type=int, default=900)
+    parser.add_argument("--vcsl-metadata-dir", default=str(ROOT / "public_data" / "vcsl_metadata"))
+    parser.add_argument("--archived-results-dir", default=str(ROOT / "archived_results"))
+    parser.add_argument("--manuscript-dir", default=str(ROOT / "paper"))
+    parser.add_argument("--output-dir", default=str(ROOT / "outputs" / "review_blocker_experiments"))
+    parser.add_argument("--min-open-set-queries", type=int, default=100)
+    parser.add_argument("--paillier-key-bits", type=int, default=2048)
+    parser.add_argument("--robust-rounds", type=int, default=20)
+    parser.add_argument("--robust-local-epochs", type=int, default=3)
+    parser.add_argument("--attacker-fractions", type=float, nargs="+", default=[0.0, 0.1, 0.2])
+    parser.add_argument("--attacks", choices=["label_flip", "sign_flip"], nargs="+", default=["label_flip", "sign_flip"])
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    if args.paillier_key_bits < 2048:
+        raise ValueError("reported Paillier experiments require --paillier-key-bits >= 2048")
+    if args.min_open_set_queries < 100:
+        raise ValueError("the 1:10,000 audit requires at least 100 queries")
+    if args.robust_rounds < 1 or args.robust_local_epochs < 1:
+        raise ValueError("robustness rounds and local epochs must be positive")
+    if any(value < 0 or value >= 1 for value in args.attacker_fractions):
+        raise ValueError("attacker fractions must lie in [0, 1)")
+    configure_paths(args)
     ensure_dirs()
     setup_plot()
     if args.mode == "full":
@@ -1449,7 +1579,7 @@ def main() -> None:
     reliability, threshold, stat_tests = run_calibration_and_stat_tests(args)
     personalization, per_client = run_personalization(args)
     av_metrics, av_scenarios = run_synthetic_av(args)
-    status, secureagg, he, paillier = protected_aggregation_tables(args)
+    status, secureagg, quantized_proxy, paillier = protected_aggregation_tables(args)
     privacy = run_privacy_attacks(args)
     robustness = run_robustness_stress(args)
     scaling, vector = receipt_scaling(args)
@@ -1485,7 +1615,7 @@ def main() -> None:
                 "av_sync_operating_points.csv",
                 "protected_aggregation_status.csv",
                 "secureagg_dropout_or_proxy.csv",
-                "he_proxy_or_real_he.csv",
+                "quantized_transport_proxy.csv",
                 "paillier_update_aggregation.csv",
                 "privacy_attack_results.csv",
                 "robustness_stress.csv",

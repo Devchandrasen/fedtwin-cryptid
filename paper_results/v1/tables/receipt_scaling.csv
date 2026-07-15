@@ -1,0 +1,4 @@
+receipts,valid_chain_verification,tampered_payload_detected,tampered_previous_hash_detected,wrong_signing_key_detected,supersession_reference_supported,key_rotation_discussed_not_production_kms,build_time_sec,verify_time_sec,verify_receipts_per_sec
+1000,True,True,True,True,True,True,0.014871200000925455,0.007937099999253405,125990.60111300902
+10000,True,True,True,True,True,True,0.20698529999936,0.07794990000184043,128287.52826833511
+100000,True,True,True,True,True,True,1.7216315000005125,0.7427286999991338,134638.6641584156

@@ -20,9 +20,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-      - name: Install
-        run: python -m pip install -e ".[test]"
-      - name: Unit tests
-        run: python -m pytest -q
+      - name: Install from lock
+        run: |
+          python -m pip install uv==0.11.20
+          uv sync --locked --extra test --python ${{ matrix.python-version }}
+      - name: Static checks
+        run: uv run --locked python -m ruff check fedtwin tests run_benchmark.py run_smoke.py revision_blocker_experiments.py strengthen_for_tmm.py
+      - name: Unit and integration tests
+        run: uv run --locked python -m pytest --cov=fedtwin --cov-report=term-missing --cov-fail-under=85 -q
       - name: Synthetic smoke run
-        run: python run_smoke.py --assets 80 --queries 100 --rounds 1 --local-epochs 1 --output-tag ci_smoke
+        run: uv run --locked python -m fedtwin.cli smoke --assets 80 --queries 100 --rounds 1 --local-epochs 1 --output-dir outputs/ci
+      - name: Verify frozen paper artifact
+        run: uv run --locked python -m fedtwin.cli verify-artifact --manifest paper_results/v1/manifest.json
+      - name: Regenerate paper assets
+        run: uv run --locked python -m fedtwin.cli regenerate-paper --results-dir paper_results/v1 --output-dir outputs/paper_regenerated

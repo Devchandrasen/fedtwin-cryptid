@@ -1,0 +1,18 @@
+{
+  "asset_overlap": 0,
+  "clients": 11,
+  "embedding_dim": 64,
+  "feature_note": "deterministic public-label topology features; large visual feature archive not required",
+  "generator": "vcsl_public_label_topology",
+  "max_test_positive_pairs": 900,
+  "max_train_positive_pairs": 2500,
+  "metadata_dir": "${DATA_ROOT}/public_data/vcsl_metadata",
+  "negative_ratio": 1.0,
+  "seed": 37,
+  "source": "VCSL public GitHub metadata and labels",
+  "split_policy": "positive-connected-component asset-disjoint",
+  "test_assets": 2171,
+  "test_rows": 1800,
+  "train_assets": 3020,
+  "train_rows": 5000
+}

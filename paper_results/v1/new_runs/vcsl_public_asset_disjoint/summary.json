@@ -1,0 +1,52 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.8727777777777778,
+    "brier": 0.09894320695713096,
+    "ece_15": 0.06441603184788124,
+    "fn": 72,
+    "fp": 157,
+    "fpr_at_95_recall": 0.25666666666666665,
+    "method": "centralized_multimodal",
+    "modality": "multimodal",
+    "n": 1800,
+    "pr_auc": 0.9402608393894627,
+    "precision": 0.8406091370558376,
+    "privacy_mode": "none",
+    "recall": 0.92,
+    "roc_auc": 0.9430444444444444,
+    "seed": 31,
+    "tn": 743,
+    "tp": 828
+  },
+  "output_tag": "vcsl_public_paper",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.9402608393894627,
+      "runtime_sec": 2.8669054999991204,
+      "seed": 31,
+      "test_rows": 1800,
+      "train_rows": 5000
+    },
+    {
+      "best_pr_auc": 0.9249900201394979,
+      "runtime_sec": 3.0506065000008675,
+      "seed": 37,
+      "test_rows": 1800,
+      "train_rows": 5000
+    },
+    {
+      "best_pr_auc": 0.8905571482547227,
+      "runtime_sec": 2.9771251999991364,
+      "seed": 41,
+      "test_rows": 1800,
+      "train_rows": 5000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "vcsl_public",
+  "total_runtime_sec": 8.956960200001049
+}

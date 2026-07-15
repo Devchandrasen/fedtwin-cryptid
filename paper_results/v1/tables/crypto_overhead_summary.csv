@@ -1,0 +1,16 @@
+tier,method,expansion,encrypt_us,aggregate_us
+Synthetic twin,fedavg_quantized_transport_proxy,16.0,40.9031038482984,32.39872865378857
+Synthetic twin,fedavg_plain,1.0,3.367137784759204,25.695667912562683
+Synthetic twin,fedavg_secureagg_sim,2.0,3.474283342560133,25.49999393522739
+VCSL public labels,fedavg_quantized_transport_proxy,16.0,82.83683564513922,83.93163249517481
+VCSL public labels,fedavg_plain,1.0,12.741645332425835,74.30738769471645
+VCSL public labels,fedavg_secureagg_sim,2.0,14.538589554528395,78.32483000432451
+VCSL ISC visual,fedavg_quantized_transport_proxy,16.0,24.797829488913212,23.22124394898613
+VCSL ISC visual,fedavg_plain,1.0,3.1634738358358545,20.143005531281236
+VCSL ISC visual,fedavg_secureagg_sim,2.0,3.065281392385562,19.112392328679565
+FMA audio 20 s,fedavg_quantized_transport_proxy,16.0,21.59731359117561,21.046912297606468
+FMA audio 20 s,fedavg_plain,1.0,2.9549261348115077,17.453673192196423
+FMA audio 20 s,fedavg_secureagg_sim,2.0,3.136590951018863,17.824856978323723
+FMA audio 5 s,fedavg_quantized_transport_proxy,16.0,22.169621661305428,22.98710039920277
+FMA audio 5 s,fedavg_plain,1.0,4.342948603961203,26.024174359109665
+FMA audio 5 s,fedavg_secureagg_sim,2.0,3.363761223024793,20.952434796426033

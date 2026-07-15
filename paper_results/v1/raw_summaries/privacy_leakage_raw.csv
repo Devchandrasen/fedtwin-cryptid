@@ -1,0 +1,13 @@
+seed,attack,setting,value
+31,confidence_membership_auc,default invariant head,0.5439145622222222
+31,client_identity_balanced_accuracy,all fields,1.0
+31,client_identity_balanced_accuracy,context removed,0.105439347979063
+31,client_identity_balanced_accuracy,default invariant,0.09861732377615719
+37,confidence_membership_auc,default invariant head,0.5534634177777777
+37,client_identity_balanced_accuracy,all fields,1.0
+37,client_identity_balanced_accuracy,context removed,0.10508037296092161
+37,client_identity_balanced_accuracy,default invariant,0.09892579506046535
+41,confidence_membership_auc,default invariant head,0.5478161377777778
+41,client_identity_balanced_accuracy,all fields,1.0
+41,client_identity_balanced_accuracy,context removed,0.10032379544256416
+41,client_identity_balanced_accuracy,default invariant,0.09859260516293435

@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import hashlib
 import json
+from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from .features import cosine, l2_normalize
+from .pairs import construct_asset_disjoint_pairs
 from .transformations import TRANSFORMATIONS, Transformation
 
 
@@ -121,7 +122,7 @@ def generate_synthetic_benchmark(
     client_ids: list[int] = []
     scenarios: list[str] = []
 
-    for qid in range(queries):
+    for _qid in range(queries):
         client_id = int(rng.integers(0, clients))
         positive = bool(rng.random() < positive_rate)
         if positive:
@@ -251,7 +252,7 @@ class _UnionFind:
 
 
 def _hash_seed(text: str, seed: int) -> int:
-    digest = hashlib.sha256(f"{seed}:{text}".encode("utf-8")).digest()
+    digest = hashlib.sha256(f"{seed}:{text}".encode()).digest()
     return int.from_bytes(digest[:8], "little", signed=False)
 
 
@@ -266,22 +267,32 @@ def _load_vcsl_metadata(metadata_dir: str | Path) -> tuple[pd.DataFrame, pd.Data
     val = pd.read_csv(base / "pair_file_val.csv")
     test = pd.read_csv(base / "pair_file_test.csv")
     frames = pd.read_csv(base / "frames_all.csv")
-    with open(base / "video_categories.json", "r", encoding="utf-8") as fh:
+    with open(base / "video_categories.json", encoding="utf-8") as fh:
         categories = json.load(fh)
     category_by_uuid: dict[str, str] = {}
     for category, ids in categories.items():
         for uuid in ids:
             category_by_uuid[str(uuid)] = str(category)
-    frame_count = dict(zip(frames["uuid"].astype(str), frames["frame_count"].astype(int)))
+    frame_count = dict(zip(frames["uuid"].astype(str), frames["frame_count"].astype(int), strict=True))
     return train, val, test, category_by_uuid, frame_count
 
 
 def _build_vcsl_groups(*pair_frames: pd.DataFrame) -> _UnionFind:
     uf = _UnionFind()
     for frame in pair_frames:
-        for q, r in zip(frame["query_id"].astype(str), frame["reference_id"].astype(str)):
+        for q, r in zip(frame["query_id"].astype(str), frame["reference_id"].astype(str), strict=True):
             uf.union(q, r)
     return uf
+
+
+def _clean_vcsl_positive_pairs(*pair_frames: pd.DataFrame) -> pd.DataFrame:
+    """Normalize VCSL positives and remove trivial identity pairs."""
+
+    frame = pd.concat(pair_frames, ignore_index=True)[["query_id", "reference_id"]].copy()
+    frame["query_id"] = frame["query_id"].astype(str)
+    frame["reference_id"] = frame["reference_id"].astype(str)
+    frame = frame[frame["query_id"].ne(frame["reference_id"])]
+    return frame.drop_duplicates(["query_id", "reference_id"], keep="first").reset_index(drop=True)
 
 
 def _sample_vcsl_pairs(
@@ -293,10 +304,50 @@ def _sample_vcsl_pairs(
     *,
     max_positive_pairs: int,
     negative_ratio: float,
+    min_positive_queries: int = 0,
 ) -> pd.DataFrame:
     pos = positives.copy()
+    if min_positive_queries < 0:
+        raise ValueError("min_positive_queries must be non-negative")
+    available_queries = pos["query_id"].astype(str).nunique()
+    if min_positive_queries > available_queries:
+        raise ValueError(
+            f"requested {min_positive_queries} positive-bearing queries, "
+            f"but only {available_queries} are available"
+        )
+    if max_positive_pairs and max_positive_pairs < min_positive_queries:
+        raise ValueError("max_positive_pairs cannot be smaller than min_positive_queries")
     if max_positive_pairs and len(pos) > max_positive_pairs:
-        pos = pos.sample(n=max_positive_pairs, random_state=int(rng.integers(0, 2**31 - 1)))
+        if min_positive_queries:
+            query_values = pos["query_id"].astype(str)
+            selected_queries = rng.choice(
+                np.asarray(sorted(query_values.unique())),
+                size=min_positive_queries,
+                replace=False,
+            )
+            anchor_indices = []
+            for query_id in selected_queries:
+                candidates = pos.index[query_values.eq(str(query_id))].to_numpy()
+                anchor_indices.append(int(rng.choice(candidates)))
+            anchors = pos.loc[anchor_indices]
+            remaining = pos.drop(index=anchor_indices)
+            fill_count = max_positive_pairs - len(anchors)
+            if fill_count:
+                fill = remaining.sample(
+                    n=fill_count,
+                    random_state=int(rng.integers(0, 2**31 - 1)),
+                )
+                pos = pd.concat([anchors, fill], ignore_index=True)
+            else:
+                pos = anchors.reset_index(drop=True)
+            pos = pos.sample(
+                frac=1.0,
+                random_state=int(rng.integers(0, 2**31 - 1)),
+            ).reset_index(drop=True)
+        else:
+            pos = pos.sample(n=max_positive_pairs, random_state=int(rng.integers(0, 2**31 - 1)))
+    if pos["query_id"].astype(str).nunique() < min_positive_queries:
+        raise RuntimeError("positive-pair sampling failed the distinct-query invariant")
     pos = pos.assign(label=1)
     id_by_category: dict[str, list[str]] = {}
     for vid in all_ids:
@@ -338,24 +389,35 @@ def _vcsl_pair_to_features(
     client_ids = []
     scenarios = []
     rng = np.random.default_rng(seed)
+    vector_cache: dict[str, np.ndarray] = {}
+
+    def cached_hash_vector(key: str) -> np.ndarray:
+        if key not in vector_cache:
+            vector_cache[key] = _hash_vector(key, dim, seed)
+        return vector_cache[key]
 
     max_frame = max(frame_count.values()) if frame_count else 1
-    for q, r, label in zip(pair_df["query_id"].astype(str), pair_df["reference_id"].astype(str), pair_df["label"].astype(int)):
+    for q, r, label in zip(
+        pair_df["query_id"].astype(str),
+        pair_df["reference_id"].astype(str),
+        pair_df["label"].astype(int),
+        strict=True,
+    ):
         q_group = uf.find(q)
         r_group = uf.find(r)
         q_cat = category_by_uuid.get(q, "unknown")
         r_cat = category_by_uuid.get(r, "unknown")
         q_frame = frame_count.get(q, int(max_frame * 0.25))
         r_frame = frame_count.get(r, int(max_frame * 0.25))
-        q_cat_v = _hash_vector(f"video-category:{q_cat}", dim, seed)
-        r_cat_v = _hash_vector(f"video-category:{r_cat}", dim, seed)
-        q_base_v = _hash_vector(f"video-group:{q_group}", dim, seed)
-        r_base_v = _hash_vector(f"video-group:{r_group}", dim, seed)
+        q_cat_v = cached_hash_vector(f"video-category:{q_cat}")
+        r_cat_v = cached_hash_vector(f"video-category:{r_cat}")
+        q_base_v = cached_hash_vector(f"video-group:{q_group}")
+        r_base_v = cached_hash_vector(f"video-group:{r_group}")
         q_vid = l2_normalize(
             (
                 0.34 * q_cat_v
                 + 0.52 * q_base_v
-                + 0.34 * _hash_vector(f"video-id:{q}", dim, seed)
+                + 0.34 * cached_hash_vector(f"video-id:{q}")
                 + rng.normal(0, 0.10, size=dim)
             )[None, :]
         )[0]
@@ -363,23 +425,22 @@ def _vcsl_pair_to_features(
             (
                 0.34 * r_cat_v
                 + 0.52 * r_base_v
-                + 0.34 * _hash_vector(f"video-id:{r}", dim, seed)
+                + 0.34 * cached_hash_vector(f"video-id:{r}")
                 + rng.normal(0, 0.10, size=dim)
             )[None, :]
         )[0]
 
         # VCSL is video-centric; audio here is a deterministic proxy used to
         # stress multimodal fusion and missing/replaced audio behavior.
-        q_audio_base = _hash_vector(f"audio-cat:{q_cat}", dim, seed)
-        r_audio_base = _hash_vector(f"audio-cat:{r_cat}", dim, seed)
-        q_audio_group = _hash_vector(f"audio-group:{q_group}", dim, seed)
-        r_audio_group = _hash_vector(f"audio-group:{r_group}", dim, seed)
+        q_audio_base = cached_hash_vector(f"audio-cat:{q_cat}")
+        r_audio_base = cached_hash_vector(f"audio-cat:{r_cat}")
+        q_audio_group = cached_hash_vector(f"audio-group:{q_group}")
         if label:
-            q_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * _hash_vector(f"audio-id:{q}", dim, seed) + rng.normal(0, 0.13, size=dim))[None, :])[0]
-            r_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * _hash_vector(f"audio-id:{r}", dim, seed) + rng.normal(0, 0.13, size=dim))[None, :])[0]
+            q_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * cached_hash_vector(f"audio-id:{q}") + rng.normal(0, 0.13, size=dim))[None, :])[0]
+            r_aud = l2_normalize((0.30 * q_audio_base + 0.42 * q_audio_group + 0.50 * cached_hash_vector(f"audio-id:{r}") + rng.normal(0, 0.13, size=dim))[None, :])[0]
         else:
-            q_aud = l2_normalize((0.40 * q_audio_base + 0.60 * _hash_vector(f"audio-id:{q}", dim, seed) + rng.normal(0, 0.16, size=dim))[None, :])[0]
-            r_aud = l2_normalize((0.40 * r_audio_base + 0.60 * _hash_vector(f"audio-id:{r}", dim, seed) + rng.normal(0, 0.16, size=dim))[None, :])[0]
+            q_aud = l2_normalize((0.40 * q_audio_base + 0.60 * cached_hash_vector(f"audio-id:{q}") + rng.normal(0, 0.16, size=dim))[None, :])[0]
+            r_aud = l2_normalize((0.40 * r_audio_base + 0.60 * cached_hash_vector(f"audio-id:{r}") + rng.normal(0, 0.16, size=dim))[None, :])[0]
 
         video_score = float(cosine(q_vid[None, :], r_vid[None, :])[0])
         audio_score = float(cosine(q_aud[None, :], r_aud[None, :])[0])
@@ -492,12 +553,22 @@ def generate_vcsl_public_benchmark(
     """
 
     train, val, test, category_by_uuid, frame_count = _load_vcsl_metadata(metadata_dir)
-    uf = _build_vcsl_groups(train, val, test)
+    all_positive_pairs = _clean_vcsl_positive_pairs(train, val, test)
+    uf = _build_vcsl_groups(all_positive_pairs)
     all_ids = sorted(set(frame_count) | set(category_by_uuid))
+    split_pairs = construct_asset_disjoint_pairs(
+        all_positive_pairs,
+        asset_ids=all_ids,
+        negative_ratio=0.0,
+        test_fraction=0.2,
+        seed=seed,
+    )
+    train_assets = sorted(set(split_pairs.train["query_id"]) | set(split_pairs.train["reference_id"]))
+    test_assets = sorted(set(split_pairs.test["query_id"]) | set(split_pairs.test["reference_id"]))
     rng = np.random.default_rng(seed)
     train_pairs = _sample_vcsl_pairs(
-        pd.concat([train, val], ignore_index=True),
-        all_ids,
+        split_pairs.train,
+        train_assets,
         category_by_uuid,
         uf,
         rng,
@@ -505,8 +576,8 @@ def generate_vcsl_public_benchmark(
         negative_ratio=negative_ratio,
     )
     test_pairs = _sample_vcsl_pairs(
-        test,
-        all_ids,
+        split_pairs.test,
+        test_assets,
         category_by_uuid,
         uf,
         rng,
@@ -532,6 +603,10 @@ def generate_vcsl_public_benchmark(
         "train_rows": int(len(y_train)),
         "test_rows": int(len(y_test)),
         "feature_note": "deterministic public-label topology features; large visual feature archive not required",
+        "split_policy": split_pairs.manifest["split_policy"],
+        "asset_overlap": split_pairs.manifest["asset_overlap"],
+        "train_assets": len(train_assets),
+        "test_assets": len(test_assets),
     }
     return BenchmarkData(
         x_train=x_train,
@@ -605,7 +680,12 @@ def _vcsl_isc_pair_to_features(
     scenarios = []
 
     max_frame = max(frame_count.values()) if frame_count else 1
-    for q, r, label in zip(pair_df["query_id"].astype(str), pair_df["reference_id"].astype(str), pair_df["label"].astype(int)):
+    for q, r, label in zip(
+        pair_df["query_id"].astype(str),
+        pair_df["reference_id"].astype(str),
+        pair_df["label"].astype(int),
+        strict=True,
+    ):
         q_cat = category_by_uuid.get(q, "unknown")
         r_cat = category_by_uuid.get(r, "unknown")
         q_frame = frame_count.get(q, int(max_frame * 0.25))
@@ -723,14 +803,27 @@ def generate_vcsl_isc_benchmark(
     """Build a VCSL benchmark from released ISC frame descriptors."""
 
     train, val, test, category_by_uuid, frame_count = _load_vcsl_metadata(metadata_dir)
-    uf = _build_vcsl_groups(train, val, test)
     feature_root = _resolve_isc_feature_root(feature_dir)
     available_ids = {path.stem for path in feature_root.glob("*.npy")}
     all_ids = sorted((set(frame_count) | set(category_by_uuid)) & available_ids)
+    all_positive_pairs = _clean_vcsl_positive_pairs(train, val, test)
+    all_positive_pairs = all_positive_pairs[
+        all_positive_pairs["query_id"].isin(available_ids) & all_positive_pairs["reference_id"].isin(available_ids)
+    ].reset_index(drop=True)
+    uf = _build_vcsl_groups(all_positive_pairs)
+    split_pairs = construct_asset_disjoint_pairs(
+        all_positive_pairs,
+        asset_ids=all_ids,
+        negative_ratio=0.0,
+        test_fraction=0.2,
+        seed=seed,
+    )
+    train_assets = sorted(set(split_pairs.train["query_id"]) | set(split_pairs.train["reference_id"]))
+    test_assets = sorted(set(split_pairs.test["query_id"]) | set(split_pairs.test["reference_id"]))
     rng = np.random.default_rng(seed)
     train_pairs = _sample_vcsl_pairs(
-        pd.concat([train, val], ignore_index=True),
-        all_ids,
+        split_pairs.train,
+        train_assets,
         category_by_uuid,
         uf,
         rng,
@@ -738,8 +831,8 @@ def generate_vcsl_isc_benchmark(
         negative_ratio=negative_ratio,
     )
     test_pairs = _sample_vcsl_pairs(
-        test,
-        all_ids,
+        split_pairs.test,
+        test_assets,
         category_by_uuid,
         uf,
         rng,
@@ -779,6 +872,10 @@ def generate_vcsl_isc_benchmark(
         "train_rows": int(len(y_train)),
         "test_rows": int(len(y_test)),
         "feature_note": "released visual ISC frame descriptors; audio fields are low-confidence schema placeholders",
+        "split_policy": split_pairs.manifest["split_policy"],
+        "asset_overlap": split_pairs.manifest["asset_overlap"],
+        "train_assets": len(train_assets),
+        "test_assets": len(test_assets),
     }
     return BenchmarkData(
         x_train=x_train,
@@ -893,7 +990,7 @@ def _audio_descriptor(y: np.ndarray, sample_rate: int) -> np.ndarray:
 
     edges = np.geomspace(60, sample_rate / 2, 33)
     bands = []
-    for lo, hi in zip(edges[:-1], edges[1:]):
+    for lo, hi in zip(edges[:-1], edges[1:], strict=True):
         idx = (freqs >= lo) & (freqs < hi)
         if not idx.any():
             bands.append(np.zeros(spec.shape[0], dtype=float))
@@ -977,7 +1074,6 @@ def _prepare_fma_audio_cache(
     if not common_ids:
         raise FileNotFoundError(f"No FMA mp3 files matched metadata under {audio_dir}")
 
-    rng = np.random.default_rng(seed)
     by_genre: dict[str, list[int]] = {}
     for track_id in common_ids:
         by_genre.setdefault(genres_by_id.get(track_id, "unknown"), []).append(track_id)
@@ -1259,6 +1355,8 @@ def generate_fma_audio_benchmark(
         "train_rows": int(len(y_train)),
         "test_rows": int(len(y_test)),
         "transformations": FMA_AUDIO_TRANSFORMS,
+        "split_policy": "track-identity-disjoint random split",
+        "asset_overlap": int(len(set(train_idx) & set(test_idx))),
     }
     return BenchmarkData(
         x_train=x_train,

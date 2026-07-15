@@ -1,0 +1,9 @@
+policy,feature_dimension_after_map,total_poly2_dimension,source_root_dimension
+default_invariant,20,151,31
+all_fields,151,151,31
+score_only,20,151,31
+visual_temporal,44,151,31
+audio_only,15,151,31
+all_fields_minus_context,135,151,31
+no_reliability,70,151,31
+linear_no_poly2,31,151,31

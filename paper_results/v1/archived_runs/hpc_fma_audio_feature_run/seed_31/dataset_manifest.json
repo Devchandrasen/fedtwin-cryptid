@@ -1,0 +1,25 @@
+{
+  "audio_dir": "data/fma/fma_small",
+  "cache_path": "data/fma/cache/fma_audio_sr8000_sec20_tracks1200.npz",
+  "clients": 8,
+  "generator": "fma_small_audio_transform_features",
+  "max_seconds": 20.0,
+  "max_test_positive_pairs": 3000,
+  "max_tracks": 1200,
+  "max_train_positive_pairs": 6000,
+  "metadata_dir": "data/fma/fma_metadata",
+  "negative_ratio": 1.0,
+  "sample_rate": 8000,
+  "seed": 31,
+  "source": "FMA-small MP3 audio and FMA metadata",
+  "test_rows": 6000,
+  "tracks_loaded": 1200,
+  "train_rows": 12000,
+  "transformations": [
+    "crop",
+    "noise",
+    "lowpass",
+    "dropout",
+    "speed"
+  ]
+}

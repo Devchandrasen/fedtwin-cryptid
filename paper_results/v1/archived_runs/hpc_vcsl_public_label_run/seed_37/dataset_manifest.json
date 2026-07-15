@@ -1,0 +1,14 @@
+{
+  "clients": 11,
+  "embedding_dim": 64,
+  "feature_note": "deterministic public-label topology features; large visual feature archive not required",
+  "generator": "vcsl_public_label_topology",
+  "max_test_positive_pairs": 30000,
+  "max_train_positive_pairs": 60000,
+  "metadata_dir": "public_data/vcsl_metadata",
+  "negative_ratio": 1.0,
+  "seed": 37,
+  "source": "VCSL public GitHub metadata and labels",
+  "test_rows": 60000,
+  "train_rows": 120000
+}

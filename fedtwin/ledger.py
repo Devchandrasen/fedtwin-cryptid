@@ -6,7 +6,7 @@ import hashlib
 import hmac
 import json
 import time
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 
 import numpy as np

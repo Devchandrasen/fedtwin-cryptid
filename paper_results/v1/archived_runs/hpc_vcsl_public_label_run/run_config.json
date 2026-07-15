@@ -1,0 +1,43 @@
+{
+  "assets": 1000,
+  "clients": 11,
+  "data_dir": "data",
+  "difficulty": 1.0,
+  "dim": 64,
+  "feature_map": "poly2",
+  "feature_policy": "invariant",
+  "federated_methods": [
+    "centralized",
+    "local",
+    "fedavg",
+    "fedprox",
+    "secureagg",
+    "heagg"
+  ],
+  "ledger_modes": [
+    "none",
+    "hashchain"
+  ],
+  "local_epochs": 8,
+  "max_test_pairs": 30000,
+  "max_train_pairs": 60000,
+  "modalities": [
+    "video",
+    "audio",
+    "multimodal"
+  ],
+  "negative_ratio": 1.0,
+  "noniid_alpha": 0.3,
+  "output_tag": "hpc_vcsl_public_label_run",
+  "queries": 1000,
+  "rounds": 40,
+  "run_dir": "outputs",
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "vcsl_public",
+  "vcsl_metadata_dir": "public_data/vcsl_metadata",
+  "write_pair_csv": false
+}

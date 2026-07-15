@@ -1,0 +1,29 @@
+tier: tier0
+seeds: [31]
+clients: 5
+assets: 80
+queries: 100
+dim: 32
+rounds: 1
+local_epochs: 1
+noniid_alpha: 0.3
+difficulty: 1.0
+max_train_pairs: 500
+max_test_pairs: 240
+negative_ratio: 1.0
+feature_map: poly2
+feature_policy: invariant
+federated_methods:
+  - centralized
+  - local
+  - fedavg
+  - fedprox
+  - secureagg_sim
+  - quantized_transport_proxy
+modalities: [video, audio, multimodal]
+ledger_modes: [hashchain]
+attacker_fractions: [0.0]
+attacks: [label_flip, sign_flip]
+dropout_rates: [0.0, 0.1, 0.2]
+paillier_key_bits: 2048
+output_tag: synthetic_config_smoke

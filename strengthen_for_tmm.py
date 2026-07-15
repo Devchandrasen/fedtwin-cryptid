@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import sys
@@ -15,12 +16,12 @@ from sklearn.metrics import average_precision_score, balanced_accuracy_score, ro
 from sklearn.preprocessing import StandardScaler
 
 ROOT = Path(__file__).resolve().parent
-PROJECT = ROOT.parent
-MANUSCRIPT = PROJECT / "phase_5_manuscript"
+MANUSCRIPT = ROOT / "paper"
 TABLES = MANUSCRIPT / "tables"
 FIGURES = MANUSCRIPT / "figures"
-PULL = ROOT / "outputs_hpc_pull"
-OUT = ROOT / "outputs_strengthened" / "tmm_revision_strengthening"
+PULL = ROOT / "archived_results"
+OUT = ROOT / "outputs" / "tmm_revision_strengthening"
+VCSL_METADATA = ROOT / "public_data" / "vcsl_metadata"
 
 sys.path.insert(0, str(ROOT))
 
@@ -29,8 +30,7 @@ from fedtwin.features import standardize_train_test  # noqa: E402
 from fedtwin.ledger import make_receipts  # noqa: E402
 from fedtwin.metrics import detection_metrics  # noqa: E402
 from fedtwin.models import LogisticHead, train_logistic  # noqa: E402
-from run_benchmark import expand_feature_map, modality_indices, minmax_score  # noqa: E402
-
+from run_benchmark import expand_feature_map, minmax_score, modality_indices  # noqa: E402
 
 SEEDS = [31, 37, 41]
 PALETTE = {
@@ -42,6 +42,16 @@ PALETTE = {
     "cyan": "#72B7B2",
     "dark": "#2F3A45",
 }
+
+
+def configure_paths(args: argparse.Namespace) -> None:
+    global MANUSCRIPT, TABLES, FIGURES, PULL, OUT, VCSL_METADATA
+    MANUSCRIPT = Path(args.manuscript_dir).resolve()
+    TABLES = MANUSCRIPT / "tables"
+    FIGURES = MANUSCRIPT / "figures"
+    PULL = Path(args.archived_results_dir).resolve()
+    OUT = Path(args.output_dir).resolve()
+    VCSL_METADATA = Path(args.vcsl_metadata_dir).resolve()
 
 
 def ensure_dirs() -> None:
@@ -164,7 +174,7 @@ def train_fedopt(
         w = np.asarray(weights, dtype=float)
         w = w / max(w.sum(), 1e-12)
         delta = np.zeros_like(base_w)
-        for wi, update in zip(w, updates):
+        for wi, update in zip(w, updates, strict=True):
             delta += wi * update
         m = beta1 * m + (1.0 - beta1) * delta
         if optimizer == "fedadam":
@@ -314,7 +324,7 @@ def run_vcsl_strengthening() -> dict[str, pd.DataFrame]:
 
     for seed in SEEDS:
         data = generate_vcsl_public_benchmark(
-            metadata_dir=ROOT / "public_data" / "vcsl_metadata",
+            metadata_dir=VCSL_METADATA,
             clients=11,
             dim=64,
             max_train_pairs=15000,
@@ -614,7 +624,18 @@ def write_summary_json(summary: dict[str, pd.DataFrame], prevalence: pd.DataFram
     (OUT / "strengthening_summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Regenerate fixed-evidence strengthening tables and figures.")
+    parser.add_argument("--vcsl-metadata-dir", default=str(ROOT / "public_data" / "vcsl_metadata"))
+    parser.add_argument("--archived-results-dir", default=str(ROOT / "archived_results"))
+    parser.add_argument("--manuscript-dir", default=str(ROOT / "paper"))
+    parser.add_argument("--output-dir", default=str(ROOT / "outputs" / "tmm_revision_strengthening"))
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+    configure_paths(args)
     ensure_dirs()
     setup_plot()
     build_feature_schema()

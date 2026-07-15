@@ -1,0 +1,2 @@
+scheme,key_bits,n_square_bits,clients,update_dimension,quantization_scale,integer_weight_sum,plain_bytes,proxy_protected_bytes,paillier_protected_bytes,proxy_ciphertext_expansion,paillier_ciphertext_expansion,proxy_max_abs_error_vs_plain,paillier_max_abs_error_vs_plain,paillier_encryption_time_sec,paillier_aggregation_decryption_time_sec,claim_scope
+Paillier,2048,4095,8,24,1000000.0,877,1536,24576,98304,16.0,64.0,2.641843818220217e-07,2.641843818221301e-07,21.683093100000406,2.067050499998004,real additive HE for compact update sums only

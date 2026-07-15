@@ -1,0 +1,16 @@
+item,field,value
+fusion head,model,logistic regression head with bias
+feature map,default,"poly2 on selected invariant score, reliability-weighted score, and agreement roots"
+feature policy,main results,invariant multimodal features; category/client fields excluded from default detector
+standardization,fit,mean/std fit on train split and applied to test split
+centralized epochs,value,140 full-batch gradient epochs
+local epochs,value,"8 for main HPC runs, 5 for FedOpt strengthening run"
+rounds,value,30--40 communication rounds depending on tier
+learning rate,value,0.08 client/head step size
+regularization,value,"L2=1e-4, bias unregularized"
+FedProx mu,value,0.02 in main experiments
+FedAdam beta1/beta2/tau,value,0.9 / 0.99 / 1e-6 in strengthening run
+FedYogi beta1/beta2/tau,value,0.9 / 0.99 / 1e-6 in strengthening run
+FedOpt server learning rate,value,0.65 in strengthening run
+HE proxy scale,value,1e6 integer quantization scale; 16x packed-update expansion reported
+decision threshold,value,0.5 for default precision/recall; FPR@95R by threshold sweep

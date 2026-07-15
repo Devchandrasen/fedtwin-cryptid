@@ -1,0 +1,15 @@
+feature_or_family,group,definition,dimension,online_available,leakage_note
+video_score,visual evidence,cosine or descriptor-match score from the upstream visual branch,1,yes,may reveal visual similarity distribution
+audio_score,audio evidence,cosine or fingerprint/descriptor score from the upstream audio branch,1,yes,may reveal audio similarity distribution
+temporal_score,temporal evidence,temporal/frame-consistency score or audio transform consistency,1,yes,may reveal copy duration or segment structure
+metadata_score,permitted metadata,same category or allowed benchmark metadata score,1,optional,can leak domain/category information
+video_reliability,reliability,visual branch confidence from frame ratio or transform reliability,1,yes,can reveal transformation quality
+audio_reliability,reliability,audio branch confidence from transform reliability,1,yes,can reveal modality degradation
+modality_gap,cross-modal agreement,absolute difference between visual and audio evidence,1,yes,can reveal modality disagreement
+fusion_prior,cross-modal agreement,weighted reliability-aware visual/audio score,1,yes,derived score leakage only
+frame_ratio,temporal evidence,min query/reference frames divided by max frames,1,yes,can reveal approximate clip-length relation
+same_category,permitted metadata,indicator for same VCSL category or FMA genre,1,optional,can leak category/domain membership
+derived products,derived evidence,"video/audio reliability products, max/mean/product scores",8,yes,derived from evidence scores
+category_*,client/domain context,one-hot public category or genre used only in all-feature audit runs,variable,optional,high client/domain leakage risk
+client_norm,client context,normalized client id used for leakage audit and non-IID analysis,1,no for default model,direct client identity leakage
+poly2 interactions,feature map,squares and pairwise products among selected evidence roots,variable,yes if roots allowed,inherits source feature leakage

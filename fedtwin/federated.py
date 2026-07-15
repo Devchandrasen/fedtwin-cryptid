@@ -76,7 +76,15 @@ def train_federated(
     local_epochs: int = 5,
     lr: float = 0.08,
     prox_mu: float = 0.0,
+    dropout_rate: float = 0.0,
+    seed: int = 31,
 ) -> tuple[LogisticHead, dict, list[dict]]:
+    if method not in {"fedavg", "fedprox"}:
+        raise ValueError("method must be 'fedavg' or 'fedprox'")
+    if rounds <= 0 or local_epochs <= 0:
+        raise ValueError("rounds and local_epochs must be positive")
+    if not 0.0 <= dropout_rate < 1.0:
+        raise ValueError("dropout_rate must lie in [0, 1)")
     start = time.perf_counter()
     client_ids = sorted(set(map(int, clients)))
     global_model = LogisticHead.zeros(x.shape[1])
@@ -87,7 +95,11 @@ def train_federated(
         weights: list[float] = []
         round_loss = []
         base_w = global_model.weights.copy()
-        for client_id in client_ids:
+        round_rng = np.random.default_rng(np.random.SeedSequence([seed, round_id]))
+        active_client_ids = [client_id for client_id in client_ids if round_rng.random() >= dropout_rate]
+        if not active_client_ids:
+            active_client_ids = [client_ids[int(round_rng.integers(0, len(client_ids)))]]
+        for client_id in active_client_ids:
             idx = clients == client_id
             if idx.sum() == 0:
                 continue
@@ -109,13 +121,16 @@ def train_federated(
 
         aggregate, report = aggregate_updates(updates, weights, mode=privacy_mode)
         global_model.weights = base_w + aggregate
-        log = {
+        log = asdict(report)
+        log.update({
             "round": round_id + 1,
             "method": method,
             "privacy_mode": privacy_mode,
             "mean_client_loss": float(np.mean(round_loss)) if round_loss else float("nan"),
-        }
-        log.update(asdict(report))
+            "active_clients": int(len(active_client_ids)),
+            "dropped_clients": int(len(client_ids) - len(active_client_ids)),
+            "dropout_rate_requested": float(dropout_rate),
+        })
         round_logs.append(log)
 
     summary = {
@@ -126,5 +141,7 @@ def train_federated(
         "mean_encryption_time_sec": float(np.mean([r["encryption_time_sec"] for r in round_logs])),
         "mean_aggregation_time_sec": float(np.mean([r["aggregation_time_sec"] for r in round_logs])),
         "mean_ciphertext_expansion": float(np.mean([r["ciphertext_expansion"] for r in round_logs])),
+        "dropout_rate": float(dropout_rate),
+        "seed": int(seed),
     }
     return global_model, summary, round_logs

@@ -1,0 +1,66 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.9672,
+    "fn": 35,
+    "fp": 129,
+    "fpr_at_95_recall": 0.019830028328611898,
+    "method": "fedavg_heagg",
+    "modality": "multimodal",
+    "n": 5000,
+    "pr_auc": 0.9963698173597937,
+    "precision": 0.9508196721311475,
+    "privacy_mode": "heagg",
+    "recall": 0.9861605377619612,
+    "roc_auc": 0.9964321599114377,
+    "seed": 37,
+    "tn": 2342,
+    "tp": 2494
+  },
+  "output_tag": "hpc_tier1_feature_run",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.9951385921262231,
+      "runtime_sec": 2.2102725286968052,
+      "seed": 31,
+      "test_rows": 5000,
+      "train_rows": 15000
+    },
+    {
+      "best_pr_auc": 0.9963698173597937,
+      "runtime_sec": 2.1752097909338772,
+      "seed": 37,
+      "test_rows": 5000,
+      "train_rows": 15000
+    },
+    {
+      "best_pr_auc": 0.9960038982301344,
+      "runtime_sec": 2.172592343762517,
+      "seed": 41,
+      "test_rows": 5000,
+      "train_rows": 15000
+    },
+    {
+      "best_pr_auc": 0.9954071680000077,
+      "runtime_sec": 2.1638416489586234,
+      "seed": 43,
+      "test_rows": 5000,
+      "train_rows": 15000
+    },
+    {
+      "best_pr_auc": 0.9955432446223603,
+      "runtime_sec": 2.1784319821745157,
+      "seed": 47,
+      "test_rows": 5000,
+      "train_rows": 15000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41,
+    43,
+    47
+  ],
+  "tier": "tier1",
+  "total_runtime_sec": 10.946405392605811
+}

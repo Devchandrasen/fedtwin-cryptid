@@ -1,0 +1,20 @@
+{
+  "best_detection_method": {
+    "accuracy_mean": 0.7973611111111111,
+    "accuracy_std": 0.013237597269953633,
+    "fpr_at_95_recall_mean": 0.4490111111111111,
+    "fpr_at_95_recall_std": 0.03990379170696178,
+    "method": "centralized_multimodal",
+    "modality": "multimodal",
+    "pr_auc_mean": 0.8970254468669925,
+    "pr_auc_std": 0.013589323695834935,
+    "precision_mean": 0.8749183321081023,
+    "precision_std": 0.01715489262663944,
+    "privacy_mode": "none",
+    "recall_mean": 0.6939444444444445,
+    "recall_std": 0.01273509295578921,
+    "roc_auc_mean": 0.8963115940740742,
+    "roc_auc_std": 0.01341012032900758
+  },
+  "summary_dir": "outputs/hpc_vcsl_public_label_run/summary_artifacts"
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "artifact_version": "v1",
+  "created_from": "FedTwin-CryptID recorded experiment workspace",
+  "raw_media_included": false,
+  "raw_embeddings_included": false,
+  "private_labels_included": false,
+  "archived_run_policy": "Retain only derived outputs with run configuration and dataset manifests; exclude regenerated pair-feature files.",
+  "new_result_policy": "A newly generated result must include a run manifest with code, configuration, input, and output hashes before it can be marked verified."
+}

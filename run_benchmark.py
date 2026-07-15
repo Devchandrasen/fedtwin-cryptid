@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from itertools import combinations
 import json
 import time
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +24,7 @@ from fedtwin.metrics import client_metrics, detection_metrics, scenario_metrics
 from fedtwin.models import model_digest
 
 
-def parse_args() -> argparse.Namespace:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run FedTwin-CryptID benchmark.")
     parser.add_argument("--tier", default="tier0", choices=["tier0", "tier1", "vcsl_public", "vcsl_isc", "fma_audio"], help="Benchmark tier.")
     parser.add_argument("--data-dir", default="data", help="Data/cache directory.")
@@ -37,7 +37,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seeds", type=int, nargs="+", default=[7])
     parser.add_argument("--rounds", type=int, default=20)
     parser.add_argument("--local-epochs", type=int, default=5)
-    parser.add_argument("--federated-methods", nargs="+", default=["centralized", "local", "fedavg", "fedprox", "secureagg", "heagg"])
+    parser.add_argument(
+        "--federated-methods",
+        nargs="+",
+        default=["centralized", "local", "fedavg", "fedprox", "secureagg_sim", "quantized_transport_proxy"],
+    )
     parser.add_argument("--modalities", nargs="+", default=["video", "audio", "multimodal"])
     parser.add_argument("--ledger-modes", nargs="+", default=["none", "hashchain"])
     parser.add_argument("--noniid-alpha", type=float, default=0.3)
@@ -57,7 +61,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--feature-map", default="poly2", choices=["linear", "poly2"])
     parser.add_argument("--feature-policy", default="invariant", choices=["all", "invariant"])
     parser.add_argument("--write-pair-csv", action="store_true", help="Write expanded train/test pair feature CSV files.")
-    return parser.parse_args()
+    return parser
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    return build_parser().parse_args(argv)
 
 
 def _feature_atoms(name: str) -> list[str]:
@@ -285,10 +293,10 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
         fed_specs.append(("fedavg", "plain", 0.0))
     if "fedprox" in args.federated_methods:
         fed_specs.append(("fedprox", "plain", 0.02))
-    if "secureagg" in args.federated_methods:
-        fed_specs.append(("fedavg", "secureagg", 0.0))
-    if "heagg" in args.federated_methods:
-        fed_specs.append(("fedavg", "heagg", 0.0))
+    if {"secureagg", "secureagg_sim"} & set(args.federated_methods):
+        fed_specs.append(("fedavg", "secureagg_sim", 0.0))
+    if {"heagg", "quantized_transport_proxy"} & set(args.federated_methods):
+        fed_specs.append(("fedavg", "quantized_transport_proxy", 0.0))
 
     for method, privacy_mode, prox_mu in fed_specs:
         feature_idx = modality_indices(feature_names, "multimodal", args.feature_policy)
@@ -301,6 +309,7 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             rounds=args.rounds,
             local_epochs=args.local_epochs,
             prox_mu=prox_mu,
+            seed=seed,
         )
         score = model.predict_proba(x_test_std[:, feature_idx])
         method_name = f"{method}_{privacy_mode}"
@@ -344,6 +353,7 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             privacy_mode="plain",
             rounds=args.rounds,
             local_epochs=args.local_epochs,
+            seed=seed,
         )
         model_map, ft_summary = train_personalized_models(
             x_train_std[:, feature_idx],
@@ -382,12 +392,12 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
         runtime_rows.append(ft_summary)
 
     if "hashchain" in args.ledger_modes:
-        if "fedavg_secureagg" in trained_models:
-            ledger_score, digest = trained_models["fedavg_secureagg"]
-            ledger_method = "fedavg_secureagg"
-        elif "fedavg_heagg" in trained_models:
-            ledger_score, digest = trained_models["fedavg_heagg"]
-            ledger_method = "fedavg_heagg"
+        if "fedavg_secureagg_sim" in trained_models:
+            ledger_score, digest = trained_models["fedavg_secureagg_sim"]
+            ledger_method = "fedavg_secureagg_sim"
+        elif "fedavg_quantized_transport_proxy" in trained_models:
+            ledger_score, digest = trained_models["fedavg_quantized_transport_proxy"]
+            ledger_method = "fedavg_quantized_transport_proxy"
         else:
             ledger_score, digest = fusion_score, "similarity"
             ledger_method = "early_fusion_similarity"
@@ -425,6 +435,7 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
             "feature_map": args.feature_map,
             "feature_policy": args.feature_policy,
             "expanded_feature_count": len(feature_names),
+            "feature_names": feature_names,
         },
     )
 
@@ -446,11 +457,11 @@ def run_one_seed(args: argparse.Namespace, seed: int, output_dir: Path) -> dict:
         "scenario": scenario_frames,
         "client": client_frames,
         "manifest": data.manifest,
+        "feature_names": feature_names,
     }
 
 
-def main() -> None:
-    args = parse_args()
+def run_benchmark(args: argparse.Namespace) -> Path:
     output_root = Path(args.run_dir) / args.output_tag
     output_root.mkdir(parents=True, exist_ok=True)
     start = time.perf_counter()
@@ -466,6 +477,7 @@ def main() -> None:
     all_client = []
     seed_summaries = []
     manifest = None
+    feature_schema: list[str] = []
 
     for seed_pos, seed in enumerate(args.seeds, start=1):
         print(f"[{seed_pos}/{len(args.seeds)}] running seed {seed} for tier {args.tier}", flush=True)
@@ -481,6 +493,7 @@ def main() -> None:
         all_scenario.extend(result["scenario"])
         all_client.extend(result["client"])
         manifest = result["manifest"]
+        feature_schema = result["feature_names"]
 
     pd.DataFrame(all_detection).to_csv(output_root / "metrics_detection.csv", index=False)
     pd.DataFrame(all_federated).to_csv(output_root / "metrics_federated.csv", index=False)
@@ -500,6 +513,10 @@ def main() -> None:
             {
                 "transformations": manifest.get("transformations", []),
                 "source": manifest.get("generator", "unknown"),
+                "feature_map": args.feature_map,
+                "feature_policy": args.feature_policy,
+                "expanded_feature_count": len(feature_schema),
+                "feature_names": feature_schema,
             },
         )
 
@@ -514,6 +531,12 @@ def main() -> None:
     }
     write_json(output_root / "summary.json", summary)
     print(json.dumps(summary, indent=2))
+    return output_root
+
+
+def main(argv: list[str] | None = None) -> None:
+    args = parse_args(argv)
+    run_benchmark(args)
 
 
 if __name__ == "__main__":

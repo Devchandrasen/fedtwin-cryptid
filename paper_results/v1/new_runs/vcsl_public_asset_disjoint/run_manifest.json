@@ -1,0 +1,430 @@
+{
+  "config": {
+    "assets": 1000,
+    "attacker_fractions": [
+      0.0,
+      0.1,
+      0.2
+    ],
+    "attacks": [
+      "label_flip",
+      "sign_flip"
+    ],
+    "clients": 11,
+    "difficulty": 1.0,
+    "dim": 64,
+    "dropout_rates": [
+      0.0,
+      0.1,
+      0.2
+    ],
+    "feature_map": "poly2",
+    "feature_policy": "invariant",
+    "federated_methods": [
+      "centralized",
+      "local",
+      "fedavg",
+      "fedprox",
+      "secureagg_sim",
+      "quantized_transport_proxy"
+    ],
+    "ledger_modes": [
+      "hashchain"
+    ],
+    "local_epochs": 5,
+    "max_test_pairs": 900,
+    "max_train_pairs": 2500,
+    "modalities": [
+      "video",
+      "audio",
+      "multimodal"
+    ],
+    "negative_ratio": 1.0,
+    "noniid_alpha": 0.3,
+    "output_tag": "vcsl_public_paper",
+    "paillier_key_bits": 2048,
+    "queries": 1000,
+    "rounds": 20,
+    "seeds": [
+      31,
+      37,
+      41
+    ],
+    "tier": "vcsl_public"
+  },
+  "config_sha256": "48046e47a7a63b37a60c1bafb30c70334315cd8dc9f8095b05a3eebd438e3bea",
+  "counts": {
+    "clients": 11,
+    "seeds": 3,
+    "test_assets": 2063,
+    "test_rows_per_seed": 1800,
+    "train_assets": 3128,
+    "train_rows_per_seed": 5000
+  },
+  "data_source": {
+    "files": [
+      {
+        "bytes": 642535,
+        "path": "frames_all.csv",
+        "sha256": "e9971d4bd08a31b03bc73fdf44b2f9d15e59ed7043b14af5ca410f2606e180b6"
+      },
+      {
+        "bytes": 3605602,
+        "path": "pair_file_test.csv",
+        "sha256": "b52c1b5fb394d117d7f02206493331e78ba26fdb7ee344fc4302aba0cf231880"
+      },
+      {
+        "bytes": 6404200,
+        "path": "pair_file_train.csv",
+        "sha256": "e7fb88859e29dc872c10fc2b9e1a1a5c5a6516a6346ec685aec42ecef14a5c9c"
+      },
+      {
+        "bytes": 2758690,
+        "path": "pair_file_val.csv",
+        "sha256": "f7065467eb71340576c1f83ce6ada8810b02311d8d932c269069c414fa746f91"
+      },
+      {
+        "bytes": 708944,
+        "path": "videos_url_uuid.csv",
+        "sha256": "f424111d2b5d20979f92472af1f5544a8fcfb168682236169e205d284c11a869"
+      },
+      {
+        "bytes": 188187,
+        "path": "video_categories.json",
+        "sha256": "112043737dfde578d3950bd9c29ab272d0e473cfc73f7eb1c70433f12c10bb42"
+      }
+    ],
+    "license_note": "Metadata is not redistributed. Users must obtain VCSL resources from the upstream project and comply with its dataset and source-video terms.",
+    "root": "${DATA_ROOT}",
+    "tier": "vcsl_public",
+    "warnings": []
+  },
+  "feature_schema": [
+    "video_score",
+    "audio_score",
+    "temporal_score",
+    "metadata_score",
+    "video_reliability",
+    "audio_reliability",
+    "modality_gap",
+    "fusion_prior",
+    "frame_ratio",
+    "same_category",
+    "video_rel_score",
+    "audio_rel_score",
+    "temporal_rel_score",
+    "max_modality_score",
+    "mean_modality_score",
+    "product_modality_score",
+    "category_audio_score",
+    "frame_video_score",
+    "category_TV series",
+    "category_advertisement",
+    "category_animation",
+    "category_daily life",
+    "category_games",
+    "category_kichiku",
+    "category_movies",
+    "category_music videos",
+    "category_news",
+    "category_sports",
+    "category_unknown",
+    "category_variety show",
+    "client_norm",
+    "video_score__sq",
+    "audio_score__sq",
+    "temporal_score__sq",
+    "video_reliability__sq",
+    "audio_reliability__sq",
+    "modality_gap__sq",
+    "fusion_prior__sq",
+    "frame_ratio__sq",
+    "video_rel_score__sq",
+    "audio_rel_score__sq",
+    "temporal_rel_score__sq",
+    "max_modality_score__sq",
+    "mean_modality_score__sq",
+    "product_modality_score__sq",
+    "frame_video_score__sq",
+    "video_score__x__audio_score",
+    "video_score__x__temporal_score",
+    "video_score__x__video_reliability",
+    "video_score__x__audio_reliability",
+    "video_score__x__modality_gap",
+    "video_score__x__fusion_prior",
+    "video_score__x__frame_ratio",
+    "video_score__x__video_rel_score",
+    "video_score__x__audio_rel_score",
+    "video_score__x__temporal_rel_score",
+    "video_score__x__max_modality_score",
+    "video_score__x__mean_modality_score",
+    "video_score__x__product_modality_score",
+    "video_score__x__frame_video_score",
+    "audio_score__x__temporal_score",
+    "audio_score__x__video_reliability",
+    "audio_score__x__audio_reliability",
+    "audio_score__x__modality_gap",
+    "audio_score__x__fusion_prior",
+    "audio_score__x__frame_ratio",
+    "audio_score__x__video_rel_score",
+    "audio_score__x__audio_rel_score",
+    "audio_score__x__temporal_rel_score",
+    "audio_score__x__max_modality_score",
+    "audio_score__x__mean_modality_score",
+    "audio_score__x__product_modality_score",
+    "audio_score__x__frame_video_score",
+    "temporal_score__x__video_reliability",
+    "temporal_score__x__audio_reliability",
+    "temporal_score__x__modality_gap",
+    "temporal_score__x__fusion_prior",
+    "temporal_score__x__frame_ratio",
+    "temporal_score__x__video_rel_score",
+    "temporal_score__x__audio_rel_score",
+    "temporal_score__x__temporal_rel_score",
+    "temporal_score__x__max_modality_score",
+    "temporal_score__x__mean_modality_score",
+    "temporal_score__x__product_modality_score",
+    "temporal_score__x__frame_video_score",
+    "video_reliability__x__audio_reliability",
+    "video_reliability__x__modality_gap",
+    "video_reliability__x__fusion_prior",
+    "video_reliability__x__frame_ratio",
+    "video_reliability__x__video_rel_score",
+    "video_reliability__x__audio_rel_score",
+    "video_reliability__x__temporal_rel_score",
+    "video_reliability__x__max_modality_score",
+    "video_reliability__x__mean_modality_score",
+    "video_reliability__x__product_modality_score",
+    "video_reliability__x__frame_video_score",
+    "audio_reliability__x__modality_gap",
+    "audio_reliability__x__fusion_prior",
+    "audio_reliability__x__frame_ratio",
+    "audio_reliability__x__video_rel_score",
+    "audio_reliability__x__audio_rel_score",
+    "audio_reliability__x__temporal_rel_score",
+    "audio_reliability__x__max_modality_score",
+    "audio_reliability__x__mean_modality_score",
+    "audio_reliability__x__product_modality_score",
+    "audio_reliability__x__frame_video_score",
+    "modality_gap__x__fusion_prior",
+    "modality_gap__x__frame_ratio",
+    "modality_gap__x__video_rel_score",
+    "modality_gap__x__audio_rel_score",
+    "modality_gap__x__temporal_rel_score",
+    "modality_gap__x__max_modality_score",
+    "modality_gap__x__mean_modality_score",
+    "modality_gap__x__product_modality_score",
+    "modality_gap__x__frame_video_score",
+    "fusion_prior__x__frame_ratio",
+    "fusion_prior__x__video_rel_score",
+    "fusion_prior__x__audio_rel_score",
+    "fusion_prior__x__temporal_rel_score",
+    "fusion_prior__x__max_modality_score",
+    "fusion_prior__x__mean_modality_score",
+    "fusion_prior__x__product_modality_score",
+    "fusion_prior__x__frame_video_score",
+    "frame_ratio__x__video_rel_score",
+    "frame_ratio__x__audio_rel_score",
+    "frame_ratio__x__temporal_rel_score",
+    "frame_ratio__x__max_modality_score",
+    "frame_ratio__x__mean_modality_score",
+    "frame_ratio__x__product_modality_score",
+    "frame_ratio__x__frame_video_score",
+    "video_rel_score__x__audio_rel_score",
+    "video_rel_score__x__temporal_rel_score",
+    "video_rel_score__x__max_modality_score",
+    "video_rel_score__x__mean_modality_score",
+    "video_rel_score__x__product_modality_score",
+    "video_rel_score__x__frame_video_score",
+    "audio_rel_score__x__temporal_rel_score",
+    "audio_rel_score__x__max_modality_score",
+    "audio_rel_score__x__mean_modality_score",
+    "audio_rel_score__x__product_modality_score",
+    "audio_rel_score__x__frame_video_score",
+    "temporal_rel_score__x__max_modality_score",
+    "temporal_rel_score__x__mean_modality_score",
+    "temporal_rel_score__x__product_modality_score",
+    "temporal_rel_score__x__frame_video_score",
+    "max_modality_score__x__mean_modality_score",
+    "max_modality_score__x__product_modality_score",
+    "max_modality_score__x__frame_video_score",
+    "mean_modality_score__x__product_modality_score",
+    "mean_modality_score__x__frame_video_score",
+    "product_modality_score__x__frame_video_score"
+  ],
+  "git": {
+    "branch": "agent/tmm-ready-revision",
+    "commit": "9dc49bf408b34f9a29e18cc6e583bdec92ed2d64",
+    "dirty": true
+  },
+  "hardware": {
+    "logical_cpu_count": 20,
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel"
+  },
+  "inputs": [
+    {
+      "bytes": 642535,
+      "path": "frames_all.csv",
+      "sha256": "e9971d4bd08a31b03bc73fdf44b2f9d15e59ed7043b14af5ca410f2606e180b6"
+    },
+    {
+      "bytes": 3605602,
+      "path": "pair_file_test.csv",
+      "sha256": "b52c1b5fb394d117d7f02206493331e78ba26fdb7ee344fc4302aba0cf231880"
+    },
+    {
+      "bytes": 6404200,
+      "path": "pair_file_train.csv",
+      "sha256": "e7fb88859e29dc872c10fc2b9e1a1a5c5a6516a6346ec685aec42ecef14a5c9c"
+    },
+    {
+      "bytes": 2758690,
+      "path": "pair_file_val.csv",
+      "sha256": "f7065467eb71340576c1f83ce6ada8810b02311d8d932c269069c414fa746f91"
+    },
+    {
+      "bytes": 708944,
+      "path": "videos_url_uuid.csv",
+      "sha256": "f424111d2b5d20979f92472af1f5544a8fcfb168682236169e205d284c11a869"
+    },
+    {
+      "bytes": 188187,
+      "path": "video_categories.json",
+      "sha256": "112043737dfde578d3950bd9c29ab272d0e473cfc73f7eb1c70433f12c10bb42"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 91,
+      "path": "client_split_manifest.json",
+      "sha256": "51f53ff80b097e001ac7f9cb370bacea7c01a74e6e4e0c9b1e8a4be10fc0c66d"
+    },
+    {
+      "bytes": 613,
+      "path": "dataset_manifest.json",
+      "sha256": "ff240a8371f1d6f7a7f4c7ec95c72e9155cf1c02c029dee772db4e4ac5f2de84"
+    },
+    {
+      "bytes": 20865,
+      "path": "metrics_client.csv",
+      "sha256": "aa008c217b0f15710aeeebaf525af212d337286b40d6491673cbc05e7fd0c60f"
+    },
+    {
+      "bytes": 7258,
+      "path": "metrics_detection.csv",
+      "sha256": "f124513fd1b89870ce01e2296ad24feb547f3340c9188e5cc44e77f9eef8e8c1"
+    },
+    {
+      "bytes": 45496,
+      "path": "metrics_federated.csv",
+      "sha256": "622c10e0d61e8abb7994e531e86576192e2cad499e992f772b262c557541fbba"
+    },
+    {
+      "bytes": 495,
+      "path": "metrics_ledger.csv",
+      "sha256": "91e6f5a0937f62266e1559b8c988399de1725a47a29b5cb2515af4674467bc19"
+    },
+    {
+      "bytes": 2,
+      "path": "metrics_localization.csv",
+      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+    },
+    {
+      "bytes": 1227,
+      "path": "metrics_privacy.csv",
+      "sha256": "063290251e95ec4e7a39ec41109e660aac91d67b34226995a7f0f66cf1da74cb"
+    },
+    {
+      "bytes": 14055,
+      "path": "metrics_scenario.csv",
+      "sha256": "adec541a5618f4e30e5f1be438c1bf2b6df7aece503bb13b9686a0cbc4962915"
+    },
+    {
+      "bytes": 1218,
+      "path": "run_config.json",
+      "sha256": "97aef36f39482c614e9c1e0225f80896c373d4c13f5bff024b89523a6c51bdf1"
+    },
+    {
+      "bytes": 2163,
+      "path": "runtime_profile.csv",
+      "sha256": "142034e1bb92d187eeac8bbb74c66898f4dee9114e1c7374c99b44ca776b72b2"
+    },
+    {
+      "bytes": 60,
+      "path": "seed_31/client_split_manifest.json",
+      "sha256": "656bda2b0b4a3ebfa0e4c7a268e74e9dddf343935235e522a5c6fca9792d4831"
+    },
+    {
+      "bytes": 612,
+      "path": "seed_31/dataset_manifest.json",
+      "sha256": "20387ae985e579ca657fc60d99c94c53707daa84f753536064a12c28cb256362"
+    },
+    {
+      "bytes": 6196,
+      "path": "seed_31/transformation_manifest.json",
+      "sha256": "8a0951c296df8909b582866b1a870a3bc21dbed04bdaeb385dd87fe865100e78"
+    },
+    {
+      "bytes": 60,
+      "path": "seed_37/client_split_manifest.json",
+      "sha256": "7979bb7d97fcb61d2576434ac971ccdfe5573c17de2f7ab2a8a6780b3d4e4abd"
+    },
+    {
+      "bytes": 613,
+      "path": "seed_37/dataset_manifest.json",
+      "sha256": "d2759aedf698e1322db12e2b51b23f88d9f42dd3f34bb4db22bcc1315cfd4841"
+    },
+    {
+      "bytes": 6196,
+      "path": "seed_37/transformation_manifest.json",
+      "sha256": "8a0951c296df8909b582866b1a870a3bc21dbed04bdaeb385dd87fe865100e78"
+    },
+    {
+      "bytes": 60,
+      "path": "seed_41/client_split_manifest.json",
+      "sha256": "c895536702854d7fd765f31e5995753451cc1eef8cef0e088f6b4fe0db53f932"
+    },
+    {
+      "bytes": 613,
+      "path": "seed_41/dataset_manifest.json",
+      "sha256": "ff240a8371f1d6f7a7f4c7ec95c72e9155cf1c02c029dee772db4e4ac5f2de84"
+    },
+    {
+      "bytes": 6196,
+      "path": "seed_41/transformation_manifest.json",
+      "sha256": "8a0951c296df8909b582866b1a870a3bc21dbed04bdaeb385dd87fe865100e78"
+    },
+    {
+      "bytes": 1210,
+      "path": "summary.json",
+      "sha256": "09b5400b10f602489d5e3b680c9694698139fae9eb9160030bcfee7d793dc9e1"
+    },
+    {
+      "bytes": 6068,
+      "path": "transformation_manifest.json",
+      "sha256": "0e692d683c53ad4ca2cb2d901b8f1a4a8247ef53f9e1b4255b1e59de82084788"
+    }
+  ],
+  "runtime": {
+    "dependencies": {
+      "PyYAML": "6.0.3",
+      "cryptography": "48.0.0",
+      "matplotlib": "3.11.0",
+      "numpy": "2.3.5",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.8.0",
+      "seaborn": "0.13.2",
+      "tqdm": "4.68.3"
+    },
+    "executable": "python.exe",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "python_implementation": "CPython"
+  },
+  "schema_version": "1.0",
+  "timing_sec": {
+    "total_runtime": 8.956960200001049
+  }
+}

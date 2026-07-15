@@ -1,0 +1,14 @@
+{
+  "transformations": [
+    "clean_copy",
+    "reencode",
+    "crop_overlay",
+    "speed_change",
+    "cam_recording",
+    "pitch_shift",
+    "audio_noise",
+    "audio_replaced",
+    "partial_segment",
+    "hard_negative_same_topic"
+  ]
+}

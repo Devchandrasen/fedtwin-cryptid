@@ -14,10 +14,10 @@ class LogisticHead:
     weights: np.ndarray
 
     @classmethod
-    def zeros(cls, n_features: int) -> "LogisticHead":
+    def zeros(cls, n_features: int) -> LogisticHead:
         return cls(weights=np.zeros(n_features + 1, dtype=float))
 
-    def copy(self) -> "LogisticHead":
+    def copy(self) -> LogisticHead:
         return LogisticHead(self.weights.copy())
 
     def predict_proba(self, x: np.ndarray) -> np.ndarray:

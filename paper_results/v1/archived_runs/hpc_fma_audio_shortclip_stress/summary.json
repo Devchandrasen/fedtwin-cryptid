@@ -1,0 +1,50 @@
+{
+  "best_method_by_pr_auc": {
+    "accuracy": 0.9576666666666667,
+    "fn": 30,
+    "fp": 224,
+    "fpr_at_95_recall": 0.016,
+    "method": "fedavgft_plain",
+    "modality": "multimodal",
+    "n": 6000,
+    "pr_auc": 0.9963849797455532,
+    "precision": 0.9298685034439574,
+    "privacy_mode": "plain",
+    "recall": 0.99,
+    "roc_auc": 0.996222,
+    "seed": 41,
+    "tn": 2776,
+    "tp": 2970
+  },
+  "output_tag": "hpc_fma_audio_shortclip_stress",
+  "seed_summaries": [
+    {
+      "best_pr_auc": 0.9945089976932151,
+      "runtime_sec": 75.44108954491094,
+      "seed": 31,
+      "test_rows": 6000,
+      "train_rows": 12000
+    },
+    {
+      "best_pr_auc": 0.9950809183943942,
+      "runtime_sec": 1.594003106933087,
+      "seed": 37,
+      "test_rows": 6000,
+      "train_rows": 12000
+    },
+    {
+      "best_pr_auc": 0.9963849797455532,
+      "runtime_sec": 1.6604488319717348,
+      "seed": 41,
+      "test_rows": 6000,
+      "train_rows": 12000
+    }
+  ],
+  "seeds": [
+    31,
+    37,
+    41
+  ],
+  "tier": "fma_audio",
+  "total_runtime_sec": 78.72895651124418
+}

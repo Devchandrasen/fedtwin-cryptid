@@ -1,0 +1,4 @@
+ledger_type,schema_version,receipts,verification_success,signature_verification_success,tamper_detection_success,mean_receipt_latency_sec,ledger_bytes,seed,example_schema_version,example_signature_len
+hashchain,fedtwin-cryptid-receipt-v2,1000,True,True,True,7.455700542777777e-06,1403540,31,fedtwin-cryptid-receipt-v2,128
+hashchain,fedtwin-cryptid-receipt-v2,1000,True,True,True,8.989798603579403e-06,1403456,37,fedtwin-cryptid-receipt-v2,128
+hashchain,fedtwin-cryptid-receipt-v2,1000,True,True,True,1.0012698126956821e-05,1403460,41,fedtwin-cryptid-receipt-v2,128
