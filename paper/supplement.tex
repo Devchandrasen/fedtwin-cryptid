@@ -4,6 +4,7 @@
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{balance}
+\usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{url}
 
@@ -55,11 +56,30 @@ At prevalence $\pi$, measured recall $r$, and false-positive rate $f$, expected 
 \end{equation}
 and expected reviews per true positive are $1/\operatorname{Prec}(\pi)$. These are prevalence projections, not new detector measurements.
 
+\section{Communication-Round Ablation}
+
+The clean VCSL public-label confirmatory run records each of 20 communication
+rounds for seeds 31, 37, and 41. Fig.~\ref{fig:round-ablation} reports the mean
+client training loss for plain FedAvg, FedProx, SecureAgg-simulation FedAvg,
+and quantized-proxy FedAvg. All four traces use the same frozen split and local
+epoch count. The protected modes follow plain FedAvg to plotting precision,
+while most optimization progress occurs in the early rounds. This is a
+convergence audit, not an independent held-out-utility gain claim.
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=0.96\columnwidth]{figures/communication_round_ablation.pdf}
+  \caption{Three-seed communication-round ablation on the confirmatory VCSL
+  public-label tier. Lines are mean client training loss; bands are sample
+  standard deviation across seeds.}
+  \label{fig:round-ablation}
+\end{figure}
+
 \section{Protected Aggregation Semantics}
 
 The implementation exposes four accurately named modes. Plain FedAvg/FedProx sends floating-point compact updates. \texttt{secureagg\_sim} applies deterministic pairwise masks whose signed contributions cancel in the active-client sum; 0\%, 10\%, and 20\% post-mask dropout scenarios reconstruct and remove residual masks and check active-weight renormalization. It does not implement authenticated key agreement, secret sharing, collusion resistance, or production recovery. \texttt{quantized\_transport\_proxy} quantizes/dequantizes updates and reports error, safe range, and byte accounting; it is not homomorphic encryption.
 
-The Paillier mode uses at least 2048-bit keys for reported measurements. For scale $S$, client weight integer $w_k$, and clipped quantized coordinate $m_{kj}=\operatorname{round}(S\Delta_{kj})$, the server multiplies Paillier ciphertexts to obtain an encryption of $\sum_kw_km_{kj}$. Only the aggregate is decrypted and divided by $S\sum_kw_k$. The artifact reports key size, quantization scale and safe range, maximum absolute error, encryption time, aggregate/decryption time, plaintext and ciphertext bytes, and expansion. Fast tests may use smaller keys and are explicitly excluded from paper evidence.
+The Paillier mode uses 2048-bit keys for the three reported measurements (seeds 31, 37, and 41). For scale $S$, client weight integer $w_k$, and clipped quantized coordinate $m_{kj}=\operatorname{round}(S\Delta_{kj})$, the server multiplies Paillier ciphertexts to obtain an encryption of $\sum_kw_km_{kj}$. Only the aggregate is decrypted and divided by $S\sum_kw_k$. The artifact reports per-seed key size, quantization scale and safe range, maximum absolute error, encryption time, aggregate/decryption time, plaintext and ciphertext bytes, and expansion. Fast tests may use smaller keys and are explicitly excluded from paper evidence.
 
 \begin{table}[!t]
 \centering
@@ -90,7 +110,7 @@ The release contains strict configuration, run/result manifests, claim mappings,
 
 The four entry points are \texttt{fedtwin smoke}, \texttt{fedtwin reproduce}, \texttt{fedtwin regenerate-paper}, and \texttt{fedtwin verify-artifact}. Complete copyable commands and the table/figure map are in \texttt{docs/REPRODUCIBILITY.md}.
 
-Each run records the Git commit, canonical configuration hash, seed, dependency versions, input/output hashes, row/client counts, feature schema, timing, Python/platform, and hardware. The same seed/configuration must reproduce strict JSON/CSV outputs; regenerated paper metrics are checked to $10^{-4}$. The repository URL is \url{https://github.com/Devchandrasen/fedtwin-cryptid}. The archival DOI will be added only after the verified GitHub release is deposited.
+Each run records the Git commit, canonical configuration hash, seed, dependency versions, input/output hashes, row/client counts, feature schema, timing, Python/platform, and hardware. The same seed/configuration must reproduce scientific JSON/CSV fields exactly; wall-clock time and latency fields are runtime provenance and may vary. Regenerated paper metrics are checked to $10^{-4}$. The repository URL is \url{https://github.com/Devchandrasen/fedtwin-cryptid}. The archival DOI will be added only after the verified GitHub release is deposited.
 
 \section{Additional Limitations}
 

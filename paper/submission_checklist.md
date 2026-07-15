@@ -26,3 +26,4 @@
 - [ ] The paper uses TMM's current single-anonymized policy wording.
 - [ ] April 2026 TMM-listed EDICS are selected: `MM-COM-SECU` primary, `MM-MOD-DIST` secondary, and `MM-DAT-SEAR` tertiary.
 - [ ] Code/data and prior-publication disclosures are complete.
+- [ ] The AI-use acknowledgment is accurate, and every author has completed the human-review attestation in `AI_USE_DISCLOSURE_REQUIRED.md`.

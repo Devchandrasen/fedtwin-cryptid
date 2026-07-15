@@ -31,6 +31,9 @@ all = ["miniaudio>=1.61", "pytest>=8", "pytest-cov>=5", "ruff>=0.6"]
 [project.scripts]
 fedtwin = "fedtwin.cli:main"
 
+[tool.setuptools]
+py-modules = ["run_benchmark"]
+
 [tool.setuptools.packages.find]
 include = ["fedtwin*"]
 

@@ -389,7 +389,7 @@ Client identity leakage & All fields vs. invariant & 1.0000 vs. 0.1115$\pm$0.020
 Query category leakage & All fields vs. invariant & 1.0000 vs. 0.1020$\pm$0.0130 & Category/context fields should not be default detector inputs. \\
 Membership attack & Best tested scalar/model attack & AUC 0.5780$\pm$0.0170 & Weak but nonzero signal; no differential-privacy guarantee is claimed. \\
 Receipt verification & 1000 receipts/seed & 100\% verify and tamper detect & Signed salted hash chains support commitment audit without storing media. \\
-Paillier compact sum & 8 clients, 24-D updates, 2048-bit key & $64\times$ bytes, $2.64\times10^{-7}$ max error & Real additive sum; 14.69 s encryption and 1.44 s aggregate/decrypt in this local microbenchmark. \\
+Paillier compact sum & 8 clients, 24-D updates, 2048-bit key & $64\times$ bytes, $3.14\times10^{-7}$ max. error & Three-seed sums: enc. $14.70\pm0.38$ s; agg./dec. $1.455\pm0.014$ s (mean $\pm$ sample s.d.). \\
 SecureAgg/proxy status & Pairwise-mask simulation / quantized proxy & $\leq2.86\times10^{-15}$ dropout error & Arithmetic recovery holds at 0\%, 10\%, and 20\% dropout; neither mode is production cryptography. \\
 \bottomrule
 \end{tabularx}
@@ -434,6 +434,9 @@ Third, privacy is bounded rather than formal. The artifact keeps raw media and r
 \section{Conclusion}
 
 This paper presented \ours, a federated fixed-evidence calibration and audit layer for multimedia copy review. The method integrates media-free pair states, compact-head federated calibration, protected-update accounting, personalization analysis, leakage-aware feature policy, Paillier compact-update summation, query-ranking diagnostics, and signed receipt chains. Across VCSL and FMA tiers, protected federated variants preserve compact-head utility, but open-set and prevalence analyses show that the system should be used for review triage rather than automated enforcement. Future work should add synchronized public audio-video copy-review corpora, stronger VCDB/FIVR/VCSL localization validation, formal privacy accounting, malicious-client robustness, and production cryptographic protocols.
+
+\section*{Acknowledgment}
+OpenAI Codex (GPT-5) assisted with language revision throughout the manuscript, code and test development, and table/figure preparation. The research framing, experimental design, interpretation, and final responsibility remain with the author; AI-assisted material was checked against cited sources, released evidence, and executable tests.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

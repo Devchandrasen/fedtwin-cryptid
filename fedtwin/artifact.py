@@ -118,7 +118,9 @@ def _plot_feature_ablation(source: Path, destination: Path) -> None:
     plot = plot.sort_values("pr_auc_mean", ascending=True)
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 8})
     fig, ax = plt.subplots(figsize=(6.8, 3.4))
-    colors = ["#4C78A8" if method not in {"score only", "default invariant"} else "#E45756" for method in plot["method"]]
+    colors = [
+        "#4C78A8" if method not in {"score only", "default invariant"} else "#E45756" for method in plot["method"]
+    ]
     ax.barh(
         np.arange(len(plot)),
         plot["pr_auc_mean"],
@@ -250,12 +252,8 @@ def build_confirmatory_tier_summary(results_root: str | Path) -> pd.DataFrame:
             "fedavg_plain_pr_auc_std": float(grouped.at["fedavg_plain", "std"]),
             "fedavg_secureagg_sim_pr_auc": float(grouped.at["fedavg_secureagg_sim", "mean"]),
             "fedavg_secureagg_sim_pr_auc_std": float(grouped.at["fedavg_secureagg_sim", "std"]),
-            "fedavg_quantized_transport_proxy_pr_auc": float(
-                grouped.at["fedavg_quantized_transport_proxy", "mean"]
-            ),
-            "fedavg_quantized_transport_proxy_pr_auc_std": float(
-                grouped.at["fedavg_quantized_transport_proxy", "std"]
-            ),
+            "fedavg_quantized_transport_proxy_pr_auc": float(grouped.at["fedavg_quantized_transport_proxy", "mean"]),
+            "fedavg_quantized_transport_proxy_pr_auc_std": float(grouped.at["fedavg_quantized_transport_proxy", "std"]),
             "fedprox_pr_auc": float(grouped.at["fedprox_plain", "mean"]),
             "fedprox_pr_auc_std": float(grouped.at["fedprox_plain", "std"]),
             "client_adapted_method": client_adapted,
@@ -274,6 +272,101 @@ def build_confirmatory_tier_summary(results_root: str | Path) -> pd.DataFrame:
     if not np.isfinite(numeric).all():
         raise ValueError("confirmatory tier summary contains non-finite values")
     return out
+
+
+def build_communication_round_ablation(results_root: str | Path) -> pd.DataFrame:
+    """Derive a three-seed, per-round convergence audit from the confirmatory VCSL run."""
+
+    root = Path(results_root).resolve()
+    source = root / "new_runs" / "vcsl_public_asset_disjoint" / "metrics_federated.csv"
+    if not source.is_file():
+        raise FileNotFoundError(source)
+    frame = pd.read_csv(source)
+    required = {"round", "method", "privacy_mode", "mean_client_loss", "seed"}
+    if missing := sorted(required - set(frame.columns)):
+        raise ValueError(f"{source} is missing columns: {missing}")
+    frame = frame[list(required)].copy()
+    frame["round"] = pd.to_numeric(frame["round"], errors="raise").astype(int)
+    frame["seed"] = pd.to_numeric(frame["seed"], errors="raise").astype(int)
+    frame["mean_client_loss"] = pd.to_numeric(frame["mean_client_loss"], errors="raise")
+    frame["method_label"] = frame["method"].astype(str) + "_" + frame["privacy_mode"].astype(str)
+    methods = [
+        "fedavg_plain",
+        "fedprox_plain",
+        "fedavg_secureagg_sim",
+        "fedavg_quantized_transport_proxy",
+    ]
+    frame = frame.loc[frame["method_label"].isin(methods)].copy()
+    if not np.isfinite(frame["mean_client_loss"].to_numpy(dtype=float)).all():
+        raise ValueError("communication-round source contains non-finite losses")
+    for method in methods:
+        subset = frame.loc[frame["method_label"].eq(method)]
+        if sorted(subset["seed"].unique().tolist()) != [31, 37, 41]:
+            raise ValueError(f"round ablation method {method} does not contain seeds 31, 37, and 41")
+        for seed in (31, 37, 41):
+            rounds = sorted(subset.loc[subset["seed"].eq(seed), "round"].tolist())
+            if rounds != list(range(1, 21)):
+                raise ValueError(f"round ablation method {method}, seed {seed} is not a complete 1--20 trace")
+    result = (
+        frame.groupby(["method_label", "round"], sort=False)["mean_client_loss"]
+        .agg(["mean", "std", "count"])
+        .reset_index()
+        .rename(
+            columns={
+                "method_label": "method",
+                "mean": "mean_client_loss_mean",
+                "std": "mean_client_loss_std",
+                "count": "seed_count",
+            }
+        )
+    )
+    result.insert(0, "tier", "VCSL public labels")
+    result["seeds"] = "31;37;41"
+    return result
+
+
+def _plot_communication_round_ablation(source: Path, destination: Path) -> None:
+    frame = pd.read_csv(source)
+    required = {"method", "round", "mean_client_loss_mean", "mean_client_loss_std"}
+    if missing := sorted(required - set(frame.columns)):
+        raise ValueError(f"communication-round table is missing columns: {missing}")
+    labels = {
+        "fedavg_plain": "FedAvg",
+        "fedprox_plain": "FedProx",
+        "fedavg_secureagg_sim": "SecureAgg sim.",
+        "fedavg_quantized_transport_proxy": "Quant. proxy",
+    }
+    unknown = sorted(set(frame["method"].astype(str)) - set(labels))
+    if unknown:
+        raise ValueError(f"communication-round table contains unknown methods: {unknown}")
+    numeric = frame[["round", "mean_client_loss_mean", "mean_client_loss_std"]].apply(pd.to_numeric, errors="raise")
+    if not np.isfinite(numeric.to_numpy(dtype=float)).all():
+        raise ValueError("communication-round table contains non-finite values")
+    frame[["round", "mean_client_loss_mean", "mean_client_loss_std"]] = numeric
+    colors = ["#4C78A8", "#54A24B", "#B279A2", "#F58518"]
+    fig, ax = plt.subplots(figsize=(5.8, 3.0))
+    for (method, label), color in zip(labels.items(), colors, strict=True):
+        group = frame.loc[frame["method"].eq(method)].sort_values("round")
+        ax.plot(group["round"], group["mean_client_loss_mean"], label=label, color=color, linewidth=1.3)
+        ax.fill_between(
+            group["round"],
+            group["mean_client_loss_mean"] - group["mean_client_loss_std"],
+            group["mean_client_loss_mean"] + group["mean_client_loss_std"],
+            color=color,
+            alpha=0.12,
+            linewidth=0,
+        )
+    ax.set_xlabel("Communication round")
+    ax.set_ylabel("Mean client training loss")
+    ax.set_xticks([1, 5, 10, 15, 20])
+    ax.grid(linewidth=0.5, alpha=0.35)
+    ax.legend(frameon=False, ncol=2, fontsize=7)
+    ax.set_title("VCSL public-label convergence audit", loc="left", fontweight="bold")
+    fig.tight_layout()
+    destination.mkdir(parents=True, exist_ok=True)
+    fig.savefig(destination / "communication_round_ablation.pdf", bbox_inches="tight")
+    fig.savefig(destination / "communication_round_ablation.png", dpi=320, bbox_inches="tight")
+    plt.close(fig)
 
 
 def _plot_multitier_results(tables: Path, destination: Path) -> None:
@@ -392,11 +485,18 @@ def _protected_expansions(tables: Path) -> tuple[list[str], np.ndarray, list[str
         "proxy_max_abs_error_vs_plain",
         "paillier_max_abs_error_vs_plain",
     ]
-    paillier = pd.read_csv(tables / "paillier_update_aggregation.csv", usecols=paillier_columns).iloc[0]
+    paillier = pd.read_csv(tables / "paillier_update_aggregation.csv", usecols=paillier_columns)
+    if paillier.empty:
+        raise ValueError("Paillier aggregation source contains no measurements")
+    paillier_numeric = paillier.apply(pd.to_numeric, errors="raise")
+    proxy_expansions = paillier_numeric["proxy_ciphertext_expansion"]
+    paillier_expansions = paillier_numeric["paillier_ciphertext_expansion"]
+    if proxy_expansions.nunique() != 1 or paillier_expansions.nunique() != 1:
+        raise ValueError("protected aggregation expansion must be constant across seeds")
     secureagg = pd.read_csv(tables / "secureagg_dropout_or_proxy.csv")
     secure_expansion = float(pd.to_numeric(secureagg["byte_expansion"], errors="raise").iloc[0])
     values = np.asarray(
-        [1.0, secure_expansion, float(paillier["proxy_ciphertext_expansion"]), float(paillier["paillier_ciphertext_expansion"])],
+        [1.0, secure_expansion, float(proxy_expansions.iloc[0]), float(paillier_expansions.iloc[0])],
         dtype=float,
     )
     if not np.isfinite(values).all():
@@ -404,8 +504,8 @@ def _protected_expansions(tables: Path) -> tuple[list[str], np.ndarray, list[str
     errors = [
         "reference",
         f"err <= {pd.to_numeric(secureagg['max_abs_error_vs_active_plain'], errors='raise').max():.1e}",
-        f"err = {float(paillier['proxy_max_abs_error_vs_plain']):.1e}",
-        f"err = {float(paillier['paillier_max_abs_error_vs_plain']):.1e}",
+        f"max err = {paillier_numeric['proxy_max_abs_error_vs_plain'].max():.1e}",
+        f"max err = {paillier_numeric['paillier_max_abs_error_vs_plain'].max():.1e}",
     ]
     return ["Plain", "SecureAgg sim.", "Quant. proxy", "Paillier"], values, errors
 
@@ -469,6 +569,10 @@ def regenerate_paper_assets(results_dir: str | Path, output_dir: str | Path) -> 
     if all(path.is_file() for path in confirmatory_inputs):
         confirmatory = build_confirmatory_tier_summary(source)
         confirmatory.to_csv(tables_destination / "tier_result_summary.csv", index=False, lineterminator="\n")
+    round_source = source / "new_runs" / "vcsl_public_asset_disjoint" / "metrics_federated.csv"
+    if round_source.is_file():
+        round_ablation = build_communication_round_ablation(source)
+        round_ablation.to_csv(tables_destination / "communication_round_ablation.csv", index=False, lineterminator="\n")
     generated_figures = ["fig10_feature_ablation.pdf", "fig10_feature_ablation.png"]
     _plot_feature_ablation(tables_source / "feature_ablation.csv", figures_destination)
     if (tables_destination / "tier_result_summary.csv").is_file():
@@ -477,6 +581,9 @@ def regenerate_paper_assets(results_dir: str | Path, output_dir: str | Path) -> 
     if (tables_source / "privacy_utility_points.csv").is_file():
         _plot_privacy_utility(tables_source / "privacy_utility_points.csv", figures_destination)
         generated_figures.extend(["fig03_privacy_utility_tradeoff.pdf", "fig03_privacy_utility_tradeoff.png"])
+    if (tables_destination / "communication_round_ablation.csv").is_file():
+        _plot_communication_round_ablation(tables_destination / "communication_round_ablation.csv", figures_destination)
+        generated_figures.extend(["communication_round_ablation.pdf", "communication_round_ablation.png"])
     if (tables_source / "paillier_update_aggregation.csv").is_file() and (
         tables_source / "secureagg_dropout_or_proxy.csv"
     ).is_file():

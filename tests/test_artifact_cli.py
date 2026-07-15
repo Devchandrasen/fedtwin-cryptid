@@ -7,11 +7,13 @@ import pandas as pd
 import pytest
 
 from fedtwin.artifact import (
+    _plot_communication_round_ablation,
     _plot_crypto_overhead,
     _plot_multitier_results,
     _plot_paillier_overhead,
     _plot_privacy_utility,
     build_artifact_manifest,
+    build_communication_round_ablation,
     build_confirmatory_tier_summary,
     regenerate_paper_assets,
     verify_artifact,
@@ -47,6 +49,13 @@ def test_artifact_build_verify_regenerate_and_tamper_detection(tmp_path: Path) -
     assert summary["files_verified"] == 2
     generated = regenerate_paper_assets(manifest.parent, tmp_path / "generated")
     assert generated["tables_copied"] == 1
+    pd.testing.assert_frame_equal(
+        pd.read_csv(manifest.parent / "tables" / "feature_ablation.csv"),
+        pd.read_csv(tmp_path / "generated" / "tables" / "feature_ablation.csv"),
+        check_exact=False,
+        atol=1e-4,
+        rtol=0.0,
+    )
     assert (tmp_path / "generated" / "figures" / "fig10_feature_ablation.pdf").is_file()
     assert b"nan" not in (tmp_path / "generated" / "figures" / "fig10_feature_ablation.pdf").read_bytes().lower()
     (manifest.parent / "claims.csv").write_text("tampered", encoding="utf-8")
@@ -70,6 +79,7 @@ def test_cli_verify_regenerate_and_smoke(tmp_path: Path) -> None:
         == 0
     )
     assert main(["smoke", "--output-dir", str(tmp_path / "runs"), "--assets", "20", "--queries", "24"]) == 0
+    assert main(["smoke", "--output-dir", str(tmp_path / "repeat"), "--assets", "20", "--queries", "24"]) == 0
     run_manifest = tmp_path / "runs" / "smoke" / "run_manifest.json"
     payload = json.loads(run_manifest.read_text(encoding="utf-8"))
     assert payload["config"]["tier"] == "tier0"
@@ -87,6 +97,28 @@ def test_cli_verify_regenerate_and_smoke(tmp_path: Path) -> None:
         "segment_precision_proxy",
         "partial_segment_n",
     ]
+
+    first = tmp_path / "runs" / "smoke"
+    second = tmp_path / "repeat" / "smoke"
+    metric_paths = sorted(path.relative_to(first) for path in first.rglob("metrics_*.csv"))
+    manifest_paths = sorted(
+        path.relative_to(first)
+        for path in first.rglob("*.json")
+        if path.name in {"client_split_manifest.json", "dataset_manifest.json", "transformation_manifest.json"}
+    )
+    assert metric_paths and manifest_paths
+    for relative in metric_paths:
+        left = pd.read_csv(first / relative)
+        right = pd.read_csv(second / relative)
+        runtime_columns = [name for name in left.columns if "time" in name or "latency" in name]
+        pd.testing.assert_frame_equal(
+            left.drop(columns=runtime_columns),
+            right.drop(columns=runtime_columns),
+            check_exact=True,
+            obj=str(relative),
+        )
+    for relative in manifest_paths:
+        assert (first / relative).read_bytes() == (second / relative).read_bytes(), relative
 
 
 def test_artifact_rejects_unresolved_replacement_claim(tmp_path: Path) -> None:
@@ -140,11 +172,12 @@ def test_multitier_plot_requires_confirmatory_finite_rows(tmp_path: Path) -> Non
     ).to_csv(tables / "privacy_utility_points.csv", index=False)
     pd.DataFrame(
         {
-            "max_safe_abs_aggregate_integer": [str(10**620)],
-            "proxy_ciphertext_expansion": [16.0],
-            "paillier_ciphertext_expansion": [64.0],
-            "proxy_max_abs_error_vs_plain": [2.6e-7],
-            "paillier_max_abs_error_vs_plain": [2.6e-7],
+            "seed": [31, 37, 41],
+            "max_safe_abs_aggregate_integer": [str(10**620)] * 3,
+            "proxy_ciphertext_expansion": [16.0] * 3,
+            "paillier_ciphertext_expansion": [64.0] * 3,
+            "proxy_max_abs_error_vs_plain": [2.5e-7, 2.6e-7, 2.4e-7],
+            "paillier_max_abs_error_vs_plain": [2.5e-7, 2.6e-7, 2.4e-7],
         }
     ).to_csv(tables / "paillier_update_aggregation.csv", index=False)
     pd.DataFrame(
@@ -229,3 +262,36 @@ def test_confirmatory_tier_summary_validates_seed_runs(tmp_path: Path) -> None:
     assert set(summary["evidence_status"]) == {"verified-confirmatory"}
     assert set(summary["seeds"]) == {"31;37;41"}
     assert summary.select_dtypes(include="number").map(pd.notna).all().all()
+
+
+def test_communication_round_ablation_requires_complete_three_seed_trace(tmp_path: Path) -> None:
+    run = tmp_path / "new_runs" / "vcsl_public_asset_disjoint"
+    run.mkdir(parents=True)
+    rows = []
+    for seed in (31, 37, 41):
+        for method, privacy_mode in (
+            ("fedavg", "plain"),
+            ("fedprox", "plain"),
+            ("fedavg", "secureagg_sim"),
+            ("fedavg", "quantized_transport_proxy"),
+        ):
+            for round_id in range(1, 21):
+                rows.append(
+                    {
+                        "round": round_id,
+                        "method": method,
+                        "privacy_mode": privacy_mode,
+                        "mean_client_loss": 1.0 / (round_id + seed),
+                        "seed": seed,
+                    }
+                )
+    pd.DataFrame(rows).to_csv(run / "metrics_federated.csv", index=False, lineterminator="\n")
+    result = build_communication_round_ablation(tmp_path)
+    assert len(result) == 80
+    assert set(result["seed_count"]) == {3}
+    assert set(result["seeds"]) == {"31;37;41"}
+    figures = tmp_path / "figures"
+    source = tmp_path / "communication_round_ablation.csv"
+    result.to_csv(source, index=False, lineterminator="\n")
+    _plot_communication_round_ablation(source, figures)
+    assert (figures / "communication_round_ablation.pdf").is_file()

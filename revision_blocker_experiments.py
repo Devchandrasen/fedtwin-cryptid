@@ -211,7 +211,9 @@ def load_public_pair_dataset(
     )
     train_pairs = train_pairs.copy()
     test_pairs = test_pairs.copy()
-    train_pairs["query_category"] = train_pairs["query_id"].astype(str).map(lambda x: category_by_uuid.get(x, "unknown"))
+    train_pairs["query_category"] = (
+        train_pairs["query_id"].astype(str).map(lambda x: category_by_uuid.get(x, "unknown"))
+    )
     test_pairs["query_category"] = test_pairs["query_id"].astype(str).map(lambda x: category_by_uuid.get(x, "unknown"))
     return {
         "x_train": x_train,
@@ -230,7 +232,9 @@ def load_public_pair_dataset(
 
 
 def prepare_features(ds: dict, *, feature_map: str = "poly2") -> dict:
-    x_train_raw, x_test_raw, feature_names = expand_feature_map(ds["x_train"], ds["x_test"], ds["feature_names"], mode=feature_map)
+    x_train_raw, x_test_raw, feature_names = expand_feature_map(
+        ds["x_train"], ds["x_test"], ds["feature_names"], mode=feature_map
+    )
     x_train_std, x_test_std, mean, std = standardize_train_test(x_train_raw, x_test_raw)
     out = dict(ds)
     out.update(
@@ -258,11 +262,19 @@ def fit_predict_methods(ds: dict, *, include_federated: bool = True) -> dict[str
 
     score_idx = select_indices(names, "score_only")
     inv_idx = select_indices(names, "invariant")
-    scores["score_only_logistic"] = train_logistic(x_train[:, score_idx], y_train, epochs=140).predict_proba(x_test[:, score_idx])
-    scores["invariant_logistic_poly2"] = train_logistic(x_train[:, inv_idx], y_train, epochs=140).predict_proba(x_test[:, inv_idx])
+    scores["score_only_logistic"] = train_logistic(x_train[:, score_idx], y_train, epochs=140).predict_proba(
+        x_test[:, score_idx]
+    )
+    scores["invariant_logistic_poly2"] = train_logistic(x_train[:, inv_idx], y_train, epochs=140).predict_proba(
+        x_test[:, inv_idx]
+    )
 
-    mean_train = minmax_score(0.5 * raw_train[:, names.index("video_score")] + 0.5 * raw_train[:, names.index("audio_score")])
-    mean_test = minmax_score(0.5 * raw_test[:, names.index("video_score")] + 0.5 * raw_test[:, names.index("audio_score")])
+    mean_train = minmax_score(
+        0.5 * raw_train[:, names.index("video_score")] + 0.5 * raw_train[:, names.index("audio_score")]
+    )
+    mean_test = minmax_score(
+        0.5 * raw_test[:, names.index("video_score")] + 0.5 * raw_test[:, names.index("audio_score")]
+    )
     scores["mean_score_fusion"] = mean_test
     platt = LogisticRegression(max_iter=500, solver="lbfgs")
     platt.fit(mean_train.reshape(-1, 1), y_train)
@@ -293,8 +305,12 @@ def fit_predict_methods(ds: dict, *, include_federated: bool = True) -> dict[str
             prox_mu=0.02,
         )[0]
         scores["fedprox_plain"] = fedprox.predict_proba(x_test[:, inv_idx])
-        scores["fedyogi"] = train_fedopt(x_train[:, inv_idx], y_train, ds["client_train"], optimizer="fedyogi").predict_proba(x_test[:, inv_idx])
-        scores["fedadam"] = train_fedopt(x_train[:, inv_idx], y_train, ds["client_train"], optimizer="fedadam").predict_proba(x_test[:, inv_idx])
+        scores["fedyogi"] = train_fedopt(
+            x_train[:, inv_idx], y_train, ds["client_train"], optimizer="fedyogi"
+        ).predict_proba(x_test[:, inv_idx])
+        scores["fedadam"] = train_fedopt(
+            x_train[:, inv_idx], y_train, ds["client_train"], optimizer="fedadam"
+        ).predict_proba(x_test[:, inv_idx])
 
     return scores
 
@@ -311,7 +327,9 @@ def _clustered_mean_interval(values: list[float], *, seed: int, resamples: int =
     return float(np.quantile(means, 0.025)), float(np.quantile(means, 0.975))
 
 
-def query_metrics(pair_df: pd.DataFrame, y: np.ndarray, score: np.ndarray, *, method: str, tier: str, seed: int, candidate_ratio: int) -> dict:
+def query_metrics(
+    pair_df: pd.DataFrame, y: np.ndarray, score: np.ndarray, *, method: str, tier: str, seed: int, candidate_ratio: int
+) -> dict:
     frame = pair_df[["query_id", "reference_id"]].copy()
     frame["label"] = y.astype(int)
     frame["score"] = score.astype(float)
@@ -332,7 +350,9 @@ def query_metrics(pair_df: pd.DataFrame, y: np.ndarray, score: np.ndarray, *, me
         for k in precisions:
             top = labels[: min(k, len(labels))]
             precisions[k].append(float(top.sum() / max(len(top), 1)))
-        ap_values.append(float(average_precision_score(labels, scores)) if len(np.unique(labels)) == 2 else float(labels[0]))
+        ap_values.append(
+            float(average_precision_score(labels, scores)) if len(np.unique(labels)) == 2 else float(labels[0])
+        )
         try:
             ndcg_values.append(float(ndcg_score(labels.reshape(1, -1), scores.reshape(1, -1), k=min(10, len(labels)))))
         except Exception:
@@ -430,7 +450,13 @@ def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.D
                     f"required at least {args.min_open_set_queries}"
                 )
             for method, score in scores.items():
-                if method not in {"score_only_logistic", "invariant_logistic_poly2", "platt_calibrated_score", "isotonic_calibrated_score", "mean_score_fusion"}:
+                if method not in {
+                    "score_only_logistic",
+                    "invariant_logistic_poly2",
+                    "platt_calibrated_score",
+                    "isotonic_calibrated_score",
+                    "mean_score_fusion",
+                }:
                     continue
                 ranking_rows.append(
                     query_metrics(
@@ -443,7 +469,9 @@ def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.D
                         candidate_ratio=ratio,
                     )
                 )
-                metric = full_metrics(test_ds["y_test"], score, method=method, tier="VCSL public-label audit", seed=seed)
+                metric = full_metrics(
+                    test_ds["y_test"], score, method=method, tier="VCSL public-label audit", seed=seed
+                )
                 metric["candidate_negative_ratio"] = ratio
                 metric["empirical_prevalence"] = float(test_ds["y_test"].mean())
                 open_rows.append(metric)
@@ -461,7 +489,10 @@ def run_query_and_open_set(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.D
                             "expected_reviews_per_true_positive": 1.0 / max(precision, 1e-15),
                         }
                     )
-    ranking = summarize(pd.DataFrame(ranking_rows), ["tier", "method", "candidate_negative_ratio", "split_note", "segment_overlap_metric"])
+    ranking = summarize(
+        pd.DataFrame(ranking_rows),
+        ["tier", "method", "candidate_negative_ratio", "split_note", "segment_overlap_metric"],
+    )
     open_set = summarize(pd.DataFrame(open_rows), ["tier", "method", "candidate_negative_ratio"])
     workload = summarize(pd.DataFrame(workload_rows), ["tier", "method", "candidate_negative_ratio", "prevalence"])
     ranking.to_csv(TABLES / "query_ranking_metrics.csv", index=False, lineterminator="\n")
@@ -560,7 +591,12 @@ def run_calibration_and_stat_tests(args: argparse.Namespace) -> tuple[pd.DataFra
             )
         )
         scores = fit_predict_methods(ds, include_federated=False)
-        for method in ["score_only_logistic", "invariant_logistic_poly2", "platt_calibrated_score", "isotonic_calibrated_score"]:
+        for method in [
+            "score_only_logistic",
+            "invariant_logistic_poly2",
+            "platt_calibrated_score",
+            "isotonic_calibrated_score",
+        ]:
             score = scores[method]
             for row in _reliability_bins(ds["y_test"], score, bins=10):
                 row.update({"tier": "VCSL public-label audit", "method": method, "seed": seed})
@@ -638,7 +674,9 @@ def train_clustered_scores(ds: dict) -> tuple[dict[str, np.ndarray], pd.DataFram
             local_score[mask] = model.predict_proba(x_test[mask])
     scores["local_calibration"] = local_score
 
-    fed = train_federated(x_train, y_train, clients_train, method="fedavg", privacy_mode="plain", rounds=30, local_epochs=5)[0]
+    fed = train_federated(
+        x_train, y_train, clients_train, method="fedavg", privacy_mode="plain", rounds=30, local_epochs=5
+    )[0]
     scores["fedavg_plain"] = fed.predict_proba(x_test)
     scores["fedprox_plain"] = train_federated(
         x_train, y_train, clients_train, method="fedprox", privacy_mode="plain", rounds=30, local_epochs=5, prox_mu=0.02
@@ -646,7 +684,9 @@ def train_clustered_scores(ds: dict) -> tuple[dict[str, np.ndarray], pd.DataFram
     scores["fedyogi"] = train_fedopt(x_train, y_train, clients_train, optimizer="fedyogi").predict_proba(x_test)
     scores["fedadam"] = train_fedopt(x_train, y_train, clients_train, optimizer="fedadam").predict_proba(x_test)
     scores["personalized_fedavg"] = np.zeros(len(ds["y_test"]), dtype=float)
-    p_models, _ = train_personalized_models(x_train, y_train, clients_train, fed.weights, epochs=35, lr=0.04, prox_mu=0.015)
+    p_models, _ = train_personalized_models(
+        x_train, y_train, clients_train, fed.weights, epochs=35, lr=0.04, prox_mu=0.015
+    )
     for client_id, model in p_models.items():
         mask = clients_test == client_id
         if np.any(mask):
@@ -855,7 +895,13 @@ def build_synthetic_av(seed: int, *, n_per_scenario: int) -> dict:
     split = int(round(0.65 * len(order)))
     train_idx = order[:split]
     test_idx = order[split:]
-    pair_df = pd.DataFrame({"query_id": np.asarray(query_ids)[test_idx], "reference_id": np.asarray(ref_ids)[test_idx], "label": y[test_idx]})
+    pair_df = pd.DataFrame(
+        {
+            "query_id": np.asarray(query_ids)[test_idx],
+            "reference_id": np.asarray(ref_ids)[test_idx],
+            "label": y[test_idx],
+        }
+    )
     return {
         "x_train": x[train_idx],
         "y_train": y[train_idx],
@@ -878,11 +924,23 @@ def run_synthetic_av(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFra
         ds = prepare_features(build_synthetic_av(seed, n_per_scenario=n_per_scenario))
         scores = fit_predict_methods(ds, include_federated=True)
         for method, score in scores.items():
-            if method in {"score_only_logistic", "invariant_logistic_poly2", "fedavg_plain", "fedprox_plain", "fedyogi", "fedadam", "mean_score_fusion"}:
-                rows.append(full_metrics(ds["y_test"], score, method=method, tier="Synthetic A/V conflict stress", seed=seed))
+            if method in {
+                "score_only_logistic",
+                "invariant_logistic_poly2",
+                "fedavg_plain",
+                "fedprox_plain",
+                "fedyogi",
+                "fedadam",
+                "mean_score_fusion",
+            }:
+                rows.append(
+                    full_metrics(ds["y_test"], score, method=method, tier="Synthetic A/V conflict stress", seed=seed)
+                )
                 for scenario in sorted(set(map(str, ds["scenario_test"]))):
                     mask = ds["scenario_test"] == scenario
-                    metric = full_metrics(ds["y_test"][mask], score[mask], method=method, tier="Synthetic A/V conflict stress", seed=seed)
+                    metric = full_metrics(
+                        ds["y_test"][mask], score[mask], method=method, tier="Synthetic A/V conflict stress", seed=seed
+                    )
                     metric["scenario"] = scenario
                     scenario_rows.append(metric)
     metrics = summarize(pd.DataFrame(rows), ["tier", "method"])
@@ -901,18 +959,45 @@ def run_synthetic_av(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFra
     return metrics, scenarios
 
 
-def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def protected_aggregation_tables(
+    args: argparse.Namespace,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     rng = np.random.default_rng(20260529)
     paillier_key_bits = int(args.paillier_key_bits)
     updates = [rng.normal(0.0, 0.015, size=24).astype(np.float64) for _ in range(8)]
     weights = [120, 96, 88, 132, 75, 141, 106, 119]
-    plain_agg, plain_report = aggregate_updates(updates, weights, mode="plain")
-    proxy_agg, proxy_report = aggregate_updates(updates, weights, mode="heagg", he_scale=1e6)
-    paillier_agg, paillier_report, paillier_details = paillier_aggregate_updates(
-        updates, weights, key_bits=paillier_key_bits, he_scale=1e6
-    )
+    plain_agg, _ = aggregate_updates(updates, weights, mode="plain")
+    proxy_agg, _ = aggregate_updates(updates, weights, mode="heagg", he_scale=1e6)
     proxy_err = float(np.max(np.abs(plain_agg - proxy_agg)))
-    paillier_err = float(np.max(np.abs(plain_agg - paillier_agg)))
+
+    paillier_rows = []
+    for seed in args.seeds:
+        seed_rng = np.random.default_rng(int(seed))
+        seed_updates = [seed_rng.normal(0.0, 0.015, size=24).astype(np.float64) for _ in range(8)]
+        seed_plain_agg, seed_plain_report = aggregate_updates(seed_updates, weights, mode="plain")
+        seed_proxy_agg, seed_proxy_report = aggregate_updates(seed_updates, weights, mode="heagg", he_scale=1e6)
+        seed_paillier_agg, seed_paillier_report, seed_paillier_details = paillier_aggregate_updates(
+            seed_updates, weights, key_bits=paillier_key_bits, he_scale=1e6
+        )
+        paillier_rows.append(
+            {
+                "seed": int(seed),
+                **seed_paillier_details,
+                "plain_bytes": seed_plain_report.plain_bytes,
+                "proxy_protected_bytes": seed_proxy_report.protected_bytes,
+                "paillier_protected_bytes": seed_paillier_report.protected_bytes,
+                "proxy_ciphertext_expansion": seed_proxy_report.ciphertext_expansion,
+                "paillier_ciphertext_expansion": seed_paillier_report.ciphertext_expansion,
+                "proxy_max_abs_error_vs_plain": float(np.max(np.abs(seed_plain_agg - seed_proxy_agg))),
+                "paillier_max_abs_error_vs_plain": float(np.max(np.abs(seed_plain_agg - seed_paillier_agg))),
+                "paillier_encryption_time_sec": seed_paillier_report.encryption_time_sec,
+                "paillier_aggregation_decryption_time_sec": seed_paillier_report.aggregation_time_sec,
+                "claim_scope": "real additive HE for compact update sums only",
+            }
+        )
+    paillier = pd.DataFrame(paillier_rows)
+    paillier_err = float(paillier["paillier_max_abs_error_vs_plain"].max())
+    paillier_expansion = float(paillier["paillier_ciphertext_expansion"].mean())
     status = pd.DataFrame(
         [
             {
@@ -1000,29 +1085,12 @@ def protected_aggregation_tables(args: argparse.Namespace) -> tuple[pd.DataFrame
                 "scheme": "Paillier additive HE",
                 "security_level_bits": f"{paillier_key_bits}-bit modulus generated for artifact run",
                 "quantization_scale": 1e6,
-                "ciphertext_expansion": paillier_report.ciphertext_expansion,
+                "ciphertext_expansion": paillier_expansion,
                 "numeric_error_tested": True,
                 "max_abs_error_vs_plain": paillier_err,
                 "full_encrypted_inference": False,
-                "notes": "Real encrypted compact-update sums with signed integer encoding; no CKKS/BFV packing and no encryption of multimedia inference.",
+                "notes": "Three-seed real encrypted compact-update sums with signed integer encoding; no CKKS/BFV packing and no encryption of multimedia inference.",
             },
-        ]
-    )
-    paillier = pd.DataFrame(
-        [
-            {
-                **paillier_details,
-                "plain_bytes": plain_report.plain_bytes,
-                "proxy_protected_bytes": proxy_report.protected_bytes,
-                "paillier_protected_bytes": paillier_report.protected_bytes,
-                "proxy_ciphertext_expansion": proxy_report.ciphertext_expansion,
-                "paillier_ciphertext_expansion": paillier_report.ciphertext_expansion,
-                "proxy_max_abs_error_vs_plain": proxy_err,
-                "paillier_max_abs_error_vs_plain": paillier_err,
-                "paillier_encryption_time_sec": paillier_report.encryption_time_sec,
-                "paillier_aggregation_decryption_time_sec": paillier_report.aggregation_time_sec,
-                "claim_scope": "real additive HE for compact update sums only",
-            }
         ]
     )
     status.to_csv(TABLES / "protected_aggregation_status.csv", index=False, lineterminator="\n")
@@ -1063,8 +1131,18 @@ def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
         }
         for attack, values in scalar_attacks.items():
             auc = roc_auc_score(y_membership, values)
-            rows.append({"attack": "membership_inference", "setting": attack, "seed": seed, "value": float(max(auc, 1 - auc)), "metric": "attack_auc"})
-        attack_features = np.vstack([scalar_attacks[k] for k in ["confidence", "entropy", "loss", "margin", "calibrated_score"]]).T
+            rows.append(
+                {
+                    "attack": "membership_inference",
+                    "setting": attack,
+                    "seed": seed,
+                    "value": float(max(auc, 1 - auc)),
+                    "metric": "attack_auc",
+                }
+            )
+        attack_features = np.vstack(
+            [scalar_attacks[k] for k in ["confidence", "entropy", "loss", "margin", "calibrated_score"]]
+        ).T
         rng = np.random.default_rng(seed + 2026)
         order = rng.permutation(len(y_membership))
         split = int(round(0.55 * len(order)))
@@ -1072,11 +1150,22 @@ def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
         te = order[split:]
         for model_name, clf in [
             ("logistic_attack_model", LogisticRegression(max_iter=500)),
-            ("random_forest_attack_model", RandomForestClassifier(n_estimators=120, min_samples_leaf=8, random_state=seed)),
+            (
+                "random_forest_attack_model",
+                RandomForestClassifier(n_estimators=120, min_samples_leaf=8, random_state=seed),
+            ),
         ]:
             clf.fit(attack_features[tr], y_membership[tr])
             score = clf.predict_proba(attack_features[te])[:, 1]
-            rows.append({"attack": "membership_inference", "setting": model_name, "seed": seed, "value": float(roc_auc_score(y_membership[te], score)), "metric": "attack_auc"})
+            rows.append(
+                {
+                    "attack": "membership_inference",
+                    "setting": model_name,
+                    "seed": seed,
+                    "value": float(roc_auc_score(y_membership[te], score)),
+                    "metric": "attack_auc",
+                }
+            )
 
         for setting, idx in [("all_fields", all_idx), ("context_removed", no_ctx_idx), ("default_invariant", inv_idx)]:
             clf = LogisticRegression(max_iter=1000, class_weight="balanced")
@@ -1156,7 +1245,9 @@ def run_privacy_attacks(args: argparse.Namespace) -> pd.DataFrame:
     return out
 
 
-def _aggregate_update_matrix(updates: np.ndarray, weights: np.ndarray, *, method: str, byzantine_count: int = 1) -> np.ndarray:
+def _aggregate_update_matrix(
+    updates: np.ndarray, weights: np.ndarray, *, method: str, byzantine_count: int = 1
+) -> np.ndarray:
     if method == "fedavg_mean":
         w = weights / max(weights.sum(), 1e-12)
         return (updates * w[:, None]).sum(axis=0)
@@ -1208,7 +1299,9 @@ def run_robustness_stress(args: argparse.Namespace) -> pd.DataFrame:
         clients = ds["client_train"]
         client_ids = sorted(map(int, np.unique(clients)))
         settings = [(0.0, "clean")]
-        settings.extend((fraction, attack) for fraction in args.attacker_fractions if fraction > 0 for attack in args.attacks)
+        settings.extend(
+            (fraction, attack) for fraction in args.attacker_fractions if fraction > 0 for attack in args.attacks
+        )
         for attack_fraction, attack in settings:
             attacked_count = int(math.ceil(len(client_ids) * attack_fraction)) if attack_fraction > 0 else 0
             attack_clients = set(client_ids[:attacked_count])
@@ -1260,7 +1353,15 @@ def run_robustness_stress(args: argparse.Namespace) -> pd.DataFrame:
     detail.to_csv(RESULTS / "robustness_stress_raw.csv", index=False, lineterminator="\n")
     out = summarize(
         detail,
-        ["tier", "attack_scenario", "attacker_fraction", "method", "communication_rounds", "local_epochs", "robustness_scope"],
+        [
+            "tier",
+            "attack_scenario",
+            "attacker_fraction",
+            "method",
+            "communication_rounds",
+            "local_epochs",
+            "robustness_scope",
+        ],
     )
     out.to_csv(TABLES / "robustness_stress.csv", index=False, lineterminator="\n")
     return out
@@ -1315,10 +1416,14 @@ def receipt_scaling(args: argparse.Namespace) -> tuple[pd.DataFrame, pd.DataFram
             key_a = Ed25519PrivateKey.generate()
             key_b = Ed25519PrivateKey.generate()
             signed_payload = receipt_payload(999999, "0" * 64)
-            signed_payload["signer_public_key"] = key_a.public_key().public_bytes(
-                encoding=serialization.Encoding.Raw,
-                format=serialization.PublicFormat.Raw,
-            ).hex()
+            signed_payload["signer_public_key"] = (
+                key_a.public_key()
+                .public_bytes(
+                    encoding=serialization.Encoding.Raw,
+                    format=serialization.PublicFormat.Raw,
+                )
+                .hex()
+            )
             signature = key_a.sign(canonical_hash(signed_payload).encode("utf-8"))
             try:
                 key_b.public_key().verify(signature, canonical_hash(signed_payload).encode("utf-8"))
@@ -1375,10 +1480,18 @@ def plot_outputs(
     robustness: pd.DataFrame,
     paillier: pd.DataFrame,
 ) -> None:
-    av_plot = av_metrics[av_metrics["method"].isin(["score_only_logistic", "invariant_logistic_poly2", "fedavg_plain", "fedyogi"])].copy()
+    av_plot = av_metrics[
+        av_metrics["method"].isin(["score_only_logistic", "invariant_logistic_poly2", "fedavg_plain", "fedyogi"])
+    ].copy()
     av_plot = av_plot.sort_values("pr_auc_mean", ascending=True)
     plt.figure(figsize=(5.5, 2.7))
-    plt.barh(av_plot["method"], av_plot["pr_auc_mean"], xerr=av_plot["pr_auc_std"].fillna(0), color=PALETTE["green"], alpha=0.86)
+    plt.barh(
+        av_plot["method"],
+        av_plot["pr_auc_mean"],
+        xerr=av_plot["pr_auc_std"].fillna(0),
+        color=PALETTE["green"],
+        alpha=0.86,
+    )
     plt.xlabel("PR-AUC")
     plt.title("Synthetic A/V stress tier: calibration performance", loc="left", fontweight="bold")
     plt.grid(axis="x", color="#D8DEE9", alpha=0.7)
@@ -1394,7 +1507,10 @@ def plot_outputs(
     plt.grid(axis="x", color="#D8DEE9", alpha=0.7)
     savefig("av_conflict_breakdown")
 
-    rank_plot = ranking[(ranking["method"].isin(["score_only_logistic", "invariant_logistic_poly2", "platt_calibrated_score"])) & (ranking["candidate_negative_ratio"].eq(100))].copy()
+    rank_plot = ranking[
+        (ranking["method"].isin(["score_only_logistic", "invariant_logistic_poly2", "platt_calibrated_score"]))
+        & (ranking["candidate_negative_ratio"].eq(100))
+    ].copy()
     metric_names = ["recall_at_1_mean", "recall_at_5_mean", "recall_at_10_mean", "recall_at_100_mean"]
     x = np.arange(len(metric_names))
     width = 0.24
@@ -1409,7 +1525,9 @@ def plot_outputs(
     plt.legend(frameon=False, ncol=1)
     savefig("query_recall_at_k")
 
-    open_plot = open_set[open_set["method"].isin(["score_only_logistic", "invariant_logistic_poly2", "platt_calibrated_score"])].copy()
+    open_plot = open_set[
+        open_set["method"].isin(["score_only_logistic", "invariant_logistic_poly2", "platt_calibrated_score"])
+    ].copy()
     plt.figure(figsize=(6.0, 3.0))
     for method, group in open_plot.groupby("method"):
         group = group.sort_values("candidate_negative_ratio")
@@ -1439,13 +1557,19 @@ def plot_outputs(
     ].copy()
     pers = pers.sort_values("pr_auc_mean", ascending=True)
     plt.figure(figsize=(6.2, 3.2))
-    plt.barh(pers["method"], pers["pr_auc_mean"], xerr=pers["pr_auc_std"].fillna(0), color=PALETTE["purple"], alpha=0.86)
+    plt.barh(
+        pers["method"], pers["pr_auc_mean"], xerr=pers["pr_auc_std"].fillna(0), color=PALETTE["purple"], alpha=0.86
+    )
     plt.xlabel("PR-AUC")
-    plt.title("Personalization and clustered calibration on VCSL public-label audit tier", loc="left", fontweight="bold")
+    plt.title(
+        "Personalization and clustered calibration on VCSL public-label audit tier", loc="left", fontweight="bold"
+    )
     plt.grid(axis="x", color="#D8DEE9", alpha=0.7)
     savefig("personalization_vs_local")
 
-    client_plot = per_client[per_client["method"].isin(["local_calibration", "fedavg_plain", "client_clustered_invariant_gate"])].copy()
+    client_plot = per_client[
+        per_client["method"].isin(["local_calibration", "fedavg_plain", "client_clustered_invariant_gate"])
+    ].copy()
     pivot = client_plot.pivot_table(index="client_id", columns="method", values="pr_auc_mean")
     plt.figure(figsize=(6.0, 3.0))
     for method in pivot.columns:
@@ -1468,7 +1592,10 @@ def plot_outputs(
     plt.grid(axis="x", color="#D8DEE9", alpha=0.7)
     savefig("privacy_attack_summary")
 
-    work = workload[(workload["method"].isin(["score_only_logistic", "invariant_logistic_poly2"])) & (workload["candidate_negative_ratio"].eq(workload["candidate_negative_ratio"].max()))].copy()
+    work = workload[
+        (workload["method"].isin(["score_only_logistic", "invariant_logistic_poly2"]))
+        & (workload["candidate_negative_ratio"].eq(workload["candidate_negative_ratio"].max()))
+    ].copy()
     plt.figure(figsize=(5.8, 3.0))
     for method, group in work.groupby("method"):
         group = group.sort_values("prevalence")
@@ -1510,7 +1637,9 @@ def plot_outputs(
     plt.legend(frameon=False)
     savefig("threshold_stability_by_client")
 
-    rob = robustness[robustness["attack_scenario"].isin(["clean", "label_flip_clients", "malicious_high_confidence_updates"])].copy()
+    rob = robustness[
+        robustness["attack_scenario"].isin(["clean", "label_flip_clients", "malicious_high_confidence_updates"])
+    ].copy()
     rob = rob[rob["method"].isin(["fedavg_mean", "coordinate_median", "trimmed_mean", "krum"])]
     pivot = rob.pivot_table(index="attack_scenario", columns="method", values="pr_auc_mean")
     plt.figure(figsize=(6.2, 3.2))
@@ -1527,10 +1656,17 @@ def plot_outputs(
     savefig("robust_aggregation_stress")
 
     if not paillier.empty:
-        row = paillier.iloc[0]
+        numeric = paillier[
+            [
+                "proxy_ciphertext_expansion",
+                "paillier_ciphertext_expansion",
+                "proxy_max_abs_error_vs_plain",
+                "paillier_max_abs_error_vs_plain",
+            ]
+        ].apply(pd.to_numeric, errors="raise")
         labels = ["Quantized transport proxy", "Paillier"]
-        expansions = [row["proxy_ciphertext_expansion"], row["paillier_ciphertext_expansion"]]
-        errors = [row["proxy_max_abs_error_vs_plain"], row["paillier_max_abs_error_vs_plain"]]
+        expansions = [numeric["proxy_ciphertext_expansion"].mean(), numeric["paillier_ciphertext_expansion"].mean()]
+        errors = [numeric["proxy_max_abs_error_vs_plain"].max(), numeric["paillier_max_abs_error_vs_plain"].max()]
         plt.figure(figsize=(4.8, 3.0))
         ax = plt.gca()
         ax.bar(labels, expansions, color=[PALETTE["cyan"], PALETTE["purple"]], alpha=0.85)
@@ -1549,7 +1685,13 @@ def artifact_checksums() -> pd.DataFrame:
             if path.suffix.lower() not in {".csv", ".json", ".pdf", ".png"}:
                 continue
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
-            rows.append({"path": str(path.relative_to(MANUSCRIPT)).replace("\\", "/"), "sha256": digest, "bytes": path.stat().st_size})
+            rows.append(
+                {
+                    "path": str(path.relative_to(MANUSCRIPT)).replace("\\", "/"),
+                    "sha256": digest,
+                    "bytes": path.stat().st_size,
+                }
+            )
     out = pd.DataFrame(rows)
     out.to_csv(MANUSCRIPT / "artifact_checksums.csv", index=False, lineterminator="\n")
     return out
@@ -1562,16 +1704,14 @@ def write_summary(payload: dict) -> None:
 def validate_finite_frame(frame: pd.DataFrame, *, name: str) -> None:
     numeric = frame.select_dtypes(include="number")
     if numeric.size and not np.isfinite(numeric.to_numpy(dtype=float)).all():
-        bad = [
-            column
-            for column in numeric.columns
-            if not np.isfinite(numeric[column].to_numpy(dtype=float)).all()
-        ]
+        bad = [column for column in numeric.columns if not np.isfinite(numeric[column].to_numpy(dtype=float)).all()]
         raise ValueError(f"{name} contains non-finite numeric columns: {', '.join(bad)}")
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Generate reviewer-blocker strengthening experiments for FedTwin-CryptID.")
+    parser = argparse.ArgumentParser(
+        description="Generate reviewer-blocker strengthening experiments for FedTwin-CryptID."
+    )
     parser.add_argument("--mode", choices=["smoke", "full"], default="smoke")
     parser.add_argument("--seeds", type=int, nargs="+", default=SEEDS)
     parser.add_argument("--max-train-pairs", type=int, default=2200)
@@ -1589,7 +1729,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--robust-rounds", type=int, default=20)
     parser.add_argument("--robust-local-epochs", type=int, default=3)
     parser.add_argument("--attacker-fractions", type=float, nargs="+", default=[0.0, 0.1, 0.2])
-    parser.add_argument("--attacks", choices=["label_flip", "sign_flip"], nargs="+", default=["label_flip", "sign_flip"])
+    parser.add_argument(
+        "--attacks", choices=["label_flip", "sign_flip"], nargs="+", default=["label_flip", "sign_flip"]
+    )
     return parser.parse_args()
 
 

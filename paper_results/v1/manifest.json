@@ -874,9 +874,9 @@
       "sha256": "d4d59e7b25b229687e7b45580bc980c8f386cf1fc908997d2828edc97b5f554b"
     },
     {
-      "bytes": 3172,
+      "bytes": 3470,
       "path": "claims.csv",
-      "sha256": "6e6fcccaf6caf6e9b265ea03dab6282a812316ebe21620a5705b4e757d548009"
+      "sha256": "92ad83478659735627325f62923158a30952d964f603bed4828a896207f4fe92"
     },
     {
       "bytes": 21722,
@@ -909,6 +909,16 @@
       "sha256": "9a31c557206c421751cc41ff75af199d2c48802ae899db2990ee863817aa6f92"
     },
     {
+      "bytes": 22629,
+      "path": "figures/communication_round_ablation.pdf",
+      "sha256": "f2c4db02f7299cf34fe4d52f1edb731e8ba6a6ed18eeb726d1014e3bcf64ba0e"
+    },
+    {
+      "bytes": 110822,
+      "path": "figures/communication_round_ablation.png",
+      "sha256": "113ccc8faa61980066aa58f4320fe525ff8e2c191b89dc04f0980bc6b2e4e44d"
+    },
+    {
       "bytes": 29757,
       "path": "figures/fig01_multitier_pr_auc.pdf",
       "sha256": "8c5345c8cfd4a3ece45a9dd11e6138e95671e5362c50ddc031d1887d713e0ec8"
@@ -929,14 +939,14 @@
       "sha256": "8c64a3d239b83cbc34c457ff00d30524cae232400a725d9f65794f9458de6cc0"
     },
     {
-      "bytes": 14055,
+      "bytes": 14127,
       "path": "figures/fig06_crypto_overhead.pdf",
-      "sha256": "ea7efc1d39702aa9b89596b5c3276521345e31073add7b1fb66b9ebeeebafa21"
+      "sha256": "4f1ca50a43c09e3588744aeb3b434b970d921b81b2f907584dc40519f2872852"
     },
     {
-      "bytes": 56982,
+      "bytes": 66922,
       "path": "figures/fig06_crypto_overhead.png",
-      "sha256": "fdd71f12cba975596d0d3d862e8420c15326be7a58de4e415afa2c0d2a2a56e1"
+      "sha256": "b67675a952c5ee5dbc7ab3ed73281a0f398d063239f9eeeae0be4541aaebaede"
     },
     {
       "bytes": 24802,
@@ -959,14 +969,14 @@
       "sha256": "10007f8f78aac5eabacd7c837da01d909140f76aed910605ca8e89257a583168"
     },
     {
-      "bytes": 22077,
+      "bytes": 22112,
       "path": "figures/paillier_update_overhead.pdf",
-      "sha256": "e51b1f62a0d2ea1a4ce0df1f11e0351b7768286583d95e89ca7894c09d0a75e7"
+      "sha256": "5c0f422822eaf29efd41e609871d939492be5e99d680c46c147a1834a1fe6368"
     },
     {
-      "bytes": 85328,
+      "bytes": 88220,
       "path": "figures/paillier_update_overhead.png",
-      "sha256": "ea4ad6569005bd46e924e00f88f5d17d6460458d0ed4c5037fb29d0adce75d0f"
+      "sha256": "a569aa2f1769d2d3de00b7b24dd3aa6b7ca061d62396600e350d6cf91d872663"
     },
     {
       "bytes": 21687,
@@ -1599,9 +1609,9 @@
       "sha256": "0661b144287ccc53207d1ad775819a3aa10e9fa4753c8c693c05cc8efdcf7f74"
     },
     {
-      "bytes": 2547,
+      "bytes": 2665,
       "path": "README.md",
-      "sha256": "622d4e7dba4199536292017cf3a551b9795ef13ba938c5365586d8fdbe5bfbff"
+      "sha256": "2b48ceaeca13f877374f3dbc7191f2b7fbf09a78db0df64a2ee60a4ccc1c0450"
     },
     {
       "bytes": 4534,
@@ -1654,6 +1664,11 @@
       "sha256": "6465a20f06e1be48f8da260d7a8f4764ad9ba2e53f25086773eeaca4ef280ca1"
     },
     {
+      "bytes": 7511,
+      "path": "tables/communication_round_ablation.csv",
+      "sha256": "bf838518829dee8f5fa15eda7f260814bebdb8a2bc707f6889046cd1668e4e67"
+    },
+    {
       "bytes": 1236,
       "path": "tables/crypto_overhead_summary.csv",
       "sha256": "188d48feef5c079695c1f5fd8988136cf8a165b8a4717f1221302e28f2897661"
@@ -1694,9 +1709,9 @@
       "sha256": "899103fa34f4c13e8e939209a12e05ab3f2312a73eeab8ceaddad7bd5c6da8fd"
     },
     {
-      "bytes": 1343,
+      "bytes": 3073,
       "path": "tables/paillier_update_aggregation.csv",
-      "sha256": "2a9d5a136acf9e742ecddf3afb4f859cfe4ca5674b420cec1c2763e792e63d33"
+      "sha256": "5b43490e8c592b09d5348af8f5c97a8bffc57d1fbd7efe37da56acb1eb2500e3"
     },
     {
       "bytes": 1070,
@@ -1744,9 +1759,9 @@
       "sha256": "2c616dfee03397e55fb2327b8e67caa1d0709439f007074c4311cb021799e87d"
     },
     {
-      "bytes": 626,
+      "bytes": 637,
       "path": "tables/quantized_transport_proxy.csv",
-      "sha256": "5ce7054d785e21eafe46fd61e514823bd1a9ab487aad9a8e07b36f6422619d49"
+      "sha256": "860d01d1eb7970cf414fa02c78e3cf1e24081cddb9605f5734a37b52c775314d"
     },
     {
       "bytes": 40127,

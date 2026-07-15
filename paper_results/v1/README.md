@@ -31,9 +31,11 @@ python -m fedtwin.cli verify-artifact --manifest paper_results/v1/manifest.json
 python -m fedtwin.cli regenerate-paper --results-dir paper_results/v1 --output-dir outputs/paper_regenerated
 ```
 
-The second command regenerates the multitier, feature-ablation, protected-update,
-and cryptographic-accounting plots from finite CSV values. Remaining figures
-are tied to source CSVs in `docs/REPRODUCIBILITY.md`.
+The second command regenerates the multitier, feature-ablation,
+communication-round, protected-update, and cryptographic-accounting plots from
+finite CSV values. The Paillier table contains separately generated 2048-bit
+measurements for seeds 31, 37, and 41. Remaining figures are tied to source
+CSVs in `docs/REPRODUCIBILITY.md`.
 
 ## Dataset boundaries
 

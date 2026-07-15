@@ -2,11 +2,12 @@
 
 ## Automated gates
 
-- [ ] Python 3.10 and 3.12 CI passes lint, tests, coverage, smoke reproduction, artifact verification, and paper regeneration.
-- [ ] Package coverage is at least 85%.
-- [ ] `paper_results/v1/manifest.json` verifies and all active claims resolve.
-- [ ] Main paper compiles to at most 10 pages; supplement compiles to at most four pages.
-- [ ] No unresolved references, private paths, non-finite figure labels, clipping, or anonymous-review mismatch remains.
+- [ ] Final committed clean-clone validation passes on Python 3.10 and 3.12: lint, tests, coverage, smoke reproduction, artifact verification, and paper regeneration.
+- [ ] The same matrix passes on public GitHub Actions after the branch is pushed.
+- [x] Package coverage is at least 85% (85.80% in the current Python 3.12 run).
+- [x] `paper_results/v1/manifest.json` verifies and all active claims resolve.
+- [x] Main paper compiles to at most 10 pages; supplement compiles to at most four pages before final metadata/DOI insertion.
+- [x] No unresolved references, private paths, non-finite figure labels, clipping, or anonymous-review mismatch remains before final metadata insertion.
 
 ## Human gates — submission remains blocked until complete
 
@@ -15,6 +16,7 @@
 - [ ] Obtain contribution and final-text approval from every author.
 - [ ] Confirm acceptance of possible mandatory TMM page charges above eight published pages.
 - [ ] Confirm prior-publication/preprint disclosure.
+- [ ] Complete the IEEE/SPS AI-use human-review attestation in `paper/AI_USE_DISCLOSURE_REQUIRED.md`.
 - [ ] Select April 2026 TMM-listed EDICS in ScholarOne: `MM-COM-SECU` (Multimedia security and watermarking) primary, `MM-MOD-DIST` (Distributed multimedia processing and Internet-of-Things) secondary, and `MM-DAT-SEAR` (Multimedia search and retrieval) tertiary.
 
 ## Publication handoff
