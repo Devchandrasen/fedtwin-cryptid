@@ -50,6 +50,43 @@
     "train_positive_rows_per_seed": 15000,
     "train_rows_per_seed": 30000
   },
+  "data_source": {
+    "files": [
+      {
+        "bytes": 642535,
+        "path": "frames_all.csv",
+        "sha256": "e9971d4bd08a31b03bc73fdf44b2f9d15e59ed7043b14af5ca410f2606e180b6"
+      },
+      {
+        "bytes": 3605602,
+        "path": "pair_file_test.csv",
+        "sha256": "b52c1b5fb394d117d7f02206493331e78ba26fdb7ee344fc4302aba0cf231880"
+      },
+      {
+        "bytes": 6404200,
+        "path": "pair_file_train.csv",
+        "sha256": "e7fb88859e29dc872c10fc2b9e1a1a5c5a6516a6346ec685aec42ecef14a5c9c"
+      },
+      {
+        "bytes": 2758690,
+        "path": "pair_file_val.csv",
+        "sha256": "f7065467eb71340576c1f83ce6ada8810b02311d8d932c269069c414fa746f91"
+      },
+      {
+        "bytes": 708944,
+        "path": "videos_url_uuid.csv",
+        "sha256": "f424111d2b5d20979f92472af1f5544a8fcfb168682236169e205d284c11a869"
+      },
+      {
+        "bytes": 188187,
+        "path": "video_categories.json",
+        "sha256": "112043737dfde578d3950bd9c29ab272d0e473cfc73f7eb1c70433f12c10bb42"
+      }
+    ],
+    "license_note": "Metadata is not redistributed. Users must obtain VCSL resources from the upstream project and comply with its dataset and source-video terms.",
+    "root": "${DATA_ROOT}/public_data/vcsl_metadata",
+    "tier": "vcsl_public"
+  },
   "feature_schema": [
     "video_score",
     "audio_score",
@@ -205,7 +242,7 @@
   ],
   "git": {
     "branch": "agent/tmm-ready-revision",
-    "commit": "9914c77abb26c9d1a6945e27eb3a99500c31f3db",
+    "commit": "eff2acebd7d8aa59b9c155d91f0998a125ed3d6d",
     "dirty": false
   },
   "hardware": {
@@ -262,6 +299,11 @@
       "sha256": "eaf76fbc9b66f1a23feb6d541ae46fece66c71256645219f01e776f9ffe539b1"
     },
     {
+      "bytes": 4423,
+      "path": "feature_policy_summary.json",
+      "sha256": "82e083defeb6aacd4564d5f67522fb0d69ee1b7cb7101391d95cee4cc66f8e2d"
+    },
+    {
       "bytes": 6142,
       "path": "fixed_evidence_baselines.csv",
       "sha256": "878eeb86af36143a3fdd81977408d27e314b0698ce61c3ef9f275d615917e3c0"
@@ -287,11 +329,6 @@
       "sha256": "d04e4216a2e28583e2b37022305456cd5f4722021f22ee829de57ebd4275fdb8"
     },
     {
-      "bytes": 667,
-      "path": "README.md",
-      "sha256": "eb1e49ca2eeb04106bb2dad34972f4d387786d36bea2d7c30da0a505dca8d07d"
-    },
-    {
       "bytes": 799,
       "path": "run_config.json",
       "sha256": "4abc9dfb36261faab04443ca3d1f3c15dbbc80426eb9824de38582415a504d23"
@@ -315,9 +352,8 @@
     "python_implementation": "CPython"
   },
   "schema_version": "1.0",
-  "scope_note": "Leakage-classifier outputs excluded after iteration-limit warnings; promoted outputs are finite fixed-evidence heads and feature-policy comparisons.",
-  "timing_note": "Approximate wall time derived from process start and promoted-output timestamps; the legacy prevalence step failed after these outputs were written.",
+  "scope_note": "Finite fixed-evidence heads and feature-policy comparisons; archived prevalence inputs and leakage-classifier diagnostics are excluded by --scope feature-policy.",
   "timing_sec": {
-    "wall_clock_to_promoted_outputs": 399.0
+    "wall_clock_to_promoted_outputs": 328.042160099998
   }
 }

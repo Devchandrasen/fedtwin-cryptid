@@ -1284,6 +1284,11 @@
       "sha256": "eaf76fbc9b66f1a23feb6d541ae46fece66c71256645219f01e776f9ffe539b1"
     },
     {
+      "bytes": 4423,
+      "path": "new_runs/vcsl_feature_policy_confirmatory/feature_policy_summary.json",
+      "sha256": "82e083defeb6aacd4564d5f67522fb0d69ee1b7cb7101391d95cee4cc66f8e2d"
+    },
+    {
       "bytes": 6142,
       "path": "new_runs/vcsl_feature_policy_confirmatory/fixed_evidence_baselines.csv",
       "sha256": "878eeb86af36143a3fdd81977408d27e314b0698ce61c3ef9f275d615917e3c0"
@@ -1309,9 +1314,9 @@
       "sha256": "d04e4216a2e28583e2b37022305456cd5f4722021f22ee829de57ebd4275fdb8"
     },
     {
-      "bytes": 667,
+      "bytes": 842,
       "path": "new_runs/vcsl_feature_policy_confirmatory/README.md",
-      "sha256": "eb1e49ca2eeb04106bb2dad34972f4d387786d36bea2d7c30da0a505dca8d07d"
+      "sha256": "24203609ce088f7f159cce32eef705bdf1b2cf558b67a3735c269caba823a95f"
     },
     {
       "bytes": 799,
@@ -1319,9 +1324,9 @@
       "sha256": "4abc9dfb36261faab04443ca3d1f3c15dbbc80426eb9824de38582415a504d23"
     },
     {
-      "bytes": 10721,
+      "bytes": 11878,
       "path": "new_runs/vcsl_feature_policy_confirmatory/run_manifest.json",
-      "sha256": "191879f3410fbae559300ec18dc0591ffd7f5505f10a11e4dd6d24b9dff0dd71"
+      "sha256": "dfb37ccb413cf1e4e882229f9c1d9d8b3f2ed6b6003e08a66d73cd7d4481e19f"
     },
     {
       "bytes": 84,
