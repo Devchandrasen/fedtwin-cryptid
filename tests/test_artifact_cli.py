@@ -12,6 +12,7 @@ from fedtwin.artifact import (
     _plot_paillier_overhead,
     _plot_privacy_utility,
     build_artifact_manifest,
+    build_confirmatory_tier_summary,
     regenerate_paper_assets,
     verify_artifact,
 )
@@ -98,33 +99,26 @@ def test_artifact_rejects_unresolved_replacement_claim(tmp_path: Path) -> None:
         verify_artifact(manifest)
 
 
-def test_multitier_plot_overrides_vcsl_archive_row(tmp_path: Path) -> None:
+def test_multitier_plot_requires_confirmatory_finite_rows(tmp_path: Path) -> None:
     tables = tmp_path / "tables"
     figures = tmp_path / "figures"
     tables.mkdir()
     pd.DataFrame(
         {
-            "tier": ["Synthetic twin", "VCSL public labels"],
-            "best_single_pr_auc": [0.80, 0.10],
-            "centralized_multimodal_pr_auc": [0.90, 0.10],
-            "fedavg_plain_pr_auc": [0.91, 0.10],
-            "fedavg_secureagg_sim_pr_auc": [0.91, 0.10],
-            "fedavg_quantized_transport_proxy_pr_auc": [0.91, 0.10],
+            "tier": ["VCSL public labels", "FMA audio 5 s"],
+            "evidence_status": ["verified-confirmatory", "verified-confirmatory"],
+            "best_single_pr_auc": [0.80, 0.90],
+            "best_single_pr_auc_std": [0.01, 0.01],
+            "centralized_pr_auc": [0.90, 0.95],
+            "centralized_pr_auc_std": [0.01, 0.01],
+            "fedavg_plain_pr_auc": [0.91, 0.96],
+            "fedavg_plain_pr_auc_std": [0.01, 0.01],
+            "fedavg_secureagg_sim_pr_auc": [0.91, 0.96],
+            "fedavg_secureagg_sim_pr_auc_std": [0.01, 0.01],
+            "fedavg_quantized_transport_proxy_pr_auc": [0.91, 0.96],
+            "fedavg_quantized_transport_proxy_pr_auc_std": [0.01, 0.01],
         }
     ).to_csv(tables / "tier_result_summary.csv", index=False)
-    pd.DataFrame(
-        {
-            "method": [
-                "video_similarity",
-                "centralized_multimodal",
-                "fedavg_plain",
-                "fedavg_secureagg_sim",
-                "fedavg_quantized_transport_proxy",
-            ],
-            "pr_auc_mean": [0.75, 0.88, 0.89, 0.89, 0.89],
-            "pr_auc_sd": [0.01, 0.01, 0.02, 0.02, 0.02],
-        }
-    ).to_csv(tables / "vcsl_asset_disjoint_detection_summary.csv", index=False)
 
     _plot_multitier_results(tables, figures)
     assert (figures / "fig01_multitier_pr_auc.pdf").is_file()
@@ -146,6 +140,7 @@ def test_multitier_plot_overrides_vcsl_archive_row(tmp_path: Path) -> None:
     ).to_csv(tables / "privacy_utility_points.csv", index=False)
     pd.DataFrame(
         {
+            "max_safe_abs_aggregate_integer": [str(10**620)],
             "proxy_ciphertext_expansion": [16.0],
             "paillier_ciphertext_expansion": [64.0],
             "proxy_max_abs_error_vs_plain": [2.6e-7],
@@ -165,3 +160,72 @@ def test_multitier_plot_overrides_vcsl_archive_row(tmp_path: Path) -> None:
     assert (figures / "fig03_privacy_utility_tradeoff.pdf").is_file()
     assert (figures / "fig06_crypto_overhead.pdf").is_file()
     assert (figures / "paillier_update_overhead.pdf").is_file()
+
+
+def test_confirmatory_tier_summary_validates_seed_runs(tmp_path: Path) -> None:
+    specs = [
+        ("vcsl_public_asset_disjoint", "video_similarity", "centralized_multimodal", "local_multimodal"),
+        ("vcsl_isc_confirmatory", "video_similarity", "centralized_multimodal", "local_multimodal"),
+        (
+            "fma_audio_20s_confirmatory",
+            "audio_similarity",
+            "centralized_audio_evidence",
+            "local_audio_evidence",
+        ),
+        (
+            "fma_audio_5s_confirmatory",
+            "audio_similarity",
+            "centralized_audio_evidence",
+            "local_audio_evidence",
+        ),
+    ]
+    common = [
+        "fedavg_plain",
+        "fedprox_plain",
+        "fedavg_secureagg_sim",
+        "fedavg_quantized_transport_proxy",
+        "fedavgft_plain",
+    ]
+    for directory, single, centralized, local in specs:
+        run = tmp_path / "new_runs" / directory
+        run.mkdir(parents=True)
+        methods = [single, centralized, local, *common]
+        rows = [
+            {"method": method, "seed": seed, "pr_auc": 0.80 + 0.001 * index + 0.0001 * seed}
+            for index, method in enumerate(methods)
+            for seed in (31, 37, 41)
+        ]
+        pd.DataFrame(rows).to_csv(run / "metrics_detection.csv", index=False, lineterminator="\n")
+        (run / "dataset_manifest.json").write_text(
+            json.dumps(
+                {
+                    "source": "test source",
+                    "clients": 4,
+                    "train_rows": 30,
+                    "test_rows": 15,
+                    "train_assets": 20,
+                    "test_assets": 10,
+                }
+            ),
+            encoding="utf-8",
+        )
+        config = {"seeds": [31, 37, 41], "tier": directory}
+        from fedtwin.manifests import canonical_json_hash, file_records
+
+        manifest = {
+            "config": config,
+            "config_sha256": canonical_json_hash(config),
+            "git": {"commit": "a" * 40, "dirty": False},
+            "counts": {"clients": 4, "train_rows_per_seed": 30, "test_rows_per_seed": 15},
+            "outputs": file_records(
+                [run / "metrics_detection.csv", run / "dataset_manifest.json"],
+                relative_to=run,
+            ),
+        }
+        (run / "run_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    summary = build_confirmatory_tier_summary(tmp_path)
+    assert len(summary) == 4
+    assert set(summary["evidence_status"]) == {"verified-confirmatory"}
+    assert set(summary["seeds"]) == {"31;37;41"}
+    assert summary.select_dtypes(include="number").map(pd.notna).all().all()

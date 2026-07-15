@@ -14,7 +14,7 @@ import pandas as pd
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-from .manifests import file_records, resolve_within_root, verify_file_records, write_json
+from .manifests import canonical_json_hash, file_records, resolve_within_root, verify_file_records, write_json
 
 ARTIFACT_MANIFEST = "manifest.json"
 
@@ -140,71 +140,201 @@ def _plot_feature_ablation(source: Path, destination: Path) -> None:
     plt.close(fig)
 
 
+def build_confirmatory_tier_summary(results_root: str | Path) -> pd.DataFrame:
+    """Derive the four-tier paper table directly from checksum-verified seed-level runs."""
+
+    root = Path(results_root).resolve()
+    specs = [
+        (
+            "VCSL public labels",
+            "vcsl_public_asset_disjoint",
+            "video_similarity",
+            "centralized_multimodal",
+            "local_multimodal",
+        ),
+        (
+            "VCSL ISC visual",
+            "vcsl_isc_confirmatory",
+            "video_similarity",
+            "centralized_multimodal",
+            "local_multimodal",
+        ),
+        (
+            "FMA audio 20 s",
+            "fma_audio_20s_confirmatory",
+            "audio_similarity",
+            "centralized_audio_evidence",
+            "local_audio_evidence",
+        ),
+        (
+            "FMA audio 5 s",
+            "fma_audio_5s_confirmatory",
+            "audio_similarity",
+            "centralized_audio_evidence",
+            "local_audio_evidence",
+        ),
+    ]
+    rows: list[dict[str, Any]] = []
+    for tier, directory, single_method, centralized_method, local_method in specs:
+        run = root / "new_runs" / directory
+        metrics_path = run / "metrics_detection.csv"
+        manifest_path = run / "run_manifest.json"
+        dataset_path = run / "dataset_manifest.json"
+        if not metrics_path.is_file() or not manifest_path.is_file() or not dataset_path.is_file():
+            raise FileNotFoundError(f"confirmatory tier is incomplete: {run}")
+        metrics = pd.read_csv(metrics_path)
+        required_columns = {"method", "seed", "pr_auc"}
+        if missing := sorted(required_columns - set(metrics.columns)):
+            raise ValueError(f"{metrics_path} is missing columns: {missing}")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        dataset = json.loads(dataset_path.read_text(encoding="utf-8"))
+        output_errors = verify_file_records(run, manifest.get("outputs", []))
+        if output_errors:
+            raise ValueError(f"{run} has invalid output records: {'; '.join(output_errors)}")
+        if manifest.get("config_sha256") != canonical_json_hash(manifest.get("config", {})):
+            raise ValueError(f"{run} has an invalid configuration hash")
+        git = manifest.get("git", {})
+        if not git.get("commit") or git.get("dirty") is not False:
+            raise ValueError(f"{run} is not a clean, commit-identified confirmatory run")
+        grouped = metrics.groupby("method")["pr_auc"].agg(["mean", "std", "count"])
+        required_methods = {
+            single_method,
+            centralized_method,
+            local_method,
+            "fedavg_plain",
+            "fedprox_plain",
+            "fedavg_secureagg_sim",
+            "fedavg_quantized_transport_proxy",
+        }
+        if missing := sorted(required_methods - set(grouped.index)):
+            raise ValueError(f"{metrics_path} is missing confirmatory methods: {missing}")
+        for method in required_methods:
+            seeds = sorted(metrics.loc[metrics["method"].eq(method), "seed"].astype(int).unique())
+            if seeds != [31, 37, 41] or int(grouped.at[method, "count"]) != 3:
+                raise ValueError(f"{tier} method {method} does not contain exactly seeds 31, 37, and 41")
+
+        adapted_candidates = [local_method]
+        if "fedavgft_plain" in grouped.index:
+            adapted_candidates.append("fedavgft_plain")
+            seeds = sorted(metrics.loc[metrics["method"].eq("fedavgft_plain"), "seed"].astype(int).unique())
+            if seeds != [31, 37, 41] or int(grouped.at["fedavgft_plain", "count"]) != 3:
+                raise ValueError(f"{tier} method fedavgft_plain does not contain exactly seeds 31, 37, and 41")
+        client_adapted = max(adapted_candidates, key=lambda name: float(grouped.at[name, "mean"]))
+        privacy_method = max(
+            ("fedavg_secureagg_sim", "fedavg_quantized_transport_proxy"),
+            key=lambda name: float(grouped.at[name, "mean"]),
+        )
+        eligible = sorted(required_methods | set(adapted_candidates))
+        best_method = max(eligible, key=lambda name: float(grouped.at[name, "mean"]))
+        counts = manifest.get("counts", {})
+        row = {
+            "tier": tier,
+            "run_dir": f"new_runs/{directory}",
+            "run_commit": git["commit"],
+            "config_sha256": manifest.get("config_sha256", ""),
+            "seeds": "31;37;41",
+            "train_rows": int(counts.get("train_rows_per_seed", dataset.get("train_rows", 0))),
+            "test_rows": int(counts.get("test_rows_per_seed", dataset.get("test_rows", 0))),
+            "train_assets": int(counts.get("train_assets", dataset.get("train_assets", 0))),
+            "test_assets": int(counts.get("test_assets", dataset.get("test_assets", 0))),
+            "clients": int(counts.get("clients", dataset.get("clients", 0))),
+            "source": str(dataset.get("source", "")),
+            "evidence_status": "verified-confirmatory",
+            "best_single_method": single_method,
+            "best_single_pr_auc": float(grouped.at[single_method, "mean"]),
+            "best_single_pr_auc_std": float(grouped.at[single_method, "std"]),
+            "centralized_method": centralized_method,
+            "centralized_pr_auc": float(grouped.at[centralized_method, "mean"]),
+            "centralized_pr_auc_std": float(grouped.at[centralized_method, "std"]),
+            "fedavg_plain_pr_auc": float(grouped.at["fedavg_plain", "mean"]),
+            "fedavg_plain_pr_auc_std": float(grouped.at["fedavg_plain", "std"]),
+            "fedavg_secureagg_sim_pr_auc": float(grouped.at["fedavg_secureagg_sim", "mean"]),
+            "fedavg_secureagg_sim_pr_auc_std": float(grouped.at["fedavg_secureagg_sim", "std"]),
+            "fedavg_quantized_transport_proxy_pr_auc": float(
+                grouped.at["fedavg_quantized_transport_proxy", "mean"]
+            ),
+            "fedavg_quantized_transport_proxy_pr_auc_std": float(
+                grouped.at["fedavg_quantized_transport_proxy", "std"]
+            ),
+            "fedprox_pr_auc": float(grouped.at["fedprox_plain", "mean"]),
+            "fedprox_pr_auc_std": float(grouped.at["fedprox_plain", "std"]),
+            "client_adapted_method": client_adapted,
+            "client_adapted_pr_auc": float(grouped.at[client_adapted, "mean"]),
+            "client_adapted_pr_auc_std": float(grouped.at[client_adapted, "std"]),
+            "best_privacy_preserving_method": privacy_method,
+            "best_privacy_preserving_pr_auc": float(grouped.at[privacy_method, "mean"]),
+            "best_privacy_preserving_pr_auc_std": float(grouped.at[privacy_method, "std"]),
+            "best_overall_method": best_method,
+            "best_overall_pr_auc": float(grouped.at[best_method, "mean"]),
+            "best_overall_std": float(grouped.at[best_method, "std"]),
+        }
+        rows.append(row)
+    out = pd.DataFrame(rows)
+    numeric = out.select_dtypes(include="number").to_numpy(dtype=float)
+    if not np.isfinite(numeric).all():
+        raise ValueError("confirmatory tier summary contains non-finite values")
+    return out
+
+
 def _plot_multitier_results(tables: Path, destination: Path) -> None:
-    """Regenerate the main comparison while overriding the stale VCSL archive row."""
+    """Regenerate the four-tier comparison from confirmatory evidence only."""
 
-    archived = pd.read_csv(tables / "tier_result_summary.csv")
-    vcsl = pd.read_csv(tables / "vcsl_asset_disjoint_detection_summary.csv").set_index("method")
-    required_methods = {
-        "video_similarity",
-        "centralized_multimodal",
-        "fedavg_plain",
-        "fedavg_secureagg_sim",
-        "fedavg_quantized_transport_proxy",
-    }
-    if missing := sorted(required_methods - set(vcsl.index)):
-        raise ValueError(f"VCSL asset-disjoint summary is missing methods: {missing}")
-
-    row = archived["tier"].astype(str).eq("VCSL public labels")
-    if int(row.sum()) != 1:
-        raise ValueError("tier result summary must contain exactly one VCSL public-label row")
-    overrides = {
-        "train_rows": 5000,
-        "test_rows": 1800,
-        "best_single_pr_auc": vcsl.at["video_similarity", "pr_auc_mean"],
-        "centralized_multimodal_pr_auc": vcsl.at["centralized_multimodal", "pr_auc_mean"],
-        "fedavg_plain_pr_auc": vcsl.at["fedavg_plain", "pr_auc_mean"],
-        "fedavg_secureagg_sim_pr_auc": vcsl.at["fedavg_secureagg_sim", "pr_auc_mean"],
-        "fedavg_quantized_transport_proxy_pr_auc": vcsl.at[
-            "fedavg_quantized_transport_proxy", "pr_auc_mean"
-        ],
-        "best_overall_pr_auc": vcsl.at["fedavg_plain", "pr_auc_mean"],
-        "best_overall_std": vcsl.at["fedavg_plain", "pr_auc_sd"],
-    }
-    for column, value in overrides.items():
-        archived.loc[row, column] = value
+    summary = pd.read_csv(tables / "tier_result_summary.csv")
+    if set(summary["evidence_status"].astype(str)) != {"verified-confirmatory"}:
+        raise ValueError("multitier plot refuses non-confirmatory tier rows")
 
     columns = {
         "Best single branch": "best_single_pr_auc",
-        "Centralized": "centralized_multimodal_pr_auc",
+        "Centralized": "centralized_pr_auc",
         "FedAvg": "fedavg_plain_pr_auc",
         "SecureAgg sim.": "fedavg_secureagg_sim_pr_auc",
         "Quant. proxy": "fedavg_quantized_transport_proxy_pr_auc",
     }
-    values = archived[list(columns.values())].apply(pd.to_numeric, errors="raise").to_numpy(dtype=float)
+    std_columns = {
+        "Best single branch": "best_single_pr_auc_std",
+        "Centralized": "centralized_pr_auc_std",
+        "FedAvg": "fedavg_plain_pr_auc_std",
+        "SecureAgg sim.": "fedavg_secureagg_sim_pr_auc_std",
+        "Quant. proxy": "fedavg_quantized_transport_proxy_pr_auc_std",
+    }
+    values = summary[list(columns.values())].apply(pd.to_numeric, errors="raise").to_numpy(dtype=float)
+    errors = summary[list(std_columns.values())].apply(pd.to_numeric, errors="raise").to_numpy(dtype=float)
     if not np.isfinite(values).all():
         raise ValueError("multitier source contains non-finite values")
+    if not np.isfinite(errors).all():
+        raise ValueError("multitier uncertainty source contains non-finite values")
 
-    labels = [tier if tier == "VCSL public labels" else f"{tier}*" for tier in archived["tier"].astype(str)]
+    labels = list(summary["tier"].astype(str))
     x = np.arange(len(labels), dtype=float)
-    width = 0.16
+    width = 0.13
     colors = ["#9CA3AF", "#4C78A8", "#54A24B", "#B279A2", "#F58518"]
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 8})
     fig, ax = plt.subplots(figsize=(8.6, 3.4))
     for index, ((label, column), color) in enumerate(zip(columns.items(), colors, strict=True)):
         offset = (index - (len(columns) - 1) / 2) * width
-        ax.bar(x + offset, archived[column], width=width, label=label, color=color, alpha=0.92)
+        ax.errorbar(
+            x + offset,
+            summary[column],
+            yerr=summary[std_columns[label]],
+            marker="o",
+            linestyle="none",
+            markersize=4,
+            capsize=2,
+            linewidth=0.8,
+            label=label,
+            color=color,
+        )
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.set_ylabel("PR-AUC (three-seed mean)")
-    ax.set_ylim(max(0.0, float(values.min()) - 0.04), 1.01)
+    ax.set_ylim(max(0.0, float(values.min()) - 0.06), 1.01)
     ax.grid(axis="y", linewidth=0.6, alpha=0.35)
     ax.legend(ncol=3, frameon=False, loc="lower right")
     ax.set_title("Fixed-evidence calibration across evaluation tiers", loc="left", fontweight="bold")
     ax.text(
         0.0,
         -0.24,
-        "* Archived exploratory tier; VCSL public labels is the checksum-verified asset-disjoint rerun.",
+        "All rows are three-seed confirmatory reruns; tiers are separate and not directly rank-comparable.",
         transform=ax.transAxes,
         fontsize=7,
     )
@@ -256,7 +386,13 @@ def _plot_privacy_utility(source: Path, destination: Path) -> None:
 
 
 def _protected_expansions(tables: Path) -> tuple[list[str], np.ndarray, list[str]]:
-    paillier = pd.read_csv(tables / "paillier_update_aggregation.csv").iloc[0]
+    paillier_columns = [
+        "proxy_ciphertext_expansion",
+        "paillier_ciphertext_expansion",
+        "proxy_max_abs_error_vs_plain",
+        "paillier_max_abs_error_vs_plain",
+    ]
+    paillier = pd.read_csv(tables / "paillier_update_aggregation.csv", usecols=paillier_columns).iloc[0]
     secureagg = pd.read_csv(tables / "secureagg_dropout_or_proxy.csv")
     secure_expansion = float(pd.to_numeric(secureagg["byte_expansion"], errors="raise").iloc[0])
     values = np.asarray(
@@ -320,12 +456,23 @@ def regenerate_paper_assets(results_dir: str | Path, output_dir: str | Path) -> 
     figures_destination.mkdir(parents=True, exist_ok=True)
     for path in sorted(tables_source.glob("*.csv")):
         shutil.copy2(path, tables_destination / path.name)
+    confirmatory_inputs = [
+        source / "new_runs" / directory / filename
+        for directory in (
+            "vcsl_public_asset_disjoint",
+            "vcsl_isc_confirmatory",
+            "fma_audio_20s_confirmatory",
+            "fma_audio_5s_confirmatory",
+        )
+        for filename in ("metrics_detection.csv", "run_manifest.json", "dataset_manifest.json")
+    ]
+    if all(path.is_file() for path in confirmatory_inputs):
+        confirmatory = build_confirmatory_tier_summary(source)
+        confirmatory.to_csv(tables_destination / "tier_result_summary.csv", index=False, lineterminator="\n")
     generated_figures = ["fig10_feature_ablation.pdf", "fig10_feature_ablation.png"]
     _plot_feature_ablation(tables_source / "feature_ablation.csv", figures_destination)
-    if (tables_source / "tier_result_summary.csv").is_file() and (
-        tables_source / "vcsl_asset_disjoint_detection_summary.csv"
-    ).is_file():
-        _plot_multitier_results(tables_source, figures_destination)
+    if (tables_destination / "tier_result_summary.csv").is_file():
+        _plot_multitier_results(tables_destination, figures_destination)
         generated_figures.extend(["fig01_multitier_pr_auc.pdf", "fig01_multitier_pr_auc.png"])
     if (tables_source / "privacy_utility_points.csv").is_file():
         _plot_privacy_utility(tables_source / "privacy_utility_points.csv", figures_destination)
