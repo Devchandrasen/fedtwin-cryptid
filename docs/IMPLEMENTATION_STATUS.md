@@ -13,7 +13,7 @@ Date: 2026-07-15
 - Pinned FMA-small-compatible audio mirror with official FMA metadata, complete selected-file hashes, and 1,200 deterministically selected, successfully decoded tracks from 1,584 tracks extracted from the first three pinned shards. The mirror maintainer reports omitting six unreadable and 78 license-unclear files from the full redistribution pack.
 - Versioned `paper_results/v1` artifact with configurations, permitted results, source provenance, claims mapping, figures, and a complete hash manifest.
 - Main manuscript and supplement revised around fixed-evidence calibration, protected compact-update accounting, and signed media-free audit receipts.
-- Test suite passes locally on Python 3.12: 38 tests and 86.10% package coverage. Python 3.10/3.12 matrix status remains a CI release gate.
+- Locked clean-clone installs pass on Python 3.10.20 and 3.12.10: 39 tests, 86.16%/86.10% package coverage, smoke execution, 359-file artifact verification, and paper-asset regeneration. Remote GitHub Actions remains a release gate until the branch is pushed.
 
 ## Deliberate interpretation limits
 
