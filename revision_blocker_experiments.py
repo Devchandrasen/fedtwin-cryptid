@@ -1528,14 +1528,14 @@ def plot_outputs(
 
     if not paillier.empty:
         row = paillier.iloc[0]
-        labels = ["HE proxy", "Paillier"]
+        labels = ["Quantized transport proxy", "Paillier"]
         expansions = [row["proxy_ciphertext_expansion"], row["paillier_ciphertext_expansion"]]
         errors = [row["proxy_max_abs_error_vs_plain"], row["paillier_max_abs_error_vs_plain"]]
         plt.figure(figsize=(4.8, 3.0))
         ax = plt.gca()
         ax.bar(labels, expansions, color=[PALETTE["cyan"], PALETTE["purple"]], alpha=0.85)
         ax.set_ylabel("Ciphertext/update byte expansion")
-        ax.set_title("Compact-update HE accounting", loc="left", fontweight="bold")
+        ax.set_title("Compact-update protection accounting", loc="left", fontweight="bold")
         for i, err in enumerate(errors):
             ax.text(i, expansions[i], f"err={err:.1e}", ha="center", va="bottom", fontsize=7)
         ax.grid(axis="y", color="#D8DEE9", alpha=0.7)

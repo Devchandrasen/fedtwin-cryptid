@@ -4,6 +4,7 @@ import argparse
 import json
 import math
 import sys
+import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -26,8 +27,10 @@ VCSL_METADATA = ROOT / "public_data" / "vcsl_metadata"
 sys.path.insert(0, str(ROOT))
 
 from fedtwin.data import generate_vcsl_public_benchmark  # noqa: E402
+from fedtwin.data_adapters import VCSLMetadataAdapter  # noqa: E402
 from fedtwin.features import standardize_train_test  # noqa: E402
 from fedtwin.ledger import make_receipts  # noqa: E402
+from fedtwin.manifests import build_run_manifest, write_json  # noqa: E402
 from fedtwin.metrics import detection_metrics, present_class_balanced_accuracy  # noqa: E402
 from fedtwin.models import LogisticHead, train_logistic  # noqa: E402
 from fedtwin.statistics import holm_adjust  # noqa: E402
@@ -312,7 +315,7 @@ def build_hyperparameter_table() -> pd.DataFrame:
         ("FedAdam beta1/beta2/tau", "value", "0.9 / 0.99 / 1e-6 in strengthening run"),
         ("FedYogi beta1/beta2/tau", "value", "0.9 / 0.99 / 1e-6 in strengthening run"),
         ("FedOpt server learning rate", "value", "0.65 in strengthening run"),
-        ("HE proxy scale", "value", "1e6 integer quantization scale; 16x packed-update expansion reported"),
+        ("Quantized transport proxy scale", "value", "1e6 integer quantization scale; 16x packed-update expansion reported"),
         ("decision threshold", "value", "0.5 for default precision/recall; FPR@95R by threshold sweep"),
     ]
     df = pd.DataFrame(rows, columns=["item", "field", "value"])
@@ -320,13 +323,17 @@ def build_hyperparameter_table() -> pd.DataFrame:
     return df
 
 
-def run_vcsl_strengthening() -> dict[str, pd.DataFrame]:
+def run_vcsl_strengthening(
+    *, include_diagnostics: bool = True
+) -> tuple[dict[str, pd.DataFrame], list[dict[str, object]], list[str]]:
     baseline_rows: list[dict] = []
     ablation_rows: list[dict] = []
     leakage_rows: list[dict] = []
     signature_rows: list[dict] = []
     paired_cases: list[dict] = []
     dimensionality_rows: list[dict] = []
+    dataset_manifests: list[dict[str, object]] = []
+    expanded_feature_schema: list[str] = []
 
     for seed in SEEDS:
         data = generate_vcsl_public_benchmark(
@@ -340,6 +347,11 @@ def run_vcsl_strengthening() -> dict[str, pd.DataFrame]:
         )
         x_train_raw, x_test_raw, feature_names = expand_feature_map(data.x_train, data.x_test, data.feature_names, mode="poly2")
         x_train_std, x_test_std, _, _ = standardize_train_test(x_train_raw, x_test_raw)
+        source_manifest = dict(data.manifest)
+        source_manifest["metadata_dir"] = "${DATA_ROOT}/public_data/vcsl_metadata"
+        dataset_manifests.append(source_manifest)
+        if not expanded_feature_schema:
+            expanded_feature_schema = list(map(str, feature_names))
         if seed == SEEDS[0]:
             for policy, label in [
                 ("invariant", "default_invariant"),
@@ -427,68 +439,84 @@ def run_vcsl_strengthening() -> dict[str, pd.DataFrame]:
                 method_scores["score_only"] = score
                 summarize_metric(baseline_rows, data.y_test, score, method="logistic_score_only", seed=seed, group="calibration")
 
-        full_model = train_logistic(x_train_std[:, invariant_idx], data.y_train, epochs=140, lr=0.08, l2=1e-4)
-        train_prob = full_model.predict_proba(x_train_std[:, invariant_idx])
-        test_prob = full_model.predict_proba(x_test_std[:, invariant_idx])
-        attack_score = np.concatenate([np.maximum(train_prob, 1 - train_prob), np.maximum(test_prob, 1 - test_prob)])
-        attack_y = np.concatenate([np.ones_like(train_prob), np.zeros_like(test_prob)])
-        membership_auc = roc_auc_score(attack_y, attack_score)
-        leakage_rows.append({"seed": seed, "attack": "confidence_membership_auc", "setting": "default invariant head", "value": membership_auc})
-
-        for policy, label in [("all", "all fields"), ("no_context", "context removed"), ("invariant", "default invariant")]:
-            idx = select_indices(feature_names, policy)
-            scaler = StandardScaler()
-            xtr = scaler.fit_transform(x_train_raw[:, idx])
-            xte = scaler.transform(x_test_raw[:, idx])
-            clf = LogisticRegression(max_iter=600, solver="lbfgs")
-            clf.fit(xtr, data.client_train)
-            pred = clf.predict(xte)
+        if include_diagnostics:
+            full_model = train_logistic(x_train_std[:, invariant_idx], data.y_train, epochs=140, lr=0.08, l2=1e-4)
+            train_prob = full_model.predict_proba(x_train_std[:, invariant_idx])
+            test_prob = full_model.predict_proba(x_test_std[:, invariant_idx])
+            attack_score = np.concatenate(
+                [np.maximum(train_prob, 1 - train_prob), np.maximum(test_prob, 1 - test_prob)]
+            )
+            attack_y = np.concatenate([np.ones_like(train_prob), np.zeros_like(test_prob)])
+            membership_auc = roc_auc_score(attack_y, attack_score)
             leakage_rows.append(
                 {
                     "seed": seed,
-                    "attack": "client_identity_balanced_accuracy",
-                    "setting": label,
-                    "value": present_class_balanced_accuracy(data.client_test, pred),
+                    "attack": "confidence_membership_auc",
+                    "setting": "default invariant head",
+                    "value": membership_auc,
                 }
             )
 
-        receipts, summary = make_receipts(
-            scores=invariant_score,
-            y=data.y_test,
-            clients=data.client_test,
-            model_digest=f"vcsl-public-strengthening-{seed}",
-            limit=1000,
-            threshold=0.5,
-            sign_receipts=True,
-        )
-        summary["seed"] = seed
-        summary["example_schema_version"] = receipts[0].schema_version if receipts else ""
-        summary["example_signature_len"] = len(receipts[0].signature) if receipts else 0
-        signature_rows.append(summary)
+            for policy, label in [
+                ("all", "all fields"),
+                ("no_context", "context removed"),
+                ("invariant", "default invariant"),
+            ]:
+                idx = select_indices(feature_names, policy)
+                scaler = StandardScaler()
+                xtr = scaler.fit_transform(x_train_raw[:, idx])
+                xte = scaler.transform(x_test_raw[:, idx])
+                clf = LogisticRegression(max_iter=600, solver="lbfgs")
+                clf.fit(xtr, data.client_train)
+                pred = clf.predict(xte)
+                leakage_rows.append(
+                    {
+                        "seed": seed,
+                        "attack": "client_identity_balanced_accuracy",
+                        "setting": label,
+                        "value": present_class_balanced_accuracy(data.client_test, pred),
+                    }
+                )
+
+            receipts, summary = make_receipts(
+                scores=invariant_score,
+                y=data.y_test,
+                clients=data.client_test,
+                model_digest=f"vcsl-public-strengthening-{seed}",
+                limit=1000,
+                threshold=0.5,
+                sign_receipts=True,
+            )
+            summary["seed"] = seed
+            summary["example_schema_version"] = receipts[0].schema_version if receipts else ""
+            summary["example_signature_len"] = len(receipts[0].signature) if receipts else 0
+            signature_rows.append(summary)
         paired_cases.append({"seed": seed, "y": data.y_test.copy(), "scores": method_scores})
 
     baseline = pd.DataFrame(baseline_rows)
     ablation = pd.DataFrame(ablation_rows)
-    leakage = pd.DataFrame(leakage_rows)
-    receipts = pd.DataFrame(signature_rows)
     paired = paired_bootstrap_table(paired_cases)
     dimensionality = pd.DataFrame(dimensionality_rows)
 
     baseline.to_csv(OUT / "fixed_evidence_baselines_raw.csv", index=False, lineterminator="\n")
     ablation.to_csv(OUT / "feature_ablation_raw.csv", index=False, lineterminator="\n")
-    leakage.to_csv(OUT / "privacy_leakage_raw.csv", index=False, lineterminator="\n")
-    receipts.to_csv(OUT / "receipt_v2_raw.csv", index=False, lineterminator="\n")
     paired.to_csv(OUT / "paired_bootstrap_raw.csv", index=False, lineterminator="\n")
     dimensionality.to_csv(TABLES / "model_dimensionality.csv", index=False, lineterminator="\n")
 
-    return {
+    result = {
         "baseline": baseline,
         "ablation": ablation,
-        "leakage": leakage,
-        "receipts": receipts,
         "paired": paired,
         "dimensionality": dimensionality,
     }
+    if include_diagnostics:
+        leakage = pd.DataFrame(leakage_rows)
+        receipts = pd.DataFrame(signature_rows)
+        leakage.to_csv(OUT / "privacy_leakage_raw.csv", index=False, lineterminator="\n")
+        receipts.to_csv(OUT / "receipt_v2_raw.csv", index=False, lineterminator="\n")
+        result["leakage"] = leakage
+        result["receipts"] = receipts
+    return result, dataset_manifests, expanded_feature_schema
 
 
 def summarize_strengthening(raw: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
@@ -504,8 +532,10 @@ def summarize_strengthening(raw: dict[str, pd.DataFrame]) -> dict[str, pd.DataFr
         out[key] = summary
     out["baseline"].to_csv(TABLES / "fixed_evidence_baselines.csv", index=False, lineterminator="\n")
     out["ablation"].to_csv(TABLES / "feature_ablation.csv", index=False, lineterminator="\n")
-    out["leakage"].to_csv(TABLES / "privacy_leakage.csv", index=False, lineterminator="\n")
-    out["receipts"].to_csv(TABLES / "receipt_v2_summary.csv", index=False, lineterminator="\n")
+    if "leakage" in out:
+        out["leakage"].to_csv(TABLES / "privacy_leakage.csv", index=False, lineterminator="\n")
+    if "receipts" in out:
+        out["receipts"].to_csv(TABLES / "receipt_v2_summary.csv", index=False, lineterminator="\n")
     out["paired"].to_csv(TABLES / "paired_bootstrap_tests.csv", index=False, lineterminator="\n")
     out["dimensionality"].to_csv(TABLES / "model_dimensionality.csv", index=False, lineterminator="\n")
     return out
@@ -540,7 +570,7 @@ def build_prevalence_table() -> pd.DataFrame:
     return df
 
 
-def plot_strengthening(summary: dict[str, pd.DataFrame], prevalence: pd.DataFrame) -> None:
+def plot_feature_policy(summary: dict[str, pd.DataFrame]) -> None:
     baseline = summary["baseline"].sort_values("pr_auc_mean", ascending=False)
     top = baseline[["method", "group", "pr_auc_mean", "pr_auc_std", "fpr_at_95_recall_mean"]].head(9)
     plt.figure(figsize=(7.1, 3.2))
@@ -556,13 +586,14 @@ def plot_strengthening(summary: dict[str, pd.DataFrame], prevalence: pd.DataFram
     ablation = summary["ablation"].copy()
     order = [
         "default invariant",
-        "all fields",
-        "all fields minus context",
-        "remove reliability",
         "score only",
+        "all fields minus context",
         "visual+temporal",
-        "audio only",
+        "remove reliability",
+        "linear all fields",
         "remove poly2 interactions",
+        "all fields",
+        "audio only",
     ]
     ablation["method"] = pd.Categorical(ablation["method"], categories=order, ordered=True)
     ablation = ablation.sort_values("method")
@@ -575,6 +606,9 @@ def plot_strengthening(summary: dict[str, pd.DataFrame], prevalence: pd.DataFram
     plt.grid(axis="x", color="#D8DEE9", linewidth=0.7, alpha=0.7)
     savefig("fig10_feature_ablation")
 
+
+def plot_strengthening(summary: dict[str, pd.DataFrame], prevalence: pd.DataFrame) -> None:
+    plot_feature_policy(summary)
     leakage = summary["leakage"].copy()
     client = leakage[leakage["attack"].eq("client_identity_balanced_accuracy")].sort_values("value_mean", ascending=True)
     membership = leakage[leakage["attack"].eq("confidence_membership_auc")]
@@ -630,24 +664,187 @@ def write_summary_json(summary: dict[str, pd.DataFrame], prevalence: pd.DataFram
     (OUT / "strengthening_summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def write_feature_policy_summary(summary: dict[str, pd.DataFrame]) -> None:
+    payload = {
+        "scope": "feature-policy",
+        "generated_tables": sorted(p.name for p in TABLES.glob("*.csv")),
+        "generated_figures": sorted(p.name for p in FIGURES.glob("fig09_*.pdf"))
+        + sorted(p.name for p in FIGURES.glob("fig10_*.pdf")),
+        "best_fixed_evidence_baseline": summary["baseline"].sort_values("pr_auc_mean", ascending=False).iloc[0].to_dict(),
+        "paired_bootstrap_tests": summary["paired"].to_dict(orient="records"),
+    }
+    write_json(OUT / "feature_policy_summary.json", payload)
+
+
+def feature_policy_config() -> dict[str, object]:
+    return {
+        "centralized_epochs": 140,
+        "clients": 11,
+        "dataset_tier": "vcsl_public_labels",
+        "embedding_dimension": 64,
+        "feature_map": "poly2",
+        "feature_policies": [
+            "all",
+            "invariant",
+            "linear_all",
+            "score_only",
+            "visual_temporal",
+            "audio",
+            "no_context",
+            "no_reliability",
+            "no_interactions",
+        ],
+        "fedopt": {
+            "beta1": 0.9,
+            "beta2": 0.99,
+            "client_learning_rate": 0.08,
+            "local_epochs": 5,
+            "rounds": 30,
+            "server_learning_rate": 0.65,
+            "tau": 1e-6,
+        },
+        "l2": 1e-4,
+        "learning_rate": 0.08,
+        "max_test_positive_pairs": 7500,
+        "max_train_positive_pairs": 15000,
+        "negative_ratio": 1.0,
+        "paired_bootstrap_resamples": 5000,
+        "seeds": list(SEEDS),
+        "split_policy": "positive-connected-component asset-disjoint",
+    }
+
+
+def freeze_feature_policy_run(
+    summary: dict[str, pd.DataFrame],
+    dataset_manifests: list[dict[str, object]],
+    feature_schema: list[str],
+    *,
+    elapsed_sec: float,
+) -> None:
+    summary["baseline"].to_csv(OUT / "fixed_evidence_baselines.csv", index=False, lineterminator="\n")
+    summary["ablation"].to_csv(OUT / "feature_ablation.csv", index=False, lineterminator="\n")
+    summary["paired"].to_csv(OUT / "paired_bootstrap_tests.csv", index=False, lineterminator="\n")
+    summary["dimensionality"].to_csv(OUT / "model_dimensionality.csv", index=False, lineterminator="\n")
+
+    config = feature_policy_config()
+    write_json(OUT / "run_config.json", config)
+    per_seed = [
+        {
+            "seed": int(item["seed"]),
+            "train_rows": int(item["train_rows"]),
+            "test_rows": int(item["test_rows"]),
+            "train_positive_rows": int(item["train_positive_rows"]),
+            "train_negative_rows": int(item["train_negative_rows"]),
+            "test_positive_rows": int(item["test_positive_rows"]),
+            "test_negative_rows": int(item["test_negative_rows"]),
+            "train_queries": int(item["train_query_count"]),
+            "test_queries": int(item["test_query_count"]),
+            "train_assets": int(item["train_assets"]),
+            "test_assets": int(item["test_assets"]),
+        }
+        for item in dataset_manifests
+    ]
+    write_json(
+        OUT / "dataset_manifest.json",
+        {
+            "asset_overlap": max(int(item["asset_overlap"]) for item in dataset_manifests),
+            "clients": 11,
+            "feature_note": (
+                "Deterministic public-label topology evidence; direct category and client fields are ablation-only."
+            ),
+            "generator": "vcsl_public_label_topology",
+            "metadata_dir": "${DATA_ROOT}/public_data/vcsl_metadata",
+            "negative_ratio": 1.0,
+            "per_seed": per_seed,
+            "source": "VCSL public GitHub metadata and labels",
+            "split_policy": "positive-connected-component asset-disjoint",
+        },
+    )
+
+    source = VCSLMetadataAdapter(VCSL_METADATA).validate()
+    inputs = [VCSL_METADATA / str(record["path"]) for record in source.files]
+    output_names = [
+        "dataset_manifest.json",
+        "feature_ablation.csv",
+        "feature_ablation_raw.csv",
+        "feature_policy_summary.json",
+        "fixed_evidence_baselines.csv",
+        "fixed_evidence_baselines_raw.csv",
+        "model_dimensionality.csv",
+        "paired_bootstrap_raw.csv",
+        "paired_bootstrap_tests.csv",
+        "run_config.json",
+    ]
+    manifest = build_run_manifest(
+        repository_root=ROOT,
+        config=config,
+        inputs=inputs,
+        outputs=[OUT / name for name in output_names],
+        counts={
+            "asset_overlap": 0,
+            "clients": 11,
+            "seeds": len(SEEDS),
+            "test_negative_rows_per_seed": 7500,
+            "test_positive_rows_per_seed": 7500,
+            "test_rows_per_seed": 15000,
+            "train_negative_rows_per_seed": 15000,
+            "train_positive_rows_per_seed": 15000,
+            "train_rows_per_seed": 30000,
+        },
+        feature_schema=feature_schema,
+        timing={"wall_clock_to_promoted_outputs": elapsed_sec},
+    )
+    manifest["data_source"] = {
+        "tier": source.tier,
+        "root": "${DATA_ROOT}/public_data/vcsl_metadata",
+        "files": list(source.files),
+        "license_note": source.license_note,
+    }
+    manifest["scope_note"] = (
+        "Finite fixed-evidence heads and feature-policy comparisons; archived prevalence inputs and "
+        "leakage-classifier diagnostics are excluded by --scope feature-policy."
+    )
+    write_json(OUT / "run_manifest.json", manifest)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Regenerate fixed-evidence strengthening tables and figures.")
     parser.add_argument("--vcsl-metadata-dir", default=str(ROOT / "public_data" / "vcsl_metadata"))
     parser.add_argument("--archived-results-dir", default=str(ROOT / "archived_results"))
     parser.add_argument("--manuscript-dir", default=str(ROOT / "paper"))
     parser.add_argument("--output-dir", default=str(ROOT / "outputs" / "tmm_revision_strengthening"))
+    parser.add_argument(
+        "--scope",
+        choices=("feature-policy", "full"),
+        default="full",
+        help="feature-policy avoids archived prevalence inputs and leakage-classifier diagnostics",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
+    started = time.perf_counter()
     args = parse_args()
     configure_paths(args)
     ensure_dirs()
     setup_plot()
     build_feature_schema()
     build_hyperparameter_table()
-    raw = run_vcsl_strengthening()
+    include_diagnostics = args.scope == "full"
+    raw, dataset_manifests, feature_schema = run_vcsl_strengthening(include_diagnostics=include_diagnostics)
     summary = summarize_strengthening(raw)
+    if args.scope == "feature-policy":
+        plot_feature_policy(summary)
+        write_feature_policy_summary(summary)
+        freeze_feature_policy_run(
+            summary,
+            dataset_manifests,
+            feature_schema,
+            elapsed_sec=time.perf_counter() - started,
+        )
+        print(f"wrote feature-policy artifacts to {OUT}")
+        print(f"wrote feature-policy tables and figures to {MANUSCRIPT}")
+        return
     prevalence = build_prevalence_table()
     plot_strengthening(summary, prevalence)
     write_summary_json(summary, prevalence)

@@ -12,5 +12,5 @@ FedProx mu,value,0.02 in main experiments
 FedAdam beta1/beta2/tau,value,0.9 / 0.99 / 1e-6 in strengthening run
 FedYogi beta1/beta2/tau,value,0.9 / 0.99 / 1e-6 in strengthening run
 FedOpt server learning rate,value,0.65 in strengthening run
-HE proxy scale,value,1e6 integer quantization scale; 16x packed-update expansion reported
+Quantized transport proxy scale,value,1e6 integer quantization scale; 16x packed-update expansion reported
 decision threshold,value,0.5 for default precision/recall; FPR@95R by threshold sweep

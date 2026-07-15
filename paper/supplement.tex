@@ -3,6 +3,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{array}
 \usepackage{booktabs}
+\usepackage{balance}
 \usepackage{tabularx}
 \usepackage{url}
 
@@ -44,7 +45,7 @@ Context & category, genre, client/domain & Excluded; leakage audit only \\
 
 \section{Frozen Splits and Statistical Procedure}
 
-For the regenerated VCSL public-label audit, positive-pair connected components are indivisible split units. Components are assigned deterministically from the seed; negatives are sampled only from assets assigned to that split. The verifier rejects null IDs, self-pairs, duplicate directional pairs, nonbinary labels, and any train/test asset intersection. The released manifest records positive, negative, pair, asset, query, and client counts. Restricted descriptor/media tiers are not redistributed.
+For every confirmatory VCSL and FMA tier, positive-pair connected components are indivisible split units. Components are assigned deterministically from the seed; negatives are sampled only from assets assigned to that split. The verifier rejects null IDs, self-pairs, duplicate directional pairs, nonbinary labels, and any train/test asset intersection. Released manifests record positive, negative, pair, asset, query, client, and decode counts. Restricted descriptors and media are not redistributed.
 
 Metrics are computed on fixed held-out rows. We report PR-AUC, ROC-AUC, FPR at 95\% recall, Brier score, 15-bin expected calibration error, Recall@$K$, mAP, fixed-budget recall, and workload. Query-ranking confidence intervals resample query clusters with replacement. Method deltas use paired bootstrap and paired sign-flip permutation tests on the same examples. Holm's step-down procedure adjusts the family of method-comparison $p$-values. Effect sizes and 95\% intervals accompany adjusted significance values; a $p$-value alone is not treated as evidence of practical improvement. The hardest 1:10000 stress has 100 positive-bearing queries and 1,000,100 candidate instances per seed. Because the public label topology has fewer than 10,001 unique references, it repeats reference assets with independent noise realizations and is not a 10,000-unique-reference benchmark.
 
@@ -76,6 +77,7 @@ Paillier & Additive compact-update sum & Threshold keys or encrypted media infer
 \end{tabularx}
 \end{table}
 
+\balance
 \section{Receipt Semantics and Threat Boundary}
 
 A receipt contains salted media commitments, model/configuration/evidence digests, a monotone sequence or timestamp, the previous-receipt hash, the signer public key, and an Ed25519 signature. Canonical serialization is hashed before signing. Verification recomputes all commitments, checks the signature, and verifies chain linkage. Tamper tests alter payload and predecessor fields independently.
@@ -84,7 +86,7 @@ Receipts establish consistency, ordering, and signer accountability under the ac
 
 \section{Artifact Map and Reproduction}
 
-The release contains strict configuration, run/result manifests, claim mappings, permitted CSV/JSON results, table sources, finite figure sources, checksums, and expected outputs. Raw copyrighted media, downloaded descriptors, caches, bytecode, temporary files, and private paths are excluded. VCSL ISC, FMA, and feature-ablation rows whose input hashes are unavailable are explicitly marked exploratory archived evidence rather than newly regenerated results.
+The release contains strict configuration, run/result manifests, claim mappings, permitted CSV/JSON results, table sources, finite figure sources, checksums, and expected outputs. Raw copyrighted media, downloaded descriptors, caches, bytecode, temporary files, and private paths are excluded. Confirmatory VCSL and FMA rows map to clean-commit run manifests and complete selected-input/output records; any retained historical row is explicitly marked exploratory and is not used for a confirmatory claim.
 
 The four entry points are \texttt{fedtwin smoke}, \texttt{fedtwin reproduce}, \texttt{fedtwin regenerate-paper}, and \texttt{fedtwin verify-artifact}. Complete copyable commands and the table/figure map are in \texttt{docs/REPRODUCIBILITY.md}.
 

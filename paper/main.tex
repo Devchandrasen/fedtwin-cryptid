@@ -61,7 +61,7 @@ Query-level ranking exposes deployment risk. & VCSL public-label Recall@K, mAP, 
 
 \section{Related Work}
 
-Visual copy detection and near-duplicate retrieval provide the closest multimedia foundation. Classical TMM systems combine visual signatures, local matching, temporal verification, and scalable retrieval \cite{wu2009realtime,douze2010image,chou2015pattern,song2013multiple,hao2017smvh}. FIVR and ViSiL pushed fine-grained incident retrieval and spatio-temporal similarity learning toward realistic partial-copy and event-level settings \cite{kordopatis2019fivr,kordopatis2019visil}. VCSL and VCDB emphasize segment-level copy localization and partial-copy evaluation \cite{feng2022vcsl,jiang2015vcdb}. These methods are strong upstream evidence providers, but they usually assume centralized access to features, labels, or indexes.
+Visual copy detection and near-duplicate retrieval provide the closest multimedia foundation. Classical TMM systems combine visual signatures, local matching, temporal verification, and scalable retrieval \cite{wu2009realtime,douze2010image,chou2015pattern,song2013multiple,hao2017smvh}. FIVR and ViSiL pushed fine-grained incident retrieval and spatio-temporal similarity learning toward realistic partial-copy and event-level settings \cite{kordopatis2019fivr,kordopatis2019visil}. VCSL and VCDB emphasize segment-level copy localization and partial-copy evaluation \cite{feng2022vcsl,jiang2015vcdb}. Recent work studies temporal-attack robustness and highly compact descriptors, including logic-gate embeddings \cite{fojcik2025compact,fojcik2025temporal,fojcik2026logic}. These methods are strong upstream evidence providers, but they usually assume centralized access to features, labels, or indexes.
 
 Audio fingerprinting is complementary because copied soundtracks can survive visual edits or appear in short clips \cite{wang2003shazam,cano2005review,baluja2008waveprint}. Watermarking and tamper analysis are related but different: they either embed marks or detect manipulation artifacts, while this work calibrates copy-pair evidence and records commitments without claiming forensic authenticity \cite{cayre2005watermarking,cox2007watermarking,sitara2018digital}. Federated, secure, and personalized learning methods motivate the cross-client training layer \cite{mcmahan2017fedavg,kairouz2021advances,li2020fedprox,karimireddy2020scaffold,reddi2021fedopt,li2021ditto}. Secure aggregation and homomorphic encryption protect aggregate updates in different threat models \cite{bonawitz2017secureagg,paillier1999public,cheon2017ckks,acar2018surveyhe}. Provenance systems such as ARCHANGEL and C2PA motivate auditable records, but in \ours{} the ledger only records salted commitments, not media, embeddings, or legal conclusions \cite{bui2020archangel,c2pa2026spec}.
 
@@ -115,7 +115,7 @@ The threat model includes honest-but-curious aggregation infrastructure, clients
 
 \begin{figure*}[!t]
   \centering
-  \includegraphics[width=0.78\textwidth]{figures/Figure1_FedTwin_CryptID_Framework_tmm.png}
+  \includegraphics[width=0.76\textwidth]{figures/Figure1_FedTwin_CryptID_Framework_tmm.png}
   \caption{Overall \ours{} framework. Each client keeps raw multimedia assets and raw embeddings local, constructs media-free pair-evidence features, trains a compact local calibration head, and sends only protected model updates for aggregation. During online detection, the global or personalized detector produces copy scores and review flags; only salted commitments, signatures, model digests, and receipt-chain links are anchored for audit.}
   \label{fig:framework}
 \end{figure*}
@@ -187,16 +187,16 @@ Receipt & Sign salted commitments to media hashes, model digest, feature digest,
 \toprule
 Tier & Source & Modality & Clients & Train rows & Test rows & Purpose \\
 \midrule
-Synthetic twin$^{\dagger}$ & Generated pair features & A+V & 20 & 15,000 & 5,000 & Pipeline, FL, privacy, and ledger sanity validation. \\
+Synthetic conflict stress & Generated pair features & A+V & 20 & 15,000 & 5,000 & Controlled pipeline, FL, privacy, and ledger validation; not natural synchronized A/V evidence. \\
 VCSL public labels & Public VCSL metadata and labels & V/meta & 11 & 5,000 & 1,800 & Asset-disjoint public label-topology tier with within-split hard negatives. \\
-VCSL ISC visual$^{\dagger}$ & Released ISC frame descriptors & V & 11 & 6,000 & 3,000 & Real visual-descriptor tier using variable-length 256-D frame descriptors. \\
-FMA audio 20 s$^{\dagger}$ & FMA-small MP3 and metadata & A & 8 & 12,000 & 6,000 & Real-audio transformed-copy and same-genre hard-negative tier. \\
-FMA audio 5 s$^{\dagger}$ & FMA-small short clips & A & 8 & 12,000 & 6,000 & Short-clip stress tier for partial audio evidence. \\
+VCSL ISC visual & Released ISC frame descriptors & V & 11 & 6,000 & 3,000 & Visual-descriptor tier using variable-length 256-D frame descriptors. \\
+FMA audio 20 s & FMA-small-compatible MP3 and official metadata & A & 8 & 12,000 & 6,000 & Audio-only transformed-copy and same-genre hard-negative tier. \\
+FMA audio 5 s & FMA-small-compatible short clips & A & 8 & 12,000 & 6,000 & Short-clip stress tier for partial audio evidence. \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-Table~\ref{tab:benchmark-tiers} summarizes the evaluation. The synthetic tier is a system-validation tier and is not presented as the main scientific evidence. VCSL public labels evaluate label-topology copy evidence and hard negatives; the regenerated audit assigns complete positive connected components to frozen train/test partitions, samples negatives only within a partition, rejects duplicate directional pairs in the canonical constructor, and verifies zero asset-identity overlap. Rows marked $\dagger$ are checksum-incomplete archived experiments and are retained as exploratory context, not confirmatory evidence. Released VCSL ISC descriptors and FMA audio provide separate visual and audio evidence; they do not establish synchronized audiovisual performance. Runs use seeds 31, 37, and 41. The comparison includes random scoring, single-modality similarity, centralized heads, local-only training, FedAvg, FedProx, SecureAgg-simulation FedAvg, quantized-proxy FedAvg, Paillier update summation, FedAdam/FedYogi, and personalized FedAvg. We report PR-AUC, ROC-AUC, FPR at 95\% recall, Brier score, 15-bin expected calibration error, Recall@$K$, mAP, recall at fixed review budgets, and expected human-review workload. Confidence intervals cluster resamples by query; paired permutation and bootstrap comparisons use the same held-out examples and Holm correction across method comparisons. Exact client, pair, positive, negative, and query counts are released with each result row.
+Table~\ref{tab:benchmark-tiers} summarizes the evaluation. The synthetic tier is a system-validation stress and is not presented as the main scientific evidence. In every reported real-data tier, complete positive connected components are assigned to frozen train/test partitions, negatives are sampled only within a partition, duplicate directional pairs are rejected, and zero asset-identity overlap is verified. VCSL ISC descriptors and FMA audio provide separate visual and audio evidence; they do not establish synchronized audiovisual performance. The FMA runs use 1,200 deterministically selected, successfully decoded tracks from 1,584 tracks extracted from the first three pinned mirror shards and joined to official FMA metadata. The mirror maintainer reports omitting six unreadable and 78 license-unclear files from the full redistribution pack. Runs use seeds 31, 37, and 41. The comparison includes random scoring, single-modality similarity, centralized heads, local-only training, FedAvg, FedProx, SecureAgg-simulation FedAvg, quantized-proxy FedAvg, Paillier update summation, FedAdam/FedYogi, and personalized FedAvg. We report PR-AUC, ROC-AUC, FPR at 95\% recall, Brier score, 15-bin expected calibration error, Recall@$K$, mAP, recall at fixed review budgets, and expected human-review workload. Confidence intervals cluster resamples by query; paired permutation and bootstrap comparisons use the same held-out examples and Holm correction across method comparisons. Exact client, pair, positive, negative, asset, query, and decode counts are released with each result row.
 
 \section{Results}
 
@@ -205,45 +205,44 @@ Table~\ref{tab:benchmark-tiers} summarizes the evaluation. The synthetic tier is
 \begin{figure*}[!t]
   \centering
   \includegraphics[width=0.90\textwidth]{figures/fig01_multitier_pr_auc.pdf}
-  \caption{Multitier PR-AUC across synthetic, visual, and real-audio benchmark tiers. Protected modes distinguish SecureAgg simulation, quantized transport accounting, and real Paillier compact-update summation.}
+  \caption{Three-seed PR-AUC (mean and sample standard deviation) for four confirmatory fixed-evidence tiers. VCSL and FMA are separate visual and audio evaluations and are not directly rank-comparable. SecureAgg is a protocol simulation and the quantized mode is a transport proxy.}
   \label{fig:multitier-pr-auc}
 \end{figure*}
 
 \begin{table*}[!t]
 \centering
-\caption{Fixed-evidence calibration results. Values are mean PR-AUC over seeds; the final column reports the best overall mean and standard deviation. $\dagger$ denotes checksum-incomplete archived results retained as exploratory context.}
+\caption{Confirmatory fixed-evidence calibration results. Values are mean PR-AUC over seeds 31, 37, and 41; the final column reports the best overall mean and sample standard deviation.}
 \label{tab:main-results}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{0.15\textwidth} p{0.17\textwidth} r r r r r r}
 \toprule
-Tier & Best single branch & Centralized & FedAvg & SecureAgg sim. & Quant. proxy & Best protected FL & Best overall \\
+Tier & Best single branch & Centralized & FedAvg & SecureAgg sim. & Quant. proxy & Best local/adapted & Best overall \\
 \midrule
-Synthetic twin$^{\dagger}$ & 0.9552 & \underline{0.9956} & \textbf{0.9957} & \textbf{0.9957} & \textbf{0.9957} & \textbf{0.9957} & \textbf{0.9957}$\pm$0.0005 \\
-VCSL public labels & 0.8974 & 0.9183 & 0.9186 & 0.9186 & 0.9186 & \underline{0.9186} & \textbf{0.9186}$\pm$0.0254 \\
-VCSL ISC visual$^{\dagger}$ & \underline{0.7596} & 0.7527 & 0.7538 & 0.7538 & 0.7538 & \underline{0.7596} & \textbf{0.7760}$\pm$0.0090 \\
-FMA audio 20 s$^{\dagger}$ & 0.9773 & 0.9936 & 0.9935 & 0.9935 & 0.9935 & \underline{0.9939} & \textbf{0.9940}$\pm$0.0008 \\
-FMA audio 5 s$^{\dagger}$ & 0.9808 & 0.9949 & 0.9950 & 0.9950 & 0.9950 & \textbf{0.9953} & \textbf{0.9953}$\pm$0.0010 \\
+VCSL public labels & 0.8974 & 0.9183 & 0.9186 & 0.9186 & 0.9186 & 0.9175 & \textbf{0.9186}$\pm$0.0254 \\
+VCSL ISC visual & 0.9115 & 0.9095 & 0.9093 & 0.9093 & 0.9093 & \textbf{0.9149} & \textbf{0.9149}$\pm$0.0619 \\
+FMA audio 20 s & 0.9768 & 0.9943 & 0.9941 & 0.9941 & 0.9941 & \textbf{0.9945} & \textbf{0.9945}$\pm$0.0008 \\
+FMA audio 5 s & 0.9807 & 0.9954 & 0.9954 & 0.9954 & 0.9954 & \textbf{0.9956} & \textbf{0.9956}$\pm$0.0007 \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-The asset-disjoint VCSL public-label row is the confirmatory result. Centralized multimodal calibration obtains 0.9183 PR-AUC; plain FedAvg, SecureAgg simulation, and the quantized transport proxy each obtain 0.9186 after rounding, and FedProx is also 0.9186. Thus the compact protected modes preserve the corresponding plain-head utility, but do not establish a material accuracy gain. The descriptor and audio rows in Fig.~\ref{fig:multitier-pr-auc} and Table~\ref{tab:main-results} are archived exploratory evidence: VCSL ISC previously favored local calibration, while FMA favored calibrated and personalized heads. Because the archived raw-input hashes are unavailable, these rows are not used for confirmatory claims.
+All four rows in Fig.~\ref{fig:multitier-pr-auc} and Table~\ref{tab:main-results} are confirmatory, input-recorded, asset-disjoint reruns. On VCSL public labels, centralized calibration obtains 0.9183 PR-AUC; plain FedAvg, SecureAgg simulation, and the quantized transport proxy each obtain 0.9186 after rounding, and FedProx is also 0.9186. On released VCSL ISC descriptors, the local head is strongest at 0.9149, but the three-seed variability is large ($0.0619$ sample standard deviation). On 20-s FMA audio, the local audio-evidence head reaches 0.9945; on 5-s audio, personalized FedAvg reaches 0.9956. Protected modes track plain FedAvg to the displayed precision in every tier, preserving compact-head utility without establishing an accuracy gain or cross-tier superiority.
 
 \begin{figure*}[!t]
   \centering
   \begin{minipage}{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig02_single_vs_fused_gain.pdf}
+    \includegraphics[width=\linewidth]{figures/personalization_vs_local.pdf}
   \end{minipage}\hfill
   \begin{minipage}{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig04_client_variability.pdf}
+    \includegraphics[width=\linewidth]{figures/vcsl_isc_client_variability.pdf}
   \end{minipage}\hfill
   \begin{minipage}{0.32\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig05_operating_point_risk.pdf}
+    \includegraphics[width=\linewidth]{figures/threshold_stability_by_client.pdf}
   \end{minipage}
-  \caption{Supporting result views. Left: gain from the best single branch to the fused privacy-preserving model. Middle: non-IID client variability in released VCSL ISC visual descriptors and FMA short clips. Right: PR-AUC must be interpreted with FPR@95R because high-recall visual operating points remain risky.}
+  \caption{Confirmatory supporting views. Left: personalization relative to local/global references. Middle: VCSL ISC client variability. Right: client threshold stability. Wide intervals and high-recall false-positive rates bound deployment claims.}
   \label{fig:supporting-results}
 \end{figure*}
 
@@ -251,37 +250,30 @@ The asset-disjoint VCSL public-label row is the confirmatory result. Centralized
 
 \begin{table*}[!t]
 \centering
-\caption{Exploratory archived VCSL public-label ablation. Score-only calibration is slightly strongest, while the default invariant policy remains competitive and avoids direct client/category context fields.}
+\caption{Confirmatory VCSL public-label calibration and feature-policy ablation over seeds 31, 37, and 41. The invariant policy excludes direct client/category context fields.}
 \label{tab:audit-ablation}
 \scriptsize
 \begin{tabularx}{\textwidth}{p{0.28\textwidth} r r p{0.28\textwidth} r}
 \toprule
 Audit baseline & PR-AUC & FPR@95R & Feature policy & PR-AUC \\
 \midrule
-Logistic score-only & \textbf{0.9001}$\pm$0.0132 & 0.4452 & Score only & \textbf{0.9001}$\pm$0.0132 \\
-Logistic poly2 invariant & 0.8989$\pm$0.0128 & 0.4459 & Default invariant & 0.8989$\pm$0.0128 \\
-FedYogi & 0.8931$\pm$0.0117 & 0.4551 & Visual+temporal & 0.8822$\pm$0.0172 \\
-FedAdam & 0.8924$\pm$0.0109 & 0.4556 & Remove reliability & 0.8405$\pm$0.0127 \\
-Mean-score fusion & 0.8854$\pm$0.0124 & 0.4744 & All fields minus context & 0.8631$\pm$0.0116 \\
-Hist. gradient boosting & 0.8852$\pm$0.0135 & 0.4904 & All fields & 0.8326$\pm$0.0105 \\
-Video similarity & 0.8780$\pm$0.0173 & 0.5165 & Audio only & 0.8138$\pm$0.0070 \\
+Logistic poly2 invariant & \textbf{0.9116}$\pm$0.0226 & 0.3719 & Default invariant & \textbf{0.9116}$\pm$0.0226 \\
+Logistic score-only & 0.9116$\pm$0.0221 & 0.3735 & Score only & 0.9116$\pm$0.0221 \\
+FedYogi & 0.9077$\pm$0.0236 & 0.3816 & All fields minus context & 0.8997$\pm$0.0278 \\
+Hist. gradient boosting & 0.9051$\pm$0.0252 & 0.4002 & Visual+temporal & 0.8938$\pm$0.0299 \\
+FedAdam & 0.9025$\pm$0.0281 & 0.3900 & Remove reliability & 0.8911$\pm$0.0347 \\
+Mean-score fusion & 0.8967$\pm$0.0115 & 0.4167 & All fields & 0.8886$\pm$0.0359 \\
+Video similarity & 0.8912$\pm$0.0298 & 0.4328 & Audio only & 0.8713$\pm$0.0335 \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-Table~\ref{tab:audit-ablation} gives an exploratory isolation of the calibration layer under fixed pair evidence. Score-only logistic calibration is slightly strongest on this archived subset, while the invariant head is competitive. The score-only 20-D map uses video score, audio score, temporal score, maximum modality score, and mean modality score plus their squares and pairwise products. The default invariant map replaces direct context with reliability-weighted and modality-product terms. Using all fields performs worse and creates severe context leakage, which motivates excluding direct client/category fields from the default detector, but a fresh checksum-verified rerun is required before treating this ablation as confirmatory. The empirical claim is therefore deliberately modest: \ours{} provides leakage-aware federated calibration and signed audit logging over fixed evidence, not superior pair-evidence fusion on every subset and not a new descriptor or retrieval method.
+Table~\ref{tab:audit-ablation} isolates the calibration layer under fixed pair evidence using 30,000 training and 15,000 test pairs per seed. The invariant head exceeds score-only calibration by only 0.0008 pooled PR-AUC (paired-bootstrap 95\% CI $[0.0001,0.0015]$, Holm-adjusted $p=0.0208$), a statistically detectable but practically small difference. The score-only 20-D map uses video, audio, temporal, maximum, and mean scores plus squares and pairwise products. The default invariant map replaces direct context with reliability-weighted and modality-product terms. All-fields calibration is weaker, supporting exclusion of direct client/category fields from the default detector. The empirical claim remains modest: \ours{} provides leakage-aware federated calibration and signed audit logging over fixed evidence, not a new descriptor, retrieval method, or universally superior evidence fusion rule.
 
 \begin{figure*}[!t]
   \centering
-  \begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig09_fixed_evidence_baselines.pdf}
-  \end{minipage}\hfill
-  \begin{minipage}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{figures/fig10_feature_ablation.pdf}
-  \end{minipage}
-  \caption{Exploratory archived audit-subset evidence. Left: fixed-evidence calibration baselines. Right: feature ablation motivating exclusion of direct context fields from the default detector; a fresh input-verifiable rerun is required for a confirmatory claim.}
+  \includegraphics[width=0.82\textwidth]{figures/fig10_feature_ablation.pdf}
+  \caption{Confirmatory feature-policy ablation. Error bars are the sample standard deviation over seeds 31, 37, and 41; all plotted values are finite and regenerate from the released table.}
   \label{fig:audit-ablation}
 \end{figure*}
 
@@ -316,7 +308,7 @@ Invariant, 1:10000 & 100 & 1,000,100 & 0.0600 & 0.1867 & 0.3900 & 0.0985 \\
   \end{minipage}\hfill
   \begin{minipage}{0.48\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/fig12_prevalence_precision.pdf}
+    \includegraphics[width=\linewidth]{figures/review_workload_vs_prevalence.pdf}
   \end{minipage}
   \caption{Deployment-risk view. Left: precision at threshold 0.5 drops as candidate negative ratio increases. Right: expected high-recall precision under rare-positive prevalence, derived from measured FPR@95R and a 95\% recall target.}
   \label{fig:deployment-risk}
@@ -334,12 +326,12 @@ Tier & Method & Precision & Recall & FPR@95R \\
 VCSL public labels & Centralized fused & 0.8496 & 0.8196 & 0.3696 \\
 VCSL public labels & SecureAgg FedAvg & 0.8553 & 0.8063 & 0.3693 \\
 VCSL public labels & Local multimodal & 0.8586 & 0.8048 & 0.3681 \\
-VCSL ISC visual & Video similarity & 0.9393 & 0.4424 & 0.9138 \\
-VCSL ISC visual & Personalized FedAvg & 0.9460 & 0.4409 & 0.9262 \\
-VCSL ISC visual & Local multimodal & 0.9568 & 0.4216 & 0.9093 \\
-FMA audio 5 s & Audio similarity & 0.5169 & 1.0000 & 0.1487 \\
-FMA audio 5 s & SecureAgg FedAvg & 0.9219 & 0.9894 & 0.0224 \\
-FMA audio 5 s & Personalized FedAvg & 0.9239 & 0.9894 & 0.0214 \\
+VCSL ISC visual & Video similarity & 0.9816 & 0.7460 & 0.6007 \\
+VCSL ISC visual & Personalized FedAvg & 0.9787 & 0.7469 & 0.5971 \\
+VCSL ISC visual & Local multimodal & 0.9854 & 0.7264 & 0.5756 \\
+FMA audio 5 s & Audio similarity & 0.5168 & 1.0000 & 0.1520 \\
+FMA audio 5 s & SecureAgg FedAvg & 0.9268 & 0.9874 & 0.0188 \\
+FMA audio 5 s & Personalized FedAvg & 0.9311 & 0.9870 & 0.0160 \\
 \bottomrule
 \end{tabularx}
 \end{table*}
@@ -397,7 +389,7 @@ Client identity leakage & All fields vs. invariant & 1.0000 vs. 0.1115$\pm$0.020
 Query category leakage & All fields vs. invariant & 1.0000 vs. 0.1020$\pm$0.0130 & Category/context fields should not be default detector inputs. \\
 Membership attack & Best tested scalar/model attack & AUC 0.5780$\pm$0.0170 & Weak but nonzero signal; no differential-privacy guarantee is claimed. \\
 Receipt verification & 1000 receipts/seed & 100\% verify and tamper detect & Signed salted hash chains support commitment audit without storing media. \\
-Paillier compact sum & 8 clients, 24-D updates, 2048-bit key & $64\times$ bytes, $2.64\times10^{-7}$ max error & Real additive sum; 21.68 s encryption and 2.07 s aggregate/decrypt in this local microbenchmark. \\
+Paillier compact sum & 8 clients, 24-D updates, 2048-bit key & $64\times$ bytes, $2.64\times10^{-7}$ max error & Real additive sum; 14.69 s encryption and 1.44 s aggregate/decrypt in this local microbenchmark. \\
 SecureAgg/proxy status & Pairwise-mask simulation / quantized proxy & $\leq2.86\times10^{-15}$ dropout error & Arithmetic recovery holds at 0\%, 10\%, and 20\% dropout; neither mode is production cryptography. \\
 \bottomrule
 \end{tabularx}
@@ -415,13 +407,13 @@ The protected-update audit separates three mechanisms. SecureAgg simulation test
     \centering
     \includegraphics[width=\linewidth]{figures/paillier_update_overhead.pdf}
   \end{minipage}
-  \caption{Additional privacy and cryptographic accounting. Left: expanded privacy/leakage audit; values above chance indicate leakage signals but do not prove privacy failure alone. Right: byte expansion for plain, quantized-proxy, and real Paillier compact-head update aggregation.}
+  \caption{Additional privacy and cryptographic accounting. Left: expanded privacy/leakage audit; values above chance indicate leakage signals but do not prove privacy failure alone. Right: byte expansion for plain, SecureAgg simulation, quantized transport proxy, and real Paillier compact-update aggregation.}
   \label{fig:privacy-paillier}
 \end{figure*}
 
 \section{Discussion}
 
-The results support the main claim that a compact fixed-evidence calibration and audit layer can be trained across clients while preserving compact-head utility under protected-update accounting. They also show that signed evidence anchoring can be added without storing media or embeddings in the ledger. The query-ranking and prevalence analyses make the deployment boundary clearer: calibrated scores can prioritize candidate review, but performance degrades as hard negatives increase, especially in the 1:10000 candidate-instance stress. The exploratory feature ablation and the checksum-verified leakage audit both motivate excluding direct client/category fields from default detector inputs. The Paillier experiment shows real additive encrypted summation is feasible for compact updates, with substantial byte and runtime costs.
+The results support the main claim that a compact fixed-evidence calibration and audit layer can be trained across clients while preserving compact-head utility under protected-update accounting. They also show that signed evidence anchoring can be added without storing media or embeddings in the ledger. The query-ranking and prevalence analyses make the deployment boundary clearer: calibrated scores can prioritize candidate review, but performance degrades as hard negatives increase, especially in the 1:10000 candidate-instance stress. The confirmatory feature ablation and the checksum-verified leakage audit both motivate excluding direct client/category fields from default detector inputs. The Paillier experiment shows real additive encrypted summation is feasible for compact updates, with substantial byte and runtime costs.
 
 The results do not prove that \ours{} solves piracy detection in the wild. VCSL validates the visual branch and FMA validates the audio branch, but the paper does not yet include a natural synchronized audio-video piracy corpus. The evaluation also does not establish superiority over ViSiL/FIVR-style retrieval and localization systems because those systems are treated as upstream evidence providers rather than replaced baselines. The protected aggregation mechanisms keep raw media local and model aggregate-only update visibility under an honest-but-curious setting; they do not provide differential privacy, collusion resistance, malicious-client robustness proof, or protection against all update-leakage attacks. The receipt ledger supports auditability; it does not prevent piracy, establish ownership, certify feature-extraction correctness, or replace human review.
 

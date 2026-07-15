@@ -48,9 +48,19 @@ Run a validated experiment configuration. Dataset roots must be supplied explici
 ```powershell
 python -m fedtwin.cli reproduce --config configs\synthetic.yaml --output-dir outputs\synthetic-rerun
 python -m fedtwin.cli reproduce --config configs\paper.yaml --data-root D:\datasets --output-dir outputs\paper-rerun
+python -m fedtwin.cli reproduce --config configs\paper_vcsl_isc.yaml --data-root D:\datasets --output-dir outputs\vcsl-isc-rerun
+python -m fedtwin.cli reproduce --config configs\paper_fma_audio_20s.yaml --data-root D:\datasets --output-dir outputs\fma-20s-rerun
+python -m fedtwin.cli reproduce --config configs\paper_fma_audio_5s.yaml --data-root D:\datasets --output-dir outputs\fma-5s-rerun
 ```
 
-The synthetic configuration is a no-data portability check. The paper configuration is the frozen public-data protocol and fails with an explicit missing-file message until the VCSL metadata is staged under the supplied data root.
+The synthetic configuration is a no-data portability check. The four paper configurations are the frozen VCSL public-label, VCSL ISC visual-descriptor, FMA 20-s audio, and FMA 5-s audio protocols. Each fails with an explicit missing-file message until its licensed inputs are staged under the supplied data root.
+
+Regenerate the confirmatory public-label feature-policy analysis without any
+archived-result dependency:
+
+```powershell
+python strengthen_for_tmm.py --scope feature-policy --vcsl-metadata-dir D:\datasets\public_data\vcsl_metadata --manuscript-dir outputs\feature-policy-paper --output-dir outputs\feature-policy-run
+```
 
 Pinned upstream commits, archive links, license boundaries, and expected hashes are listed in [`docs/DATA_ACQUISITION.md`](docs/DATA_ACQUISITION.md).
 
@@ -66,6 +76,7 @@ The backward-compatible runners remain available:
 ```powershell
 python run_benchmark.py --tier tier0 --clients 5 --assets 1000 --queries 1000 --seeds 31 37 41 --rounds 20 --local-epochs 5 --output-tag tier0_full
 python revision_blocker_experiments.py --help
+python strengthen_for_tmm.py --help
 ```
 
 See [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) for the result contract and table/figure map, and [HPC_README.md](HPC_README.md) for cluster execution.

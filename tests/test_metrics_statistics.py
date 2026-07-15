@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 from sklearn.metrics import average_precision_score
 
+import strengthen_for_tmm as strengthening
 from fedtwin.metrics import (
     brier_score,
     detection_metrics,
@@ -121,3 +122,40 @@ def test_legacy_strengthening_bootstrap_uses_finite_p_values_and_holm() -> None:
     result = paired_bootstrap_table(cases, n_boot=100)
     assert (result["delta_pr_auc_boot_p_two_sided"] > 0).all()
     assert (result["holm_adjusted_p_value"] >= result["delta_pr_auc_boot_p_two_sided"]).all()
+
+
+def test_feature_policy_plot_accepts_every_released_policy(tmp_path, monkeypatch) -> None:
+    methods = [
+        "default invariant",
+        "score only",
+        "all fields minus context",
+        "visual+temporal",
+        "remove reliability",
+        "linear all fields",
+        "remove poly2 interactions",
+        "all fields",
+        "audio only",
+    ]
+    summary = {
+        "baseline": pd.DataFrame(
+            {
+                "method": ["logistic_poly2_invariant", "video_similarity"],
+                "group": ["fusion head", "fixed evidence"],
+                "pr_auc_mean": [0.91, 0.89],
+                "pr_auc_std": [0.02, 0.03],
+                "fpr_at_95_recall_mean": [0.37, 0.43],
+            }
+        ),
+        "ablation": pd.DataFrame(
+            {
+                "method": methods,
+                "pr_auc_mean": np.linspace(0.91, 0.87, len(methods)),
+                "pr_auc_std": np.full(len(methods), 0.02),
+            }
+        ),
+    }
+    monkeypatch.setattr(strengthening, "FIGURES", tmp_path)
+    strengthening.setup_plot()
+    strengthening.plot_feature_policy(summary)
+    assert (tmp_path / "fig09_fixed_evidence_baselines.pdf").is_file()
+    assert (tmp_path / "fig10_feature_ablation.pdf").is_file()
