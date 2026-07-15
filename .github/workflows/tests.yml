@@ -25,7 +25,7 @@ jobs:
           python -m pip install uv==0.11.20
           uv sync --locked --extra test --python ${{ matrix.python-version }}
       - name: Static checks
-        run: uv run --locked python -m ruff check fedtwin tests run_benchmark.py run_smoke.py revision_blocker_experiments.py strengthen_for_tmm.py
+        run: uv run --locked python -m ruff check fedtwin tests tools/check_abstract_length.py run_benchmark.py run_smoke.py revision_blocker_experiments.py strengthen_for_tmm.py
       - name: Unit and integration tests
         run: uv run --locked python -m pytest --cov=fedtwin --cov-report=term-missing --cov-fail-under=85 -q
       - name: Synthetic smoke run
@@ -52,4 +52,4 @@ jobs:
           test "$(pdfinfo main.pdf | awk '/^Pages:/ {print $2}')" -le 10
           test "$(pdfinfo supplement.pdf | awk '/^Pages:/ {print $2}')" -le 4
           ! grep -Eq 'Overfull|undefined citations|undefined references|There were undefined references' main.log supplement.log
-          python -c "import pathlib,re; t=pathlib.Path('main.tex').read_text(encoding='utf-8'); a=re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}',t,re.S).group(1); n=len(re.findall(r\"[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*\",a)); assert 150 <= n <= 250, n"
+          python ../tools/check_abstract_length.py main.tex --minimum 150 --maximum 250
